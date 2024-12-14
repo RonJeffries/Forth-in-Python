@@ -17,13 +17,11 @@ def number(n):
     stack.append(n)
 
 def interpret(s):
-    print(f'interpret {s}')
     words = s.split()
     for word in words:
         interpret_word(word)
 
 def interpret_word(word):
-    print(f'word {word}')
     if is_number(word):
         stack.append(int(word))
     elif word == '+':
@@ -132,4 +130,9 @@ class TestInitial:
         s = '3 4 HYPOTENUSE'
         interpret(s)
         assert stack.pop() == 5
-        assert False
+
+    def test_hyp_longhand(self):
+        clear()
+        s = '3 4 DUP * SWAP DUP * + SQRT'
+        interpret(s)
+        assert stack.pop() == 5
