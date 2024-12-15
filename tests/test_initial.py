@@ -3,10 +3,12 @@ import math
 import pytest
 
 stack = []
+skipping = False
 
 def clear():
-    global stack
+    global stack, skipping
     stack = []
+    skipping = False
 
 def plus():
     # ( x1 x2 -- x1+x2 )
@@ -17,11 +19,19 @@ def number(n):
     stack.append(n)
 
 def interpret(s):
+    print(f"interpret {s}")
     words = s.split()
     for word in words:
         interpret_word(word)
+    print(f'end interpret {s}')
 
 def interpret_word(word):
+    global skipping
+    if word == 'THEN':
+        skipping = False
+        return
+    if skipping:
+        return
     if is_number(word):
         stack.append(int(word))
     elif word == '+':
@@ -42,6 +52,15 @@ def interpret_word(word):
     elif word == 'DUP':
         x1 = stack.pop()
         stack.append(x1); stack.append(x1)
+    elif word == '.':
+        print(stack.pop())
+    elif word == '>':
+        top, lower = stack.pop(), stack.pop()
+        stack.append(1 if top > lower else 0)
+    elif word == 'IF':
+        if stack.pop() == 0:
+            skipping = True
+
     elif word == 'NEGATE':
         s = '0 SWAP -'
         interpret(s)
@@ -136,3 +155,24 @@ class TestInitial:
         s = '3 4 DUP * SWAP DUP * + SQRT'
         interpret(s)
         assert stack.pop() == 5
+
+    def test_greater(self):
+        clear()
+        s = '3 4 >'
+        interpret(s)
+        assert stack.pop() == 1
+        clear()
+        s = '4 4 >'
+        interpret(s)
+        assert stack.pop() == 0
+
+    def test_if_then(self):
+        clear()
+        s = '0 3 4 > IF 600 + THEN 400 +'
+        interpret(s)
+        assert stack.pop() == 1000
+        clear()
+        s = '0 4 4 > IF 600 + THEN 400 +'
+        interpret(s)
+        assert stack.pop() == 400
+
