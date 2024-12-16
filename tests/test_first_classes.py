@@ -14,24 +14,24 @@ class PrimaryWord:
         self.name = name
         self.code = code
 
-    def __repr__(self):
-        return f'PW: {self.name}'
-
     def do(self):
         self.code()
+
+    def __repr__(self):
+        return f'PW: {self.name}'
 
 class SecondaryWord:
     def __init__(self, name, code):
         self.name = name
         self.code = code
 
-    def __repr__(self):
-        return f'SW: {self.name}'
-
     def do(self):
         for word_index in self.code:
             word = lexicon[word_index]
             word.do()
+
+    def __repr__(self):
+        return f'SW: {self.name}'
 
 
 class TestFirstClasses:
@@ -62,9 +62,9 @@ class TestFirstClasses:
         w_swap = PrimaryWord('SWAP', lambda: stack.extend([stack.pop(), stack.pop()]))
         w_times = PrimaryWord('*', lambda: stack.append(stack.pop() * stack.pop()))
         w_sqrt = PrimaryWord('SQRT', lambda: stack.append(math.sqrt(stack.pop())))
-        w_square = SecondaryWord('SQUARE', [1, 3])
-        w_hypsq = SecondaryWord('HYPSQ', [5, 2, 5, 0])
-        w_hyp = SecondaryWord('HYP', [6, 4])
+        w_square = SecondaryWord('SQUARE', [1, 3]) # DUP *
+        w_hypsq = SecondaryWord('HYPSQ', [5, 2, 5, 0]) # SQUARE SWAP SQUARE +
+        w_hyp = SecondaryWord('HYP', [6, 4]) # HYPSQ SQRT
         lexicon.extend([w_plus, w_dup, w_swap, w_times, w_sqrt, w_square, w_hypsq, w_hyp])
         #               0       1      2       3        4       5         6        7
         stack.append(3)
