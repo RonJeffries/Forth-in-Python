@@ -1,12 +1,6 @@
 import math
 
-stack = []
-lexicon = []
-
-def clear():
-    global stack, lexicon
-    stack = []
-    lexicon = []
+from forth import stack, lexicon
 
 
 class PrimaryWord:
@@ -14,24 +8,31 @@ class PrimaryWord:
         self.name = name
         self.code = code
 
-    def do(self):
+    def do(self, lexicon):
         self.code()
 
     def __repr__(self):
         return f'PW: {self.name}'
+
 
 class SecondaryWord:
     def __init__(self, name, code):
         self.name = name
         self.code = code
 
-    def do(self):
+    def do(self, lexicon):
+        print(f'do {self.name}')
         for word_index in self.code:
-            word = lexicon[word_index]
-            word.do()
+            lexicon[word_index].do(lexicon)
 
     def __repr__(self):
         return f'SW: {self.name}'
+
+
+def clear():
+    global lexicon, stack
+    stack = []
+    lexicon = []
 
 
 class TestFirstClasses:
@@ -42,7 +43,7 @@ class TestFirstClasses:
         word = PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop()))
         stack.append(1)
         stack.append(3)
-        word.do()
+        word.do(lexicon)
         assert stack.pop() == 4
 
     def test_double(self):
@@ -52,7 +53,7 @@ class TestFirstClasses:
         lexicon.append(w1)
         s0 = SecondaryWord('DOUBLE', [1, 0])
         stack.append(2)
-        s0.do()
+        s0.do(lexicon)
         assert stack.pop() == 4
 
     def test_hypotenuse(self):
@@ -69,7 +70,8 @@ class TestFirstClasses:
         #               0       1      2       3        4       5         6        7
         stack.append(3)
         stack.append(4)
-        w_hyp.do()
+        print(f'test lex {lexicon}')
+        w_hyp.do(lexicon)
         assert stack.pop() == 5
 
 

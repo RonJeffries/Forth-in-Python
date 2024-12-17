@@ -1,0 +1,3 @@
+
+stack = []
+lexicon = []
