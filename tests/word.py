@@ -18,9 +18,9 @@ class SecondaryWord:
         self.word_indices = word_indices
 
     def do(self, forth):
-        print(f'do {self.name}')
+        lexicon = forth.lexicon
         for word_index in self.word_indices:
-            forth.lexicon[word_index].do(forth)
+            lexicon[word_index].do(forth)
 
     def __repr__(self):
         return f'SW: {self.name}'
