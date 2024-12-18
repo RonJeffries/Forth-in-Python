@@ -5,8 +5,8 @@ class Stack:
     def dup(self):
         self.push(self.stack[-1])
 
-    def extend(self, words):
-        self.stack.extend(words)
+    def extend(self, items):
+        self.stack.extend(items)
 
     def over(self):
         self.push(self.stack[-2])
@@ -14,8 +14,8 @@ class Stack:
     def pop(self):
         return self.stack.pop()
 
-    def push(self, word):
-        self.stack.append(word)
+    def push(self, item):
+        self.stack.append(item)
 
     def rot(self):
         stack = self.stack
