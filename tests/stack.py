@@ -20,7 +20,7 @@ class Stack:
     def rot(self):
         stack = self.stack
         top, middle, bottom  = stack.pop(), stack.pop(), stack.pop()
-        stack.extend([middle, top, bottom])
+        self.extend([middle, top, bottom])
 
     def swap(self):
         stack = self.stack
