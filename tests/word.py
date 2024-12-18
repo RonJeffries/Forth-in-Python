@@ -13,13 +13,13 @@ class PrimaryWord:
 
 
 class SecondaryWord:
-    def __init__(self, name, code):
+    def __init__(self, name, word_indices):
         self.name = name
-        self.code = code
+        self.word_indices = word_indices
 
     def do(self, forth):
         print(f'do {self.name}')
-        for word_index in self.code:
+        for word_index in self.word_indices:
             forth.lexicon[word_index].do(forth)
 
     def __repr__(self):
