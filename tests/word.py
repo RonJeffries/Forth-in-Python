@@ -13,6 +13,7 @@ class PrimaryWord:
 
 
 class SecondaryWord:
+    # why don't we just store the word in the lexicon? it's no larger than the index.
     def __init__(self, name, word_indices):
         self.name = name
         self.word_indices = word_indices
