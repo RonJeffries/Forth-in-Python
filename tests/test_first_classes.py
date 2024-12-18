@@ -36,10 +36,8 @@ def clear():
 
 
 class TestFirstClasses:
-    def test_hookup(self):
-        assert True
-
     def test_first_word(self):
+        clear()
         word = PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop()))
         stack.append(1)
         stack.append(3)
@@ -47,6 +45,7 @@ class TestFirstClasses:
         assert stack.pop() == 4
 
     def test_double(self):
+        clear()
         w0 = PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop()))
         w1 = PrimaryWord('DUP', lambda: stack.append(stack[-1]))
         lexicon.append(w0)

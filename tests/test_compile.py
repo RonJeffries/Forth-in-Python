@@ -9,44 +9,36 @@ def forth_compile(text, lex):
     words = text.split()
     match words:
         case ':', defining, *rest, ';':
-            word_list = [ix for word in rest if (ix := find_word(word, lex)) is not None]
+            word_list = [ix for word in rest if (ix := find_word_index(word, lex)) is not None]
             lex.append(SecondaryWord(defining, word_list))
         case _:
             raise SyntaxError(f'Syntax error: "{text}". Missing : or ;?')
 
-def find_word(word, lex):
+def find_word_index(word, lex):
     for i in range(len(lex)):
         if lex[i].name == word:
             return i
     raise ValueError(f'cannot find word "{word}"')
+
+def find_word(word, lex):
+    return lex[find_word_index(word, lex)]
 
 
 class TestCompile:
 
     def test_compiler_hyp(self):
         clear()
-        w_plus = PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop()))
-        w_dup = PrimaryWord('DUP', lambda: stack.append(stack[-1]))
-        w_swap = PrimaryWord('SWAP', lambda: stack.extend([stack.pop(), stack.pop()]))
-        w_times = PrimaryWord('*', lambda: stack.append(stack.pop() * stack.pop()))
-        w_sqrt = PrimaryWord('SQRT', lambda: stack.append(math.sqrt(stack.pop())))
-        lexicon.extend([w_plus, w_dup, w_swap, w_times, w_sqrt])
-        print(f'tc lex {lexicon}')
-        s = ': SQUARE DUP * ;'
-        forth_compile(s, lexicon)
-        index = find_word('SQUARE', lexicon)
-        word = lexicon[index]
-        assert word.name == 'SQUARE'
-        assert word.code == [1, 3]
-        hypsq = ': HYPSQ SQUARE SWAP SQUARE + ;'
-        forth_compile(hypsq, lexicon)
-        hyp = ': HYP HYPSQ SQRT ;'
-        forth_compile(hyp, lexicon)
-        index = find_word('HYP', lexicon)
-        word = lexicon[index]
+        lexicon.append(PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop())))
+        lexicon.append(PrimaryWord('-', lambda: stack.append(stack.pop() - stack.pop())))
+        lexicon.append(PrimaryWord('*', lambda: stack.append(stack.pop() * stack.pop())))
+        lexicon.append(PrimaryWord('DUP', lambda: stack.append(stack[-1])))
+        lexicon.append(PrimaryWord('SWAP', lambda: stack.extend([stack.pop(), stack.pop()])))
+        lexicon.append(PrimaryWord('SQRT', lambda: stack.append(math.sqrt(stack.pop()))))
+        forth_compile(': SQUARE DUP * ;', lexicon)
+        forth_compile(': HYPSQ SQUARE SWAP SQUARE + ;', lexicon)
+        forth_compile(': HYP HYPSQ SQRT ;', lexicon)
         stack.extend([3, 4])
-        word.do(lexicon)
-        print(f'{stack=}')
+        find_word('HYP', lexicon).do(lexicon)
         assert stack.pop() == 5
 
     def test_syntax_error(self):
