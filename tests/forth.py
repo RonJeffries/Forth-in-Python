@@ -1,26 +1,28 @@
 import math
 
+from tests.stack import Stack
 from tests.word import PrimaryWord, SecondaryWord
 
 
 class Forth:
     def __init__(self):
-        self.stack = []
+        self.stack = Stack()
         self.lexicon = []
         self.define_primaries()
 
     def define_primaries(self):
         lex = self.lexicon
         stack = self.stack
-        lex.append(PrimaryWord('+', lambda: stack.append(stack.pop() + stack.pop())))
-        lex.append(PrimaryWord('-', lambda: stack.append(-stack.pop() + stack.pop())))
-        lex.append(PrimaryWord('*', lambda: stack.append(stack.pop() * stack.pop())))
-        lex.append(PrimaryWord('/', lambda: stack.append(1/(stack.pop() / stack.pop()))))
-        lex.append(PrimaryWord('DUP', lambda: stack.append(stack[-1])))
-        lex.append(PrimaryWord('DROP', lambda: stack.pop()))
-        lex.append(PrimaryWord('OVER', lambda: stack.append(stack[-2])))
-        lex.append(PrimaryWord('SWAP', lambda: stack.extend([stack.pop(), stack.pop()])))
-        lex.append(PrimaryWord('SQRT', lambda: stack.append(math.sqrt(stack.pop()))))
+        lex.append(PrimaryWord('DROP', stack.pop))
+        lex.append(PrimaryWord('DUP', stack.dup))
+        lex.append(PrimaryWord('OVER', stack.over))
+        lex.append(PrimaryWord('ROT', stack.rot))
+        lex.append(PrimaryWord('SWAP', stack.swap))
+        lex.append(PrimaryWord('+', lambda: stack.push(stack.pop() + stack.pop())))
+        lex.append(PrimaryWord('-', lambda: stack.push(-stack.pop() + stack.pop())))
+        lex.append(PrimaryWord('*', lambda: stack.push(stack.pop() * stack.pop())))
+        lex.append(PrimaryWord('/', lambda: stack.push(1/(stack.pop() / stack.pop()))))
+        lex.append(PrimaryWord('SQRT', lambda: stack.push(math.sqrt(stack.pop()))))
 
     def compile(self, text):
         words = text.split()

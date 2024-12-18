@@ -14,6 +14,12 @@ class TestCompile:
         f.find_word('HYP').do(f)
         assert f.stack.pop() == 5
 
+    def test_rot(self):
+        forth = Forth()
+        forth.stack.extend([0, 1, 2, 3, 4, 5, 6])
+        forth.find_word('ROT').do(forth)
+        assert forth.stack == [0, 1, 2, 3, 5, 6, 4]
+
     def test_minus(self):
         forth = Forth()
         forth.stack.extend([5, 2])
