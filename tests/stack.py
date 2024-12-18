@@ -30,7 +30,7 @@ class Stack:
     def swap_pop(self):
         # (_ under top -> _ top ) -> under
         self.swap()
-        return self.stack.pop()
+        return self.pop()
 
     def __eq__(self, other):
         return self.stack == other
