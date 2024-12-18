@@ -1,7 +1,7 @@
 import math
 import pytest
 
-from tests.test_first_classes import PrimaryWord, SecondaryWord, clear
+from tests.word import PrimaryWord, SecondaryWord
 
 class Forth:
     def __init__(self):
@@ -50,31 +50,31 @@ class TestCompile:
         f.compile(': HYPSQ SQUARE SWAP SQUARE + ;')
         f.compile(': HYP HYPSQ SQRT ;')
         f.stack.extend([3, 4])
-        f.find_word('HYP').do(f.lexicon)
+        f.find_word('HYP').do(f)
         assert f.stack.pop() == 5
 
     def test_minus(self):
         forth = Forth()
         forth.stack.extend([5, 2])
-        forth.find_word('-',).do(forth.lexicon)
+        forth.find_word('-',).do(forth)
         assert forth.stack.pop() == 3
 
     def test_divide(self):
         f = Forth()
         f.stack.extend([4, 2])
-        f.find_word('/').do(f.lexicon)
+        f.find_word('/').do(f)
         assert f.stack.pop() == 2
 
     def test_drop(self):
         f = Forth()
         f.stack.extend([4, 2])
-        f.find_word('DROP').do(f.lexicon)
+        f.find_word('DROP').do(f)
         assert f.stack.pop() == 4
 
     def test_over(self):
         f = Forth()
         f.stack.extend([4, 2])
-        f.find_word('OVER').do(f.lexicon)
+        f.find_word('OVER').do(f)
         assert f.stack == [4, 2, 4]
 
     def test_syntax_error(self):
