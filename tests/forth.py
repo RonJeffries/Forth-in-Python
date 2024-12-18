@@ -19,9 +19,9 @@ class Forth:
         lex.append(PrimaryWord('ROT', stack.rot))
         lex.append(PrimaryWord('SWAP', stack.swap))
         lex.append(PrimaryWord('+', lambda: stack.push(stack.pop() + stack.pop())))
-        lex.append(PrimaryWord('-', lambda: stack.push(-stack.pop() + stack.pop())))
+        lex.append(PrimaryWord('-', lambda: stack.push(stack.swap_pop() - stack.pop())))
         lex.append(PrimaryWord('*', lambda: stack.push(stack.pop() * stack.pop())))
-        lex.append(PrimaryWord('/', lambda: stack.push(1/(stack.pop() / stack.pop()))))
+        lex.append(PrimaryWord('/', lambda: stack.push(stack.swap_pop() / stack.pop())))
         lex.append(PrimaryWord('SQRT', lambda: stack.push(math.sqrt(stack.pop()))))
 
     def compile(self, text):

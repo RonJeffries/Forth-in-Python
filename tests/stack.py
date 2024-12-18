@@ -27,5 +27,10 @@ class Stack:
         top, under = stack.pop(), stack.pop()
         self.extend([top, under])
 
+    def swap_pop(self):
+        # (_ under top -> _ top ) -> under
+        self.swap()
+        return self.stack.pop()
+
     def __eq__(self, other):
         return self.stack == other
