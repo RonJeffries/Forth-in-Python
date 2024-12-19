@@ -72,8 +72,12 @@ class TestCompile:
         s = ': TEST *IF DUP + ;'
         f.compile(s)
         f.stack.extend([2, 0])
-        f.find_word('TEST').do(f)
+        test_word = f.find_word('TEST')
+        test_word.do(f)
         assert f.stack.pop() == 2
+        f.stack.extend([2, 1])
+        test_word.do(f)
+        assert f.stack.pop() == 4
 
 
 
