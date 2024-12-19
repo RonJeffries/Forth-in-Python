@@ -5,8 +5,8 @@ class PrimaryWord:
         self.name = name
         self.code = code
 
-    def do(self, _forth):
-        self.code()
+    def do(self, forth):
+        self.code(forth)
 
     def __repr__(self):
         return f'PW: {self.name}'

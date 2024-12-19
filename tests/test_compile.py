@@ -1,6 +1,7 @@
 import pytest
 
 from tests.forth import Forth
+from tests.stack import Stack
 
 
 class TestCompile:
@@ -13,6 +14,13 @@ class TestCompile:
         f.stack.extend([3, 4])
         f.find_word('HYP').do(f)
         assert f.stack.pop() == 5
+
+    def test_changing_stack(self):
+        f = Forth()
+        f.stack = Stack()
+        f.stack.extend([3, 4])
+        f.find_word('+').do(f)
+        assert f.stack.pop() == 7
 
     def test_rot(self):
         forth = Forth()
