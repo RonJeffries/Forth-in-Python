@@ -14,6 +14,7 @@ class TestCompile:
         f.stack.extend([3, 4])
         f.find_word('HYP').do(f)
         assert f.stack.pop() == 5
+        assert f.active_words == []
 
     def test_changing_stack(self):
         f = Forth()
@@ -65,6 +66,14 @@ class TestCompile:
         with pytest.raises(ValueError) as e:
             f.compile(s)
         assert str(e.value) == 'cannot find word "DUMB"'
+
+    def test_star_if(self):
+        f = Forth()
+        s = ': TEST *IF DUP + ;'
+        f.compile(s)
+        f.stack.extend([2, 0])
+        f.find_word('TEST').do(f)
+        assert f.stack.pop() == 2
 
 
 
