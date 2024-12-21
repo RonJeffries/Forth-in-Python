@@ -26,9 +26,9 @@ class Forth:
 
     def define_primaries(self):
         lex = self.lexicon
+        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
-        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
