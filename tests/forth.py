@@ -9,20 +9,27 @@ class Forth:
         self.stack = Stack()
         self.lexicon = []
         self.define_primaries()
+        self.active_words = []
+
+    def begin(self, word):
+        self.active_words.append(word)
+
+    def end(self):
+        self.active_words.pop()
+
 
     def define_primaries(self):
         lex = self.lexicon
-        stack = self.stack
-        lex.append(PrimaryWord('DROP', stack.pop))
-        lex.append(PrimaryWord('DUP', stack.dup))
-        lex.append(PrimaryWord('OVER', stack.over))
-        lex.append(PrimaryWord('ROT', stack.rot))
-        lex.append(PrimaryWord('SWAP', stack.swap))
-        lex.append(PrimaryWord('+', lambda: stack.push(stack.pop() + stack.pop())))
-        lex.append(PrimaryWord('-', lambda: stack.push(stack.swap_pop() - stack.pop())))
-        lex.append(PrimaryWord('*', lambda: stack.push(stack.pop() * stack.pop())))
-        lex.append(PrimaryWord('/', lambda: stack.push(stack.swap_pop() / stack.pop())))
-        lex.append(PrimaryWord('SQRT', lambda: stack.push(math.sqrt(stack.pop()))))
+        lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
+        lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
+        lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
+        lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
+        lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
+        lex.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
+        lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
+        lex.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
+        lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
+        lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
 
     def compile(self, text):
         # why don't we just store the word in the list, it's no larger than the index
