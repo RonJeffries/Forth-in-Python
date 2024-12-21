@@ -11,17 +11,24 @@ class Forth:
         self.define_primaries()
         self.active_words = []
 
+    @property
+    def active_word(self):
+        return self.active_words[-1]
+
     def begin(self, word):
         self.active_words.append(word)
 
     def end(self):
         self.active_words.pop()
 
+    def next_word(self):
+        return self.active_word.next_word()
 
     def define_primaries(self):
         lex = self.lexicon
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
+        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))

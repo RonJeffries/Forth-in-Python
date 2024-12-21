@@ -2,6 +2,7 @@ import pytest
 
 from tests.forth import Forth
 from tests.stack import Stack
+from tests.word import SecondaryWord
 
 
 class TestCompile:
@@ -89,6 +90,17 @@ class TestCompile:
         f.compile(s)
         test_word = f.find_word('TEST')
         assert test_word.word_indices[0] == 0
+
+    def test_lit_hand_compiled(self):
+        f = Forth()
+        # s = ': 3 DUP +'
+        lit = f.find_word_index('*#')
+        dup = f.find_word_index('DUP')
+        plus = f.find_word_index('+')
+        indices = [lit, 3, dup, plus]
+        sw = SecondaryWord('TEST', indices)
+        sw.do(f)
+        assert f.stack.pop() == 6
 
 
 

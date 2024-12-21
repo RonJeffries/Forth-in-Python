@@ -17,20 +17,23 @@ class SecondaryWord:
     def __init__(self, name, word_indices):
         self.name = name
         self.word_indices = word_indices
-        self.ix = 0
+        self.pc = 0
 
     def do(self, forth):
         forth.begin(self)
         lexicon = forth.lexicon
-        self.ix = 0
-        while self.ix < len(self.word_indices):
-            word_index = self.word_indices[self.ix]
-            lexicon[word_index].do(forth)
-            self.ix += 1
+        self.pc = 0
+        while self.pc < len(self.word_indices):
+            lexicon[self.next_word()].do(forth)
         forth.end()
 
+    def next_word(self):
+        word =  self.word_indices[self.pc]
+        self.pc += 1
+        return word
+
     def skip(self, n):
-        self.ix += n
+        self.pc += n
 
     def __repr__(self):
         return f'SW: {self.name}'
