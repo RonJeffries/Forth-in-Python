@@ -43,17 +43,37 @@ class Forth:
         words = text.split()
         match words:
             case ':', defining, *rest, ';':
-                word_list = [ix for word in rest if (ix := self.find_word_index(word)) is not None]
+                word_list = self.compile_word_list(rest)
                 self.lexicon.append(SecondaryWord(defining, word_list))
             case _:
                 raise SyntaxError(f'Syntax error: "{text}". Missing : or ;?')
+
+    def compile_word_list(self, rest):
+        word_list = []
+        for word in rest:
+            if (ix := self.find_word_index(word)) is not None:
+                word_list.append(ix)
+            elif (num := self.compile_number(word)) is not None:
+                ix = self.find_word_index('*#')
+                word_list.append(ix)
+                word_list.append(num)
+            else:
+                raise SyntaxError(f'Syntax error: "{word}" unrecognized')
+        return word_list
+
+    def compile_number(self, word):
+        try:
+            num = int(word)
+            return num
+        except ValueError:
+            return None
 
     def find_word_index(self, word):
         lex = self.lexicon
         for i in range(len(lex)):
             if lex[i].name == word:
                 return i
-        raise ValueError(f'cannot find word "{word}"')
+        return None
 
     def find_word(self, word):
         return self.lexicon[self.find_word_index(word)]
