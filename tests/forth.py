@@ -44,7 +44,9 @@ class Forth:
         match words:
             case ':', defining, *rest, ';':
                 word_list = self.compile_word_list(rest)
-                self.lexicon.append(SecondaryWord(defining, word_list))
+                word = SecondaryWord(defining, word_list)
+                self.lexicon.append(word)
+                return word
             case _:
                 raise SyntaxError(f'Syntax error: "{text}". Missing : or ;?')
 

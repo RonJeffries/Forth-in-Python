@@ -63,10 +63,10 @@ class TestCompile:
 
     def test_undefined_word(self):
         f = Forth()
-        s = ': SQUARE DUMB + ;'
+        s = ': SQUARE UNKNOWN_WORD + ;'
         with pytest.raises(SyntaxError) as e:
             f.compile(s)
-        assert str(e.value) == 'Syntax error: "DUMB" unrecognized'
+        assert str(e.value) == 'Syntax error: "UNKNOWN_WORD" unrecognized'
 
     @pytest.mark.skip(reason='not implemented')
     def test_star_if(self):
@@ -104,10 +104,7 @@ class TestCompile:
 
     def test_lit_compiled(self):
         f = Forth()
-        s = ': TEST 3 4 + ;'
-        f.compile(s)
-        test_word = f.find_word('TEST')
-        test_word.do(f)
+        f.compile(': TEST 3 4 + ;').do(f)
         assert f.stack.pop() == 7
 
 
