@@ -72,11 +72,10 @@ class TestCompile:
     def test_star_if(self):
         f = Forth()
         s = ': TEST *IF DUP + ;'
-        f.compile(s)
+        test_word = f.compile(s)
         star_if = f.find_word('*IF')
         star_if.parameter = 2
         f.stack.extend([2, 0])
-        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 2
         f.stack.extend([2, 1])
@@ -87,8 +86,7 @@ class TestCompile:
     def test_compile_if(self):
         f = Forth()
         s = ': TEST IF DUP + ;'
-        f.compile(s)
-        test_word = f.find_word('TEST')
+        test_word = f.compile(s)
         assert test_word.word_indices[0] == 0
 
     def test_lit_hand_compiled(self):
