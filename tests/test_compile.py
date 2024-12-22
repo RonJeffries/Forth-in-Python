@@ -11,9 +11,9 @@ class TestCompile:
         f = Forth()
         f.compile(': SQUARE DUP * ;')
         f.compile(': HYPSQ SQUARE SWAP SQUARE + ;')
-        f.compile(': HYP HYPSQ SQRT ;')
+        hyp = f.compile(': HYP HYPSQ SQRT ;')
         f.stack.extend([3, 4])
-        f.find_word('HYP').do(f)
+        hyp.do(f)
         assert f.stack.pop() == 5
         assert f.active_words == []
 
