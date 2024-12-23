@@ -70,15 +70,8 @@ class Forth:
         except ValueError:
             return None
 
-    def find_word_index(self, word):
-        lex = self.lexicon
-        for i in range(len(lex)):
-            if lex[i].name == word:
-                return i
-        return None
-
     def find_word(self, word):
-        index = self.find_word_index(word)
-        if index is None:
-            return None
-        return self.lexicon[index]
+        for definition in self.lexicon:
+            if definition.name == word:
+                return definition
+        return None
