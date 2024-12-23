@@ -87,7 +87,7 @@ class TestCompile:
         f = Forth()
         s = ': TEST IF DUP + ;'
         test_word = f.compile(s)
-        assert test_word.word_indices[0] == 0
+        assert test_word.words[0] == 0
 
     def test_lit_hand_compiled(self):
         f = Forth()
