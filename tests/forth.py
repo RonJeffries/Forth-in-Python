@@ -71,7 +71,4 @@ class Forth:
             return None
 
     def find_word(self, word):
-        for definition in self.lexicon:
-            if definition.name == word:
-                return definition
-        return None
+        return next(filter(lambda d: d.name == word, self.lexicon), None)
