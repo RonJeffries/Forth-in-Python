@@ -53,11 +53,11 @@ class Forth:
     def compile_word_list(self, rest):
         word_list = []
         for word in rest:
-            if (ix := self.find_word_index(word)) is not None:
-                word_list.append(ix)
+            if (definition := self.find_word(word)) is not None:
+                word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
-                ix = self.find_word_index('*#')
-                word_list.append(ix)
+                definition = self.find_word('*#')
+                word_list.append(definition)
                 word_list.append(num)
             else:
                 raise SyntaxError(f'Syntax error: "{word}" unrecognized')
@@ -78,4 +78,7 @@ class Forth:
         return None
 
     def find_word(self, word):
-        return self.lexicon[self.find_word_index(word)]
+        index = self.find_word_index(word)
+        if index is None:
+            return None
+        return self.lexicon[index]

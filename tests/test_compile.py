@@ -92,9 +92,9 @@ class TestCompile:
     def test_lit_hand_compiled(self):
         f = Forth()
         # s = ': 3 DUP +'
-        lit = f.find_word_index('*#')
-        dup = f.find_word_index('DUP')
-        plus = f.find_word_index('+')
+        lit = f.find_word('*#')
+        dup = f.find_word('DUP')
+        plus = f.find_word('+')
         indices = [lit, 3, dup, plus]
         sw = SecondaryWord('TEST', indices)
         sw.do(f)

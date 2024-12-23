@@ -24,7 +24,7 @@ class SecondaryWord:
         lexicon = forth.lexicon
         self.pc = 0
         while self.pc < len(self.word_indices):
-            lexicon[self.next_word()].do(forth)
+            self.next_word().do(forth)
         forth.end()
 
     def next_word(self):
