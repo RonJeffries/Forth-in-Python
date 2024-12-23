@@ -22,7 +22,8 @@ class SecondaryWord:
         forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
-            self.next_word().do(forth)
+            w =  self.next_word()
+            w.do(forth)
         forth.end()
 
     def next_word(self):

@@ -26,6 +26,7 @@ class Forth:
 
     def define_primaries(self):
         lex = self.lexicon
+        lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
@@ -53,7 +54,10 @@ class Forth:
     def compile_word_list(self, rest):
         word_list = []
         for word in rest:
-            if (definition := self.find_word(word)) is not None:
+            if word == 'IF':
+                word_list.append(self.find_word('*IF'))
+                word_list.append(0)
+            elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
                 definition = self.find_word('*#')
@@ -72,3 +76,9 @@ class Forth:
 
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, self.lexicon), None)
+
+    def star_if(self):
+        jump = self.next_word()
+        flag = self.stack.pop()
+        if not flag:
+            self.active_word.skip(jump)

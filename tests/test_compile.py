@@ -82,12 +82,18 @@ class TestCompile:
         test_word.do(f)
         assert f.stack.pop() == 4
 
-    @pytest.mark.skip(reason='not implemented')
     def test_compile_if(self):
         f = Forth()
         s = ': TEST IF DUP + ;'
         test_word = f.compile(s)
-        assert test_word.words[0] == 0
+        assert test_word.words[1] == 0
+        test_word.words[1] = 2
+        f.stack.extend([5, 0])
+        test_word.do(f)
+        assert f.stack.pop() == 5
+        f.stack.extend([5, 1])
+        test_word.do(f)
+        assert f.stack.pop() == 10
 
     def test_lit_hand_compiled(self):
         f = Forth()
