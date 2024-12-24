@@ -59,7 +59,8 @@ class TestCompile:
         s = '; SQUARE DUP + ;'
         with pytest.raises(SyntaxError) as e:
             f.compile(s)
-        assert str(e.value) == 'Syntax error: "; SQUARE DUP + ;". Missing : or ;?'
+        assert (str(e.value) ==
+                'Syntax error: "; SQUARE DUP + ;". Missing : or ;?')
 
     def test_undefined_word(self):
         f = Forth()
@@ -110,6 +111,20 @@ class TestCompile:
         f = Forth()
         f.compile(': TEST 3 4 + ;').do(f)
         assert f.stack.pop() == 7
+
+    def test_if_true(self):
+        f = Forth()
+        s = ': TEST 5 1 IF DUP + THEN 100 + ;'
+        test_word = f.compile(s)
+        test_word.do(f)
+        assert f.stack.pop() == 110
+
+    def test_if_false(self):
+        f = Forth()
+        s = ': TEST 5 0 IF DUP + THEN 100 + ;'
+        test_word = f.compile(s)
+        test_word.do(f)
+        assert f.stack.pop() == 105
 
 
 

@@ -56,7 +56,12 @@ class Forth:
         for word in rest:
             if word == 'IF':
                 word_list.append(self.find_word('*IF'))
+                self.stack.push(len(word_list))
                 word_list.append(0)
+            elif word == 'THEN':
+                last_loc = len(word_list) - 1
+                patch_loc = self.stack.pop()
+                word_list[patch_loc] = last_loc - patch_loc
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
