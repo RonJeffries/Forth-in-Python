@@ -67,21 +67,8 @@ class TestCompile:
         s = ': SQUARE UNKNOWN_WORD + ;'
         with pytest.raises(SyntaxError) as e:
             f.compile(s)
-        assert str(e.value) == 'Syntax error: "UNKNOWN_WORD" unrecognized'
-
-    @pytest.mark.skip(reason='not implemented')
-    def test_star_if(self):
-        f = Forth()
-        s = ': TEST *IF DUP + ;'
-        test_word = f.compile(s)
-        star_if = f.find_word('*IF')
-        star_if.parameter = 2
-        f.stack.extend([2, 0])
-        test_word.do(f)
-        assert f.stack.pop() == 2
-        f.stack.extend([2, 1])
-        test_word.do(f)
-        assert f.stack.pop() == 4
+        assert (str(e.value) ==
+                'Syntax error: "UNKNOWN_WORD" unrecognized')
 
     def test_compile_if(self):
         f = Forth()
