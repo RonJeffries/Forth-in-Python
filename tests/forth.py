@@ -40,7 +40,6 @@ class Forth:
         lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
 
     def compile(self, text):
-        # why don't we just store the word in the list, it's no larger than the index
         words = text.split()
         match words:
             case ':', defining, *rest, ';':
