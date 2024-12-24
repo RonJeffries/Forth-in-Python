@@ -126,6 +126,24 @@ class TestCompile:
         test_word.do(f)
         assert f.stack.pop() == 105
 
+    def test_if_nested(self):
+        f = Forth()
+        s = ': TEST 200 100 1 1 IF 5 SWAP IF DUP THEN THEN + ;'
+        test_word = f.compile(s)
+        test_word.do(f)
+        assert f.stack.pop() == 10
+        assert f.stack == [200, 100]
+
+        s = ': TEST 200 100 0 1 IF 5 SWAP IF DUP THEN THEN + ;'
+        test_word = f.compile(s)
+        test_word.do(f)
+        assert f.stack.pop() == 105
+
+        s = ': TEST 200 100 0 IF 5 SWAP IF DUP THEN THEN + ;'
+        test_word = f.compile(s)
+        test_word.do(f)
+        assert f.stack.pop() == 300
+
 
 
 
