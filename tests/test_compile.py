@@ -2,6 +2,7 @@ import pytest
 
 from tests.forth import Forth
 from tests.stack import Stack
+from tests.test_initial import stack
 from tests.word import SecondaryWord
 
 
@@ -141,6 +142,33 @@ class TestCompile:
         f.stack.push(0)
         test_word.do(f)
         assert f.stack.pop() == 50
+
+    def test_conditionals(self):
+        f = Forth()
+        f.compile(': TEST 1 1 = ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 2 1 = ;').do(f)
+        assert f.stack.pop() == 0
+        f.compile(': TEST 2 1 < ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 1 2 < ;').do(f)
+        assert f.stack.pop() == 0
+        f.compile(': TEST 2 1 > ;').do(f)
+        assert f.stack.pop() == 0
+        f.compile(': TEST 1 2 > ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 2 1 >= ;').do(f)
+        assert f.stack.pop() == 0
+        f.compile(': TEST 1 2 >= ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 2 2 >= ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 2 1 <= ;').do(f)
+        assert f.stack.pop() == 1
+        f.compile(': TEST 1 2 <= ;').do(f)
+        assert f.stack.pop() == 0
+        f.compile(': TEST 2 2 <= ;').do(f)
+        assert f.stack.pop() == 1
 
 
 
