@@ -26,24 +26,40 @@ class Forth:
 
     def define_primaries(self):
         lex = self.lexicon
+        self.define_skippers(lex)
+        self.define_stack_ops(lex)
+        self.define_arithmetic(lex)
+        self.define_comparators(lex)
+        lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
+
+    @staticmethod
+    def define_skippers(lex):
         lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
         lex.append(PrimaryWord('*ELSE', lambda f: f.star_else()))
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
+
+    @staticmethod
+    def define_stack_ops(lex):
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
+
+    @staticmethod
+    def define_arithmetic(lex):
         lex.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
         lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
         lex.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
         lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
+
+    @staticmethod
+    def define_comparators(lex):
         lex.append(PrimaryWord('=', lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0)))
         lex.append(PrimaryWord('>', lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0)))
         lex.append(PrimaryWord('<', lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0)))
         lex.append(PrimaryWord('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0)))
         lex.append(PrimaryWord('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0)))
-        lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
 
     def compile(self, text):
         words = text.split()
