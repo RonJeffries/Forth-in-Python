@@ -131,6 +131,18 @@ class TestCompile:
         test_word.do(f)
         assert f.stack.pop() == 300
 
+    def test_else(self):
+        f = Forth()
+        s = ': TEST IF 5 ELSE 50 THEN ;'
+        test_word = f.compile(s)
+        f.stack.push(1)
+        test_word.do(f)
+        assert f.stack.pop() == 5
+        f.stack.push(0)
+        test_word.do(f)
+        assert f.stack.pop() == 50
+
+
 
 
 

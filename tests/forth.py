@@ -27,6 +27,7 @@ class Forth:
     def define_primaries(self):
         lex = self.lexicon
         lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
+        lex.append(PrimaryWord('*ELSE', lambda f: f.star_else()))
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
@@ -54,15 +55,27 @@ class Forth:
         word_list = []
         for word in rest:
             if word == 'IF':
+                last_loc = len(word_list) + 1
+
+                self.stack.push( ('*IF', last_loc))
                 word_list.append(self.find_word('*IF'))
-                self.stack.push( ('IF', len(word_list)))
                 word_list.append(0)
             elif word == 'THEN':
-                last_loc = len(word_list) - 1
                 key, patch_loc = self.stack.pop()
-                if key != 'IF':
-                    raise SyntaxError(f'THEN did not find matching if, found: "{key}"')
+                if key != '*IF' and key != '*ELSE':
+                    raise SyntaxError(f'THEN did not find matching IF or ELSE, found: "{key}"')
+                last_loc = len(word_list) - 1
                 word_list[patch_loc] = last_loc - patch_loc
+            elif word == 'ELSE':
+                key, patch_loc = self.stack.pop()
+                if key !='*IF':
+                    raise SyntaxError(f'ELSE did not find matching IF, found: "{key}"')
+                last_loc = len(word_list) + 1
+                word_list[patch_loc] = last_loc - patch_loc
+
+                self.stack.push( ('*ELSE', last_loc))
+                word_list.append(self.find_word('*ELSE'))
+                word_list.append(0)
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
@@ -88,3 +101,6 @@ class Forth:
         flag = self.stack.pop()
         if not flag:
             self.active_word.skip(jump)
+
+    def star_else(self):
+        self.active_word.skip(self.next_word())
