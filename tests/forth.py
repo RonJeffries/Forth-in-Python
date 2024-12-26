@@ -48,16 +48,17 @@ class Forth:
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
         lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
 
-    @staticmethod
-    def define_arithmetic(lex):
-        # swap_pop, beware
-        lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
-        lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
-        ## pop
+    def define_arithmetic(self, lex):
+        self.define_arithmetic_with_swap_pop(lex)
         lex.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
         lex.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
         lex.append(PrimaryWord('1+', lambda f: f.stack.push(f.stack.pop() + 1)))
         lex.append(PrimaryWord('1-', lambda f: f.stack.push(f.stack.pop() - 1)))
+
+    @staticmethod
+    def define_arithmetic_with_swap_pop(lex):
+        lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
+        lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
 
     @staticmethod
     def define_comparators(lex):
@@ -127,7 +128,9 @@ class Forth:
             return None
 
     def dump_stack(self):
-        self.stack.dump()
+        name = self.active_word.name
+        pc = self.active_word.pc
+        self.stack.dump(name, pc)
 
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, self.lexicon), None)
