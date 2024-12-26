@@ -50,7 +50,7 @@ class Forth:
 
     @staticmethod
     def define_arithmetic(lex):
-        # swap_pop
+        # swap_pop, beware
         lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
         lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
         ## pop
