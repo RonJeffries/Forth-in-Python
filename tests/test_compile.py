@@ -194,7 +194,7 @@ class TestCompile:
         f = Forth()
         f.compile(': DOUBLE 2 * ;')
         f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
-        s = ': TEST 2 5 DO DOUBLE_UNDER 1 - DUP 0 >= UNTIL ;'
+        s = ': TEST 2 5 DO DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
         word = f.compile(s)
         word.do(f)
         assert f.stack.pop() == 0

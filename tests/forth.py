@@ -50,10 +50,14 @@ class Forth:
 
     @staticmethod
     def define_arithmetic(lex):
-        lex.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
+        # swap_pop
         lex.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
-        lex.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
         lex.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
+        ## pop
+        lex.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
+        lex.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
+        lex.append(PrimaryWord('1+', lambda f: f.stack.push(f.stack.pop() + 1)))
+        lex.append(PrimaryWord('1-', lambda f: f.stack.push(f.stack.pop() - 1)))
 
     @staticmethod
     def define_comparators(lex):
