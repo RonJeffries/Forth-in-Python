@@ -2,6 +2,9 @@ class Stack:
     def __init__(self):
         self.stack = []
 
+    def dump(self):
+        print(self.stack)
+
     def dup(self):
         self.push(self.stack[-1])
 

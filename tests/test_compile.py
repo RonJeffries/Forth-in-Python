@@ -170,6 +170,38 @@ class TestCompile:
         f.compile(': TEST 2 2 <= ;').do(f)
         assert f.stack.pop() == 1
 
+    def test_double(self):
+        f = Forth()
+        s = ': DOUBLE 2 * ;'
+        f.compile(s)
+        s = ': TEST 5 DOUBLE DOUBLE DOUBLE ;'
+        f.compile(s).do(f)
+        assert f.stack.pop() == 40
+
+    def test_double_under(self):
+        f = Forth()
+        f.compile(': DOUBLE 2 * ;')
+        f.compile(': DU SWAP DOUBLE SWAP ;')
+        s = ': TEST 2 5 DU DU DU DU ;'
+        word = f.compile(s)
+        word.do(f)
+        print(word.words)
+        print(f.stack.stack)
+        assert f.stack.pop() == 5
+        assert f.stack.pop() == 32
+
+    def test_do_until_hard(self):
+        f = Forth()
+        f.compile(': DOUBLE 2 * ;')
+        f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
+        s = ': TEST 2 5 DO DOUBLE_UNDER 1 - DUP 0 >= UNTIL ;'
+        word = f.compile(s)
+        word.do(f)
+        assert f.stack.pop() == 0
+        assert f.stack.pop() == 64
+
+
+
 
 
 

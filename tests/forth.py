@@ -36,6 +36,7 @@ class Forth:
     def define_skippers(lex):
         lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
         lex.append(PrimaryWord('*ELSE', lambda f: f.star_else()))
+        lex.append(PrimaryWord('*UNTIL', lambda f: f.star_until()))
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
 
     @staticmethod
@@ -45,6 +46,7 @@ class Forth:
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
+        lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
 
     @staticmethod
     def define_arithmetic(lex):
@@ -82,6 +84,15 @@ class Forth:
             elif word == 'ELSE':
                 self.patch_the_skip(['*IF'], 1, word_list)
                 self.compile_conditional('*ELSE', word_list)
+            elif word == 'DO':
+                self.stack.push(('DO', len(word_list)))
+            elif word == 'UNTIL':
+                key, jump_loc = self.stack.pop()
+                if key != 'DO':
+                    raise SyntaxError(f'UNTIL without DO')
+                until = self.find_word('*UNTIL')
+                word_list.append(until)
+                word_list.append(jump_loc - len(word_list) - 1)
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
@@ -111,6 +122,9 @@ class Forth:
         except ValueError:
             return None
 
+    def dump_stack(self):
+        self.stack.dump()
+
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, self.lexicon), None)
 
@@ -122,3 +136,13 @@ class Forth:
 
     def star_else(self):
         self.active_word.skip(self.next_word())
+
+    def star_until(self):
+        # if pop is true, skip one else skip in word + 1
+        to_check = self.stack.pop()
+        skip_back = self.next_word()
+        # print(f'*UNTIL has {to_check=} and {skip_back=}')
+        if to_check == 0:
+            # print('skipping back')
+            self.active_word.skip(skip_back)
+
