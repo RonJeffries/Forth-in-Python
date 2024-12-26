@@ -192,7 +192,7 @@ class TestCompile:
 
     def test_do_until_hard(self):
         f = Forth()
-        f.compile(': DOUBLE 2 ;')
+        f.compile(': DOUBLE 2 * ;')
         f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
         s = ': TEST 2 5 DO DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
         word = f.compile(s)
