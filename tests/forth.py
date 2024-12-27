@@ -33,13 +33,17 @@ class Forth:
         self.define_arithmetic(lex)
         self.define_comparators(lex)
         lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
+        lex.append(PrimaryWord('.', lambda f: print(f.stack.pop(), end=' ')))
+        lex.append(PrimaryWord('CR', lambda f: print()))
 
     @staticmethod
     def define_skippers(lex):
+        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
         lex.append(PrimaryWord('*ELSE', lambda f: f.star_else()))
         lex.append(PrimaryWord('*UNTIL', lambda f: f.star_until()))
-        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
+        lex.append(PrimaryWord('*DO', lambda f: f.star_do()))
+        lex.append(PrimaryWord('*LOOP', lambda f: f.star_loop()))
 
     @staticmethod
     def define_stack_ops(lex):
@@ -51,6 +55,7 @@ class Forth:
         lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
         lex.append(PrimaryWord('R>', lambda f: f.return_stack.push(f.stack.pop())))
         lex.append(PrimaryWord('>R', lambda f: f.stack.push(f.return_stack.pop())))
+        lex.append(PrimaryWord('I', lambda f: f.i_word()))
 
     def define_arithmetic(self, lex):
         self.define_arithmetic_with_swap_pop(lex)
@@ -99,10 +104,20 @@ class Forth:
             elif word == 'UNTIL':
                 key, jump_loc = self.stack.pop()
                 if key != 'BEGIN':
-                    raise SyntaxError(f'UNTIL without DO')
+                    raise SyntaxError(f'UNTIL without BEGIN')
                 until = self.find_word('*UNTIL')
                 word_list.append(until)
                 word_list.append(jump_loc - len(word_list) - 1)
+            elif word == 'DO':
+                self.stack.push(('DO', len(word_list)))
+                word_list.append(self.find_word('*DO'))
+            elif word == 'LOOP':
+                key, jump_loc = self.stack.pop()
+                if key != 'DO':
+                    raise SyntaxError(f'LOOP without DO')
+                loop = self.find_word('*LOOP')
+                word_list.append(loop)
+                word_list.append(jump_loc - len(word_list))
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
@@ -139,6 +154,24 @@ class Forth:
 
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, self.lexicon), None)
+
+    def i_word(self):
+        limit, index = self.return_stack[-1]
+        self.stack.push(index)
+
+    def star_do(self):
+        start = self.stack.pop()
+        limit = self.stack.pop()
+        self.return_stack.push((limit, start))
+
+    def star_loop(self):
+        jump = self.next_word()
+        limit, start = self.return_stack.pop()
+        start += 1
+        if start < limit:
+            self.return_stack.push((limit, start))
+            self.active_word.skip(jump)
+
 
     def star_if(self):
         jump = self.next_word()

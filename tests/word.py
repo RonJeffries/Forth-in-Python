@@ -9,7 +9,7 @@ class PrimaryWord:
         self.code(forth)
 
     def __repr__(self):
-        return f'PW: {self.name}'
+        return f' {self.name}'
 
 
 class SecondaryWord:

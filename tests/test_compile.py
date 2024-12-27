@@ -252,4 +252,11 @@ class TestCompile:
         assert f.return_stack == []
         assert f.stack.pop() == 12
 
+    def test_initial_do(self):
+        f = Forth()
+        s = ': TEST 5 0 DO I 10 * LOOP ;'
+        tw = f.compile(s)
+        tw.do(f)
+        assert f.stack.stack == [0, 10, 20, 30, 40]
+
 

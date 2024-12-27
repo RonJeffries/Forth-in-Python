@@ -37,3 +37,6 @@ class Stack:
 
     def __eq__(self, other):
         return self.stack == other
+
+    def __getitem__(self, item):
+        return self.stack[item]
