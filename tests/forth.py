@@ -1,4 +1,5 @@
 import math
+import re
 
 from tests.stack import Stack
 from tests.word import PrimaryWord, SecondaryWord
@@ -7,6 +8,7 @@ from tests.word import PrimaryWord, SecondaryWord
 class Forth:
     def __init__(self):
         self.stack = Stack()
+        self.return_stack = Stack()
         self.lexicon = []
         self.define_primaries()
         self.active_words = []
@@ -47,6 +49,8 @@ class Forth:
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
         lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
+        lex.append(PrimaryWord('R>', lambda f: f.return_stack.push(f.stack.pop())))
+        lex.append(PrimaryWord('>R', lambda f: f.stack.push(f.return_stack.pop())))
 
     def define_arithmetic(self, lex):
         self.define_arithmetic_with_swap_pop(lex)
@@ -69,7 +73,8 @@ class Forth:
         lex.append(PrimaryWord('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0)))
 
     def compile(self, text):
-        words = text.split()
+        new_text = re.sub(r'\(.*?\)', ' ', text)
+        words = new_text.split()
         match words:
             case ':', defining, *rest, ';':
                 word_list = self.compile_word_list(rest)
@@ -89,11 +94,11 @@ class Forth:
             elif word == 'ELSE':
                 self.patch_the_skip(['*IF'], 1, word_list)
                 self.compile_conditional('*ELSE', word_list)
-            elif word == 'DO':
-                self.stack.push(('DO', len(word_list)))
+            elif word == 'BEGIN':
+                self.stack.push(('BEGIN', len(word_list)))
             elif word == 'UNTIL':
                 key, jump_loc = self.stack.pop()
-                if key != 'DO':
+                if key != 'BEGIN':
                     raise SyntaxError(f'UNTIL without DO')
                 until = self.find_word('*UNTIL')
                 word_list.append(until)

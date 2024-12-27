@@ -2,7 +2,6 @@ import pytest
 
 from tests.forth import Forth
 from tests.stack import Stack
-from tests.test_initial import stack
 from tests.word import SecondaryWord
 
 
@@ -190,12 +189,67 @@ class TestCompile:
         assert f.stack.pop() == 5
         assert f.stack.pop() == 32
 
-    def test_do_until_hard(self):
+    def test_begin_until_hard(self):
         f = Forth()
         f.compile(': DOUBLE 2 * ;')
         f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
-        s = ': TEST 2 5 DO DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
+        s = ': TEST 2 5 BEGIN DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
         word = f.compile(s)
         word.do(f)
         assert f.stack.pop() == 0
         assert f.stack.pop() == 64
+
+    def test_begin_until_inline(self):
+        f = Forth()
+        s = ': TEST 2 5 BEGIN SWAP 2 * SWAP 1- DUP 0 >= UNTIL ;'
+        word = f.compile(s)
+        word.do(f)
+        assert f.stack.pop() == 0
+        assert f.stack.pop() == 64
+
+    def test_pow_step(self):
+        f = Forth()
+        pow_step = ': POW_STEP DUP ROT * SWAP ;'
+        f.compile(pow_step)
+        f.compile(': TEST 9 3 POW_STEP ;').do(f)
+        assert f.stack.pop() == 3
+        assert f.stack.pop() == 27
+
+    def test_power(self):
+        f = Forth()
+        f.compile(': 2ROT ROT ROT ;')
+        pow_step = (': POW_STEP '
+                    '(prod base -- prod*base base)'
+                    'DUP ROT * SWAP ;')
+        f.compile(pow_step)
+        f.compile(': POWER'
+                  '(base power -- base**power) '
+                  '1 2ROT           (1 base power)'
+                  'BEGIN 2ROT       (power 1 base)'
+                  'POW_STEP         (power product base)'
+                  'ROT              (product base power)'
+                  '1- DUP 0 = UNTIL (product base power)'
+                  'DROP DROP        (product) ;')
+        f.compile(': TEST 3 4 POWER ;').do(f)
+        print("final ", f.stack.stack)
+        assert f.stack.pop() == 81
+
+    def test_comment(self):
+        f = Forth()
+        f.compile(': TEST ( a b -- b a ) SWAP ;')
+        f.compile(': TEST (a b -- b a) SWAP ;')
+
+    def test_different_loop(self):
+        p = (': POWER'
+             '(base power -- base**power) '
+             '1 2ROT (1 base power)'
+             'DO_N POW_STEP LOOP DROP ;')
+
+    def test_return_stack(self):
+        f = Forth()
+        s = ': TEST 3 R> 4 5 + >R + ;'
+        f.compile(s).do(f)
+        assert f.return_stack == []
+        assert f.stack.pop() == 12
+
+
