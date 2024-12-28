@@ -92,32 +92,8 @@ class Forth:
     def compile_word_list(self, rest):
         word_list = []
         for word in rest:
-            if word == 'IF':
-                self.compile_conditional('*IF', word_list)
-            elif word == 'THEN':
-                self.patch_the_skip(['*IF', '*ELSE'], -1, word_list)
-            elif word == 'ELSE':
-                self.patch_the_skip(['*IF'], 1, word_list)
-                self.compile_conditional('*ELSE', word_list)
-            elif word == 'BEGIN':
-                self.stack.push(('BEGIN', len(word_list)))
-            elif word == 'UNTIL':
-                key, jump_loc = self.stack.pop()
-                if key != 'BEGIN':
-                    raise SyntaxError(f'UNTIL without BEGIN')
-                until = self.find_word('*UNTIL')
-                word_list.append(until)
-                word_list.append(jump_loc - len(word_list) - 1)
-            elif word == 'DO':
-                self.stack.push(('DO', len(word_list)))
-                word_list.append(self.find_word('*DO'))
-            elif word == 'LOOP':
-                key, jump_loc = self.stack.pop()
-                if key != 'DO':
-                    raise SyntaxError(f'LOOP without DO')
-                loop = self.find_word('*LOOP')
-                word_list.append(loop)
-                word_list.append(jump_loc - len(word_list))
+            if word in ['IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
+                self.compile_action_word(word, word_list)
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(word)) is not None:
@@ -127,6 +103,34 @@ class Forth:
             else:
                 raise SyntaxError(f'Syntax error: "{word}" unrecognized')
         return word_list
+
+    def compile_action_word(self, word, word_list):
+        if word == 'IF':
+            self.compile_conditional('*IF', word_list)
+        elif word == 'THEN':
+            self.patch_the_skip(['*IF', '*ELSE'], -1, word_list)
+        elif word == 'ELSE':
+            self.patch_the_skip(['*IF'], 1, word_list)
+            self.compile_conditional('*ELSE', word_list)
+        elif word == 'BEGIN':
+            self.stack.push(('BEGIN', len(word_list)))
+        elif word == 'UNTIL':
+            key, jump_loc = self.stack.pop()
+            if key != 'BEGIN':
+                raise SyntaxError(f'UNTIL without BEGIN')
+            until = self.find_word('*UNTIL')
+            word_list.append(until)
+            word_list.append(jump_loc - len(word_list) - 1)
+        elif word == 'DO':
+            self.stack.push(('DO', len(word_list)))
+            word_list.append(self.find_word('*DO'))
+        elif word == 'LOOP':
+            key, jump_loc = self.stack.pop()
+            if key != 'DO':
+                raise SyntaxError(f'LOOP without DO')
+            loop = self.find_word('*LOOP')
+            word_list.append(loop)
+            word_list.append(jump_loc - len(word_list))
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
         key, patch_loc = self.stack.pop()
@@ -190,4 +194,10 @@ class Forth:
         if to_check == 0:
             # print('skipping back')
             self.active_word.skip(skip_back)
+
+    def process(self, word_string):
+        to_compile = ': XYZZY ' + word_string + ' ;'
+        code = self.compile(to_compile)
+        to_execute = self.find_word('XYZZY')
+        to_execute.do(self)
 
