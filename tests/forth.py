@@ -92,7 +92,8 @@ class Forth:
 
     def compile_word_list(self, rest):
         word_list = []
-        for word in rest:
+        rest_iter = iter(rest)
+        while word := next(rest_iter, None):
             if word in ['IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
                 self.compile_action_word(word, word_list)
             elif (definition := self.find_word(word)) is not None:
