@@ -13,6 +13,7 @@ class Forth:
         self.lexicon = []
         self.define_primaries()
         self.active_words = []
+        self.rest_iter = None
 
     @property
     def active_word(self):
@@ -92,9 +93,9 @@ class Forth:
 
     def compile_word_list(self, rest):
         word_list = []
-        rest_iter = iter(rest)
-        while word := next(rest_iter, None):
-            if word in ['IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
+        self.rest_iter = iter(rest)
+        while word := next(self.rest_iter, None):
+            if word in [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
                 self.compile_action_word(word, word_list)
             elif (definition := self.find_word(word)) is not None:
                 word_list.append(definition)
@@ -108,6 +109,11 @@ class Forth:
 
     def compile_action_word(self, word, word_list):
         match word:
+            case ':':
+                new_word = next(self.rest_iter)
+                self.compile_stack.push((':', new_word))
+            case ';':
+                pass
             case 'IF':
                 self.compile_conditional('*IF', word_list)
             case 'THEN':
