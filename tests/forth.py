@@ -9,6 +9,7 @@ class Forth:
     def __init__(self):
         self.stack = Stack()
         self.return_stack = Stack()
+        self.compile_stack = Stack()
         self.lexicon = []
         self.define_primaries()
         self.active_words = []
@@ -105,42 +106,43 @@ class Forth:
         return word_list
 
     def compile_action_word(self, word, word_list):
-        if word == 'IF':
-            self.compile_conditional('*IF', word_list)
-        elif word == 'THEN':
-            self.patch_the_skip(['*IF', '*ELSE'], -1, word_list)
-        elif word == 'ELSE':
-            self.patch_the_skip(['*IF'], 1, word_list)
-            self.compile_conditional('*ELSE', word_list)
-        elif word == 'BEGIN':
-            self.stack.push(('BEGIN', len(word_list)))
-        elif word == 'UNTIL':
-            key, jump_loc = self.stack.pop()
-            if key != 'BEGIN':
-                raise SyntaxError(f'UNTIL without BEGIN')
-            until = self.find_word('*UNTIL')
-            word_list.append(until)
-            word_list.append(jump_loc - len(word_list) - 1)
-        elif word == 'DO':
-            self.stack.push(('DO', len(word_list)))
-            word_list.append(self.find_word('*DO'))
-        elif word == 'LOOP':
-            key, jump_loc = self.stack.pop()
-            if key != 'DO':
-                raise SyntaxError(f'LOOP without DO')
-            loop = self.find_word('*LOOP')
-            word_list.append(loop)
-            word_list.append(jump_loc - len(word_list))
+        match word:
+            case 'IF':
+                self.compile_conditional('*IF', word_list)
+            case 'THEN':
+                self.patch_the_skip(['*IF', '*ELSE'], -1, word_list)
+            case 'ELSE':
+                self.patch_the_skip(['*IF'], 1, word_list)
+                self.compile_conditional('*ELSE', word_list)
+            case 'BEGIN':
+                self.compile_stack.push(('BEGIN', len(word_list)))
+            case 'UNTIL':
+                key, jump_loc = self.compile_stack.pop()
+                if key != 'BEGIN':
+                    raise SyntaxError(f'UNTIL without BEGIN')
+                until = self.find_word('*UNTIL')
+                word_list.append(until)
+                word_list.append(jump_loc - len(word_list) - 1)
+            case 'DO':
+                self.compile_stack.push(('DO', len(word_list)))
+                word_list.append(self.find_word('*DO'))
+            case 'LOOP':
+                key, jump_loc = self.compile_stack.pop()
+                if key != 'DO':
+                    raise SyntaxError(f'LOOP without DO')
+                loop = self.find_word('*LOOP')
+                word_list.append(loop)
+                word_list.append(jump_loc - len(word_list))
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
-        key, patch_loc = self.stack.pop()
+        key, patch_loc = self.compile_stack.pop()
         if key not in expected:
             raise SyntaxError(f'malformed IF-ELSE-THEN, found: "{key}"')
         last_loc = len(word_list) + skip_adjustment
         word_list[patch_loc] = last_loc - patch_loc
 
     def compile_conditional(self, word_to_compile, word_list):
-        self.stack.push((word_to_compile, len(word_list) + 1))
+        self.compile_stack.push((word_to_compile, len(word_list) + 1))
         word_list.append(self.find_word(word_to_compile))
         word_list.append(0)
 
