@@ -11,9 +11,8 @@ class TestCompile:
         f = Forth()
         f.compile(': SQUARE DUP * ;')
         f.compile(': HYPSQ SQUARE SWAP SQUARE + ;')
-        hyp = f.compile(': HYP HYPSQ SQRT ;')
-        f.stack.extend([3, 4])
-        hyp.do(f)
+        f.compile(': HYP HYPSQ SQRT ;')
+        f.compile('3 4 HYP')
         assert f.stack.pop() == 5
         assert f.active_words == []
 
@@ -60,7 +59,7 @@ class TestCompile:
         with pytest.raises(SyntaxError) as e:
             f.compile(s)
         assert (str(e.value) ==
-                'Syntax error: "; SQUARE DUP + ;". Missing : or ;?')
+                'Syntax error: ; without :')
 
     def test_undefined_word(self):
         f = Forth()
@@ -72,10 +71,10 @@ class TestCompile:
 
     def test_compile_if(self):
         f = Forth()
-        s = ': TEST IF DUP + ;'
-        test_word = f.compile(s)
-        assert test_word.words[1] == 0
-        test_word.words[1] = 2
+        s = ': TEST IF DUP + THEN ;'
+        f.compile(s)
+        test_word = f.find_word('TEST')
+        print(test_word.words)
         f.stack.extend([5, 0])
         test_word.do(f)
         assert f.stack.pop() == 5
@@ -96,45 +95,53 @@ class TestCompile:
 
     def test_lit_compiled(self):
         f = Forth()
-        f.compile(': TEST 3 4 + ;').do(f)
+        f.compile('3 4 +')
         assert f.stack.pop() == 7
 
     def test_if_true(self):
         f = Forth()
         s = ': TEST 5 1 IF DUP + THEN 100 + ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 110
 
     def test_if_false(self):
         f = Forth()
         s = ': TEST 5 0 IF DUP + THEN 100 + ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 105
 
     def test_if_nested(self):
         f = Forth()
         s = ': TEST 200 100 1 1 IF 5 SWAP IF DUP THEN THEN + ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 10
         assert f.stack == [200, 100]
 
+        f = Forth()
         s = ': TEST 200 100 0 1 IF 5 SWAP IF DUP THEN THEN + ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 105
 
+        f = Forth()
         s = ': TEST 200 100 0 IF 5 SWAP IF DUP THEN THEN + ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         test_word.do(f)
         assert f.stack.pop() == 300
 
     def test_else(self):
         f = Forth()
         s = ': TEST IF 5 ELSE 50 THEN ;'
-        test_word = f.compile(s)
+        f.compile(s)
+        test_word = f.find_word('TEST')
         f.stack.push(1)
         test_word.do(f)
         assert f.stack.pop() == 5
@@ -144,29 +151,29 @@ class TestCompile:
 
     def test_conditionals(self):
         f = Forth()
-        f.compile(': TEST 1 1 = ;').do(f)
+        f.compile(' 1 1 = ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 2 1 = ;').do(f)
+        f.compile(' 2 1 = ')
         assert f.stack.pop() == 0
-        f.compile(': TEST 2 1 < ;').do(f)
+        f.compile(' 2 1 < ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 1 2 < ;').do(f)
+        f.compile(' 1 2 < ')
         assert f.stack.pop() == 0
-        f.compile(': TEST 2 1 > ;').do(f)
+        f.compile(' 2 1 > ')
         assert f.stack.pop() == 0
-        f.compile(': TEST 1 2 > ;').do(f)
+        f.compile(' 1 2 > ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 2 1 >= ;').do(f)
+        f.compile(' 2 1 >= ')
         assert f.stack.pop() == 0
-        f.compile(': TEST 1 2 >= ;').do(f)
+        f.compile(' 1 2 >= ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 2 2 >= ;').do(f)
+        f.compile(' 2 2 >= ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 2 1 <= ;').do(f)
+        f.compile(' 2 1 <= ')
         assert f.stack.pop() == 1
-        f.compile(': TEST 1 2 <= ;').do(f)
+        f.compile(' 1 2 <= ')
         assert f.stack.pop() == 0
-        f.compile(': TEST 2 2 <= ;').do(f)
+        f.compile(' 2 2 <= ')
         assert f.stack.pop() == 1
 
     def test_double(self):
@@ -174,7 +181,8 @@ class TestCompile:
         s = ': DOUBLE 2 * ;'
         f.compile(s)
         s = ': TEST 5 DOUBLE DOUBLE DOUBLE ;'
-        f.compile(s).do(f)
+        f.compile(s)
+        f.compile('TEST')
         assert f.stack.pop() == 40
 
     def test_double_under(self):
@@ -182,10 +190,18 @@ class TestCompile:
         f.compile(': DOUBLE 2 * ;')
         f.compile(': DU SWAP DOUBLE SWAP ;')
         s = ': TEST 2 5 DU DU DU DU ;'
-        word = f.compile(s)
-        word.do(f)
-        print(word.words)
-        print(f.stack.stack)
+        f.compile(s)
+        test = f.find_word('TEST')
+        test.do(f)
+        assert f.stack.pop() == 5
+        assert f.stack.pop() == 32
+
+    def test_double_under_direct(self):
+        f = Forth()
+        f.compile(': DOUBLE 2 * ;')
+        f.compile(': DU SWAP DOUBLE SWAP ;')
+        s = ' 2 5 DU DU DU DU '
+        f.compile(s)
         assert f.stack.pop() == 5
         assert f.stack.pop() == 32
 
@@ -194,16 +210,15 @@ class TestCompile:
         f.compile(': DOUBLE 2 * ;')
         f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
         s = ': TEST 2 5 BEGIN DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
-        word = f.compile(s)
-        word.do(f)
+        f.compile(s)
+        f.compile('TEST')
         assert f.stack.pop() == 0
         assert f.stack.pop() == 64
 
     def test_begin_until_inline(self):
         f = Forth()
-        s = ': TEST 2 5 BEGIN SWAP 2 * SWAP 1- DUP 0 >= UNTIL ;'
-        word = f.compile(s)
-        word.do(f)
+        s = ' 2 5 BEGIN SWAP 2 * SWAP 1- DUP 0 >= UNTIL '
+        f.compile(s)
         assert f.stack.pop() == 0
         assert f.stack.pop() == 64
 
@@ -211,7 +226,7 @@ class TestCompile:
         f = Forth()
         pow_step = ': POW_STEP DUP ROT * SWAP ;'
         f.compile(pow_step)
-        f.compile(': TEST 9 3 POW_STEP ;').do(f)
+        f.compile(' 9 3 POW_STEP ')
         assert f.stack.pop() == 3
         assert f.stack.pop() == 27
 
@@ -230,8 +245,7 @@ class TestCompile:
                   'ROT              (product base power)'
                   '1- DUP 0 = UNTIL (product base power)'
                   'DROP DROP        (product) ;')
-        f.compile(': TEST 3 4 POWER ;').do(f)
-        print("final ", f.stack.stack)
+        f.compile(' 3 4 POWER ')
         assert f.stack.pop() == 81
 
     def test_comment(self):
@@ -247,16 +261,15 @@ class TestCompile:
 
     def test_return_stack(self):
         f = Forth()
-        s = ': TEST 3 R> 4 5 + >R + ;'
-        f.compile(s).do(f)
+        s = ' 3 R> 4 5 + >R + '
+        f.compile(s)
         assert f.return_stack == []
         assert f.stack.pop() == 12
 
     def test_initial_do(self):
         f = Forth()
-        s = ': TEST 5 0 DO I 10 * LOOP ;'
-        tw = f.compile(s)
-        tw.do(f)
+        s = ' 5 0 DO I 10 * LOOP '
+        f.compile(s)
         assert f.stack.stack == [0, 10, 20, 30, 40]
 
     def test_direct_execute(self):
@@ -272,31 +285,6 @@ class TestCompile:
         f.process(s)
         assert f.stack.pop() == 7
 
-    def test_new_colon(self):
-        f = Forth()
-        s = ': ADD5 5 + ;'
-        rest = s.split()
-        f.rest_iter = iter(rest)
-        colon = next(f.rest_iter)
-        word_list = []
-        f.compile_action_word(colon, word_list)
-        stacked = f.compile_stack[0]
-        assert stacked == (':', 'ADD5')
-        five = next(f.rest_iter)
-        assert five == '5'
-        lit = f.find_word('*#')
-        word_list.append(lit)
-        word_list.append(5)
-        plus_sign = next(f.rest_iter)
-        assert plus_sign == '+'
-        plus = f.find_word('+')
-        word_list.append(plus)
-        f.compile_action_word(';', word_list)
-        assert word_list == []
-        add5 = f.find_word('ADD5')
-        f.stack.push(37)
-        add5.do(f)
-        assert f.stack.pop() == 42
 
 
 

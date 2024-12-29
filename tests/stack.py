@@ -6,6 +6,9 @@ class Stack:
     def is_not_empty(self):
         return len(self.stack) > 0
 
+    def is_empty(self):
+        return len(self.stack) == 0
+
     def dump(self, name, pc):
         print(f'{name}[{pc}]: {self.stack}')
 

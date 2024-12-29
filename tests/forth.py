@@ -7,13 +7,22 @@ from tests.word import PrimaryWord, SecondaryWord
 
 class Forth:
     def __init__(self):
-        self.stack = Stack()
-        self.return_stack = Stack()
+        self.active_words = []
         self.compile_stack = Stack()
         self.lexicon = []
         self.define_primaries()
-        self.active_words = []
         self.rest_iter = None
+        self.return_stack = Stack()
+        self.stack = Stack()
+        self.tokens = None
+        self.token_index = 0
+
+    def next_token(self):
+        if self.token_index >= len(self.tokens):
+            return None
+        token = self.tokens[self.token_index]
+        self.token_index += 1
+        return token
 
     @property
     def active_word(self):
@@ -81,31 +90,35 @@ class Forth:
 
     def compile(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
-        words = new_text.split()
-        match words:
-            case ':', defining, *rest, ';':
-                word_list = self.compile_word_list(rest)
-                word = SecondaryWord(defining, word_list)
-                self.lexicon.append(word)
-                return word
-            case _:
-                raise SyntaxError(f'Syntax error: "{text}". Missing : or ;?')
+        self.tokens = new_text.split()
+        self.token_index = 0
+        while self.token_index < len(self.tokens):
+            word_list = self.compile_word_list()
+            word = SecondaryWord('', word_list)
+            word.do(self)
 
-    def compile_word_list(self, rest):
+    def compile_word_list(self):
         word_list = []
-        self.rest_iter = iter(rest)
-        while word := next(self.rest_iter, None):
-            if word in [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
-                self.compile_action_word(word, word_list)
-            elif (definition := self.find_word(word)) is not None:
+        while True:
+            token = self.next_token()
+            if token is None:
+                copy = word_list[:]
+                word_list.clear()
+                return copy
+            if token in [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
+                self.compile_action_word(token, word_list)
+            elif (definition := self.find_word(token)) is not None:
                 word_list.append(definition)
-            elif (num := self.compile_number(word)) is not None:
+            elif (num := self.compile_number(token)) is not None:
                 definition = self.find_word('*#')
                 word_list.append(definition)
                 word_list.append(num)
             else:
-                raise SyntaxError(f'Syntax error: "{word}" unrecognized')
-        return word_list
+                raise SyntaxError(f'Syntax error: "{token}" unrecognized')
+            if self.compile_stack.is_empty():
+                copy = word_list[:]
+                word_list.clear()
+                return copy
 
     def compile_action_word(self, word, word_list):
         match word:
@@ -114,9 +127,11 @@ class Forth:
                     raise SyntaxError(f'Syntax error: nested word definition')
                 if word_list:
                     raise SyntaxError(f'Syntax error: "{word_list}" not empty')
-                definition_name = next(self.rest_iter)
+                definition_name = self.next_token()
                 self.compile_stack.push((':', definition_name))
             case ';':
+                if self.compile_stack.is_empty():
+                    raise SyntaxError(f'Syntax error: ; without :')
                 key, definition_name = self.compile_stack.pop()
                 if key != ':':
                     raise SyntaxError(f'Syntax error: ; without :')
