@@ -110,10 +110,19 @@ class Forth:
     def compile_action_word(self, word, word_list):
         match word:
             case ':':
-                new_word = next(self.rest_iter)
-                self.compile_stack.push((':', new_word))
+                if self.compile_stack.is_not_empty():
+                    raise SyntaxError(f'Syntax error: nested word definition')
+                if word_list:
+                    raise SyntaxError(f'Syntax error: "{word_list}" not empty')
+                definition_name = next(self.rest_iter)
+                self.compile_stack.push((':', definition_name))
             case ';':
-                pass
+                key, definition_name = self.compile_stack.pop()
+                if key != ':':
+                    raise SyntaxError(f'Syntax error: ; without :')
+                word = SecondaryWord(definition_name, word_list[:])
+                self.lexicon.append(word)
+                word_list.clear()
             case 'IF':
                 self.compile_conditional('*IF', word_list)
             case 'THEN':

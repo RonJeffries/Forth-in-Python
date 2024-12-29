@@ -272,5 +272,32 @@ class TestCompile:
         f.process(s)
         assert f.stack.pop() == 7
 
+    def test_new_colon(self):
+        f = Forth()
+        s = ': ADD5 5 + ;'
+        rest = s.split()
+        f.rest_iter = iter(rest)
+        colon = next(f.rest_iter)
+        word_list = []
+        f.compile_action_word(colon, word_list)
+        stacked = f.compile_stack[0]
+        assert stacked == (':', 'ADD5')
+        five = next(f.rest_iter)
+        assert five == '5'
+        lit = f.find_word('*#')
+        word_list.append(lit)
+        word_list.append(5)
+        plus_sign = next(f.rest_iter)
+        assert plus_sign == '+'
+        plus = f.find_word('+')
+        word_list.append(plus)
+        f.compile_action_word(';', word_list)
+        assert word_list == []
+        add5 = f.find_word('ADD5')
+        f.stack.push(37)
+        add5.do(f)
+        assert f.stack.pop() == 42
+
+
 
 
