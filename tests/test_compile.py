@@ -274,15 +274,14 @@ class TestCompile:
 
     def test_direct_execute(self):
         f = Forth()
-        f.process('3 4')
+        f.compile('3 4')
         assert f.stack.stack == [3, 4]
 
-    @pytest.mark.skip("too hard for now")
     def test_direct_harder(self):
         f = Forth()
-        s = (': SUM + ;'
-             '3 4 SUM')
-        f.process(s)
+        s = (': SUM + ; '
+             ' 3 4 SUM')
+        f.compile(s)
         assert f.stack.pop() == 7
 
 

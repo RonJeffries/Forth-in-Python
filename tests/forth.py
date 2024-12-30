@@ -222,14 +222,6 @@ class Forth:
         # if pop is true, skip one else skip in word + 1
         to_check = self.stack.pop()
         skip_back = self.next_word()
-        # print(f'*UNTIL has {to_check=} and {skip_back=}')
         if to_check == 0:
-            # print('skipping back')
             self.active_word.skip(skip_back)
-
-    def process(self, word_string):
-        to_compile = ': XYZZY ' + word_string + ' ;'
-        code = self.compile(to_compile)
-        to_execute = self.find_word('XYZZY')
-        to_execute.do(self)
 
