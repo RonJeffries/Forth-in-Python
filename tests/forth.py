@@ -11,7 +11,6 @@ class Forth:
         self.compile_stack = Stack()
         self.lexicon = []
         self.define_primaries()
-        self.rest_iter = None
         self.return_stack = Stack()
         self.stack = Stack()
         self.tokens = None
