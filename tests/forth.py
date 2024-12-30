@@ -6,6 +6,8 @@ from tests.word import PrimaryWord, SecondaryWord
 
 
 class Forth:
+    action_tokens = [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']
+
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
@@ -92,15 +94,13 @@ class Forth:
         self.tokens = new_text.split()
         self.token_index = 0
         while self.token_index < len(self.tokens):
-            word_list = self.compile_word_list()
-            word = SecondaryWord('', word_list)
-            word.do(self)
+            self.compile_a_word().do(self)
 
-    def compile_word_list(self):
+    def compile_a_word(self):
         word_list = []
         while True:
             token = self.next_token()
-            if token in [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
+            if token in self.action_tokens:
                 self.compile_action_word(token, word_list)
             elif (definition := self.find_word(token)) is not None:
                 word_list.append(definition)
@@ -110,9 +110,7 @@ class Forth:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
             if self.compile_stack.is_empty():
                 break
-        copy = word_list[:]
-        word_list.clear()
-        return copy
+        return SecondaryWord('nameless', word_list)
 
     def append_number(self, num, word_list):
         definition = self.find_word('*#')
