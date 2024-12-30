@@ -113,8 +113,7 @@ class Forth:
         return SecondaryWord('nameless', word_list)
 
     def append_number(self, num, word_list):
-        definition = self.find_word('*#')
-        word_list.append(definition)
+        word_list.append(self.find_word('*#'))
         word_list.append(num)
 
     def compile_action_word(self, word, word_list):
