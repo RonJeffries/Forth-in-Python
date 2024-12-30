@@ -209,7 +209,6 @@ class Forth:
             self.return_stack.push((limit, start))
             self.active_word.skip(jump)
 
-
     def star_if(self):
         jump = self.next_word()
         flag = self.stack.pop()
