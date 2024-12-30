@@ -181,28 +181,26 @@ class Forth:
             return None
 
     def dump_stack(self):
-        name = self.active_word.name
-        pc = self.active_word.pc
-        self.stack.dump(name, pc)
+        self.stack.dump(self.active_word.name, self.active_word.pc)
 
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, self.lexicon), None)
 
     def i_word(self):
-        limit, index = self.return_stack[-1]
+        index, limit = self.return_stack[-1]
         self.stack.push(index)
 
     def star_do(self):
         start = self.stack.pop()
         limit = self.stack.pop()
-        self.return_stack.push((limit, start))
+        self.return_stack.push((start, limit))
 
     def star_loop(self):
         jump = self.next_word()
-        limit, start = self.return_stack.pop()
-        start += 1
-        if start < limit:
-            self.return_stack.push((limit, start))
+        index, limit = self.return_stack.pop()
+        index += 1
+        if index < limit:
+            self.return_stack.push((index, limit))
             self.active_word.skip(jump)
 
     def star_if(self):
