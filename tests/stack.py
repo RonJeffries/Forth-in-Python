@@ -41,7 +41,7 @@ class Stack:
         return self.stack.pop(-2)
 
     def __eq__(self, other):
-        return self.stack == other
+        return other == self.stack
 
     def __getitem__(self, item):
         return self.stack[item]
