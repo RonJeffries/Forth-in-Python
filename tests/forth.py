@@ -100,24 +100,24 @@ class Forth:
         word_list = []
         while True:
             token = self.next_token()
-            if token is None:
-                copy = word_list[:]
-                word_list.clear()
-                return copy
             if token in [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']:
                 self.compile_action_word(token, word_list)
             elif (definition := self.find_word(token)) is not None:
                 word_list.append(definition)
             elif (num := self.compile_number(token)) is not None:
-                definition = self.find_word('*#')
-                word_list.append(definition)
-                word_list.append(num)
+                self.append_number(num, word_list)
             else:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
             if self.compile_stack.is_empty():
-                copy = word_list[:]
-                word_list.clear()
-                return copy
+                break
+        copy = word_list[:]
+        word_list.clear()
+        return copy
+
+    def append_number(self, num, word_list):
+        definition = self.find_word('*#')
+        word_list.append(definition)
+        word_list.append(num)
 
     def compile_action_word(self, word, word_list):
         match word:
