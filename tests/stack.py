@@ -29,18 +29,16 @@ class Stack:
 
     def rot(self):
         stack = self.stack
-        top, middle, bottom  = stack.pop(), stack.pop(), stack.pop()
-        self.extend([middle, top, bottom])
+        stack[-1], stack[-2], stack[-3]  = stack[-3], stack[-1], stack[-2]
+        # top, middle, bottom  =            bottom     top        middle
 
     def swap(self):
         stack = self.stack
-        top, under = stack.pop(), stack.pop()
-        self.extend([top, under])
+        stack[-1], stack[-2] = stack[-2], stack[-1]
 
     def swap_pop(self):
         # (_ under top -> _ top ) -> under
-        self.swap()
-        return self.pop()
+        return self.stack.pop(-2)
 
     def __eq__(self, other):
         return self.stack == other
