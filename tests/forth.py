@@ -6,8 +6,6 @@ from tests.word import PrimaryWord, SecondaryWord
 
 
 class Forth:
-    action_tokens = [':', ';', 'ELSE', 'UNTIL', 'DO', 'LOOP']
-
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
@@ -17,6 +15,7 @@ class Forth:
         self.stack = Stack()
         self.tokens = None
         self.token_index = 0
+        self.word_list = None
 
     def next_token(self):
         if self.token_index >= len(self.tokens):
@@ -64,7 +63,7 @@ class Forth:
     def define_skippers(lex):
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
-        lex.append(PrimaryWord('*ELSE', lambda f: f.star_else()))
+        lex.append(PrimaryWord('*ELSE', lambda f: f.active_word.skip(f.next_word())))
         lex.append(PrimaryWord('*UNTIL', lambda f: f.star_until()))
         lex.append(PrimaryWord('*DO', lambda f: f.star_do()))
         lex.append(PrimaryWord('*LOOP', lambda f: f.star_loop()))
@@ -159,14 +158,6 @@ class Forth:
         self.word_list.append(loop)
         self.word_list.append(jump_loc - len(self.word_list))
 
-    def imm_until(self):
-        key, jump_loc = self.compile_stack.pop()
-        if key != 'BEGIN':
-            raise SyntaxError(f'UNTIL without BEGIN')
-        until = self.find_word('*UNTIL')
-        self.word_list.append(until)
-        self.word_list.append(jump_loc - len(self.word_list) - 1)
-
     def imm_semi(self):
         if self.compile_stack.is_empty():
             raise SyntaxError(f'Syntax error: ; without :')
@@ -179,6 +170,14 @@ class Forth:
 
     def imm_then(self):
         self.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
+
+    def imm_until(self):
+        key, jump_loc = self.compile_stack.pop()
+        if key != 'BEGIN':
+            raise SyntaxError(f'UNTIL without BEGIN')
+        until = self.find_word('*UNTIL')
+        self.word_list.append(until)
+        self.word_list.append(jump_loc - len(self.word_list) - 1)
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
         key, patch_loc = self.compile_stack.pop()
@@ -227,9 +226,6 @@ class Forth:
         flag = self.stack.pop()
         if not flag:
             self.active_word.skip(jump)
-
-    def star_else(self):
-        self.active_word.skip(self.next_word())
 
     def star_until(self):
         # if pop is true, skip one else skip in word + 1
