@@ -6,7 +6,7 @@ from tests.word import PrimaryWord, SecondaryWord
 
 
 class Forth:
-    action_tokens = [':', ';','IF', 'THEN', 'ELSE', 'BEGIN', 'UNTIL', 'DO', 'LOOP']
+    action_tokens = [':', ';', 'ELSE', 'UNTIL', 'DO', 'LOOP']
 
     def __init__(self):
         self.active_words = []
@@ -40,6 +40,7 @@ class Forth:
 
     def define_primaries(self):
         lex = self.lexicon
+        self.define_immediates(lex)
         self.define_skippers(lex)
         self.define_stack_ops(lex)
         self.define_arithmetic(lex)
@@ -47,7 +48,17 @@ class Forth:
         lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
         lex.append(PrimaryWord('.', lambda f: print(f.stack.pop(), end=' ')))
         lex.append(PrimaryWord('CR', lambda f: print()))
+
+    def define_immediates(self, lex):
+        lex.append(PrimaryWord(':', lambda f: f.imm_colon(), immediate=True))
+        lex.append(PrimaryWord(';', lambda f: f.imm_semi(), immediate=True))
         lex.append(PrimaryWord('IF', lambda f: f.imm_if(), immediate=True))
+        lex.append(PrimaryWord('ELSE', lambda f: f.imm_else(), immediate=True))
+        lex.append(PrimaryWord('THEN', lambda f: f.imm_then(), immediate=True))
+        lex.append(PrimaryWord('BEGIN', lambda f: f.imm_begin(), immediate=True))
+        lex.append(PrimaryWord('UNTIL', lambda f: f.imm_until(), immediate=True))
+        lex.append(PrimaryWord('DO', lambda f: f.imm_do(), immediate=True))
+        lex.append(PrimaryWord('LOOP', lambda f: f.imm_loop(), immediate=True))
 
     @staticmethod
     def define_skippers(lex):
@@ -106,8 +117,6 @@ class Forth:
                     definition.do(self)
                 else:
                     self.word_list.append(definition)
-            elif token in self.action_tokens:
-                self.compile_action_word(token, self.word_list)
             elif (num := self.compile_number(token)) is not None:
                 self.append_number(num, self.word_list)
             else:
@@ -120,50 +129,56 @@ class Forth:
         word_list.append(self.find_word('*#'))
         word_list.append(num)
 
-    def compile_action_word(self, word, word_list):
-        match word:
-            case ':':
-                if self.compile_stack.is_not_empty():
-                    raise SyntaxError(f'Syntax error: nested word definition')
-                if word_list:
-                    raise SyntaxError(f'Syntax error: "{word_list}" not empty')
-                definition_name = self.next_token()
-                self.compile_stack.push((':', definition_name))
-            case ';':
-                if self.compile_stack.is_empty():
-                    raise SyntaxError(f'Syntax error: ; without :')
-                key, definition_name = self.compile_stack.pop()
-                if key != ':':
-                    raise SyntaxError(f'Syntax error: ; without :')
-                word = SecondaryWord(definition_name, word_list[:])
-                self.lexicon.append(word)
-                word_list.clear()
-            case 'IF':
-                self.compile_conditional('*IF', word_list)
-            case 'THEN':
-                self.patch_the_skip(['*IF', '*ELSE'], -1, word_list)
-            case 'ELSE':
-                self.patch_the_skip(['*IF'], 1, word_list)
-                self.compile_conditional('*ELSE', word_list)
-            case 'BEGIN':
-                self.compile_stack.push(('BEGIN', len(word_list)))
-            case 'UNTIL':
-                key, jump_loc = self.compile_stack.pop()
-                if key != 'BEGIN':
-                    raise SyntaxError(f'UNTIL without BEGIN')
-                until = self.find_word('*UNTIL')
-                word_list.append(until)
-                word_list.append(jump_loc - len(word_list) - 1)
-            case 'DO':
-                self.compile_stack.push(('DO', len(word_list)))
-                word_list.append(self.find_word('*DO'))
-            case 'LOOP':
-                key, jump_loc = self.compile_stack.pop()
-                if key != 'DO':
-                    raise SyntaxError(f'LOOP without DO')
-                loop = self.find_word('*LOOP')
-                word_list.append(loop)
-                word_list.append(jump_loc - len(word_list))
+    def imm_begin(self):
+        self.compile_stack.push(('BEGIN', len(self.word_list)))
+
+    def imm_colon(self):
+        if self.compile_stack.is_not_empty():
+            raise SyntaxError(f'Syntax error: nested word definition')
+        if self.word_list:
+            raise SyntaxError(f'Syntax error: "{self.word_list}" not empty')
+        definition_name = self.next_token()
+        self.compile_stack.push((':', definition_name))
+
+    def imm_do(self):
+        self.compile_stack.push(('DO', len(self.word_list)))
+        self.word_list.append(self.find_word('*DO'))
+
+    def imm_else(self):
+        self.patch_the_skip(['*IF'], 1, self.word_list)
+        self.compile_conditional('*ELSE', self.word_list)
+
+    def imm_if(self):
+        self.compile_conditional('*IF', self.word_list)
+
+    def imm_loop(self):
+        key, jump_loc = self.compile_stack.pop()
+        if key != 'DO':
+            raise SyntaxError(f'LOOP without DO')
+        loop = self.find_word('*LOOP')
+        self.word_list.append(loop)
+        self.word_list.append(jump_loc - len(self.word_list))
+
+    def imm_until(self):
+        key, jump_loc = self.compile_stack.pop()
+        if key != 'BEGIN':
+            raise SyntaxError(f'UNTIL without BEGIN')
+        until = self.find_word('*UNTIL')
+        self.word_list.append(until)
+        self.word_list.append(jump_loc - len(self.word_list) - 1)
+
+    def imm_semi(self):
+        if self.compile_stack.is_empty():
+            raise SyntaxError(f'Syntax error: ; without :')
+        key, definition_name = self.compile_stack.pop()
+        if key != ':':
+            raise SyntaxError(f'Syntax error: ; without :')
+        word = SecondaryWord(definition_name, self.word_list[:])
+        self.lexicon.append(word)
+        self.word_list.clear()
+
+    def imm_then(self):
+        self.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
         key, patch_loc = self.compile_stack.pop()
@@ -193,9 +208,6 @@ class Forth:
     def i_word(self):
         index, limit = self.return_stack[-1]
         self.stack.push(index)
-
-    def imm_if(self):
-        self.compile_conditional('*IF', self.word_list)
 
     def star_do(self):
         start = self.stack.pop()
