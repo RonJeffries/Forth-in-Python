@@ -100,10 +100,10 @@ class Forth:
         word_list = []
         while True:
             token = self.next_token()
-            if token in self.action_tokens:
-                self.compile_action_word(token, word_list)
-            elif (definition := self.find_word(token)) is not None:
+            if (definition := self.find_word(token)) is not None:
                 word_list.append(definition)
+            elif token in self.action_tokens:
+                self.compile_action_word(token, word_list)
             elif (num := self.compile_number(token)) is not None:
                 self.append_number(num, word_list)
             else:
