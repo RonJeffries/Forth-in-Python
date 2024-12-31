@@ -101,7 +101,10 @@ class Forth:
         while True:
             token = self.next_token()
             if (definition := self.find_word(token)) is not None:
-                word_list.append(definition)
+                if definition.immediate:
+                    raise SyntaxError('not supported')
+                else:
+                    word_list.append(definition)
             elif token in self.action_tokens:
                 self.compile_action_word(token, word_list)
             elif (num := self.compile_number(token)) is not None:
