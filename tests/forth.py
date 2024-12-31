@@ -97,23 +97,23 @@ class Forth:
             self.compile_a_word().do(self)
 
     def compile_a_word(self):
-        word_list = []
+        self.word_list = []
         while True:
             token = self.next_token()
             if (definition := self.find_word(token)) is not None:
                 if definition.immediate:
                     raise SyntaxError('not supported')
                 else:
-                    word_list.append(definition)
+                    self.word_list.append(definition)
             elif token in self.action_tokens:
-                self.compile_action_word(token, word_list)
+                self.compile_action_word(token, self.word_list)
             elif (num := self.compile_number(token)) is not None:
-                self.append_number(num, word_list)
+                self.append_number(num, self.word_list)
             else:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
             if self.compile_stack.is_empty():
                 break
-        return SecondaryWord('nameless', word_list)
+        return SecondaryWord('nameless', self.word_list)
 
     def append_number(self, num, word_list):
         word_list.append(self.find_word('*#'))
