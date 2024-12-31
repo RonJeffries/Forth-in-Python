@@ -1,9 +1,10 @@
 
 
 class PrimaryWord:
-    def __init__(self, name, code):
+    def __init__(self, name, code, immediate=False):
         self.name = name
         self.code = code
+        self.immediate = immediate
 
     def do(self, forth):
         self.code(forth)
@@ -13,9 +14,10 @@ class PrimaryWord:
 
 
 class SecondaryWord:
-    def __init__(self, name, word_list):
+    def __init__(self, name, word_list, immediate=False):
         self.name = name
         self.words = word_list
+        self.immediate = immediate
         self.pc = 0
 
     def do(self, forth):
