@@ -47,6 +47,7 @@ class Forth:
         lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
         lex.append(PrimaryWord('.', lambda f: print(f.stack.pop(), end=' ')))
         lex.append(PrimaryWord('CR', lambda f: print()))
+        lex.append(PrimaryWord('IF', lambda f: f.imm_if(), immediate=True))
 
     @staticmethod
     def define_skippers(lex):
@@ -102,7 +103,7 @@ class Forth:
             token = self.next_token()
             if (definition := self.find_word(token)) is not None:
                 if definition.immediate:
-                    raise SyntaxError('not supported')
+                    definition.do(self)
                 else:
                     self.word_list.append(definition)
             elif token in self.action_tokens:
@@ -192,6 +193,9 @@ class Forth:
     def i_word(self):
         index, limit = self.return_stack[-1]
         self.stack.push(index)
+
+    def imm_if(self):
+        self.compile_conditional('*IF', self.word_list)
 
     def star_do(self):
         start = self.stack.pop()
