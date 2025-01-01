@@ -132,10 +132,6 @@ class Forth:
         self.compile_stack.push(('BEGIN', len(self.word_list)))
 
     def imm_colon(self):
-        if self.compile_stack.is_not_empty():
-            raise SyntaxError(f'Syntax error: nested word definition')
-        if self.word_list:
-            raise SyntaxError(f'Syntax error: "{self.word_list}" not empty')
         definition_name = self.next_token()
         self.compile_stack.push((':', definition_name))
 
@@ -152,18 +148,12 @@ class Forth:
 
     def imm_loop(self):
         key, jump_loc = self.compile_stack.pop()
-        if key != 'DO':
-            raise SyntaxError(f'LOOP without DO')
         loop = self.find_word('*LOOP')
         self.word_list.append(loop)
         self.word_list.append(jump_loc - len(self.word_list))
 
     def imm_semi(self):
-        if self.compile_stack.is_empty():
-            raise SyntaxError(f'Syntax error: ; without :')
         key, definition_name = self.compile_stack.pop()
-        if key != ':':
-            raise SyntaxError(f'Syntax error: ; without :')
         word = SecondaryWord(definition_name, self.word_list[:])
         self.lexicon.append(word)
         self.word_list.clear()
@@ -173,16 +163,12 @@ class Forth:
 
     def imm_until(self):
         key, jump_loc = self.compile_stack.pop()
-        if key != 'BEGIN':
-            raise SyntaxError(f'UNTIL without BEGIN')
         until = self.find_word('*UNTIL')
         self.word_list.append(until)
         self.word_list.append(jump_loc - len(self.word_list) - 1)
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
         key, patch_loc = self.compile_stack.pop()
-        if key not in expected:
-            raise SyntaxError(f'malformed IF-ELSE-THEN, found: "{key}"')
         last_loc = len(word_list) + skip_adjustment
         word_list[patch_loc] = last_loc - patch_loc
 

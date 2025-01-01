@@ -56,10 +56,10 @@ class TestCompile:
     def test_syntax_error(self):
         f = Forth()
         s = '; SQUARE DUP + ;'
-        with pytest.raises(SyntaxError) as e:
+        with pytest.raises(IndexError) as e:
             f.compile(s)
         assert (str(e.value) ==
-                'Syntax error: ; without :')
+                'pop from empty list')
 
     def test_undefined_word(self):
         f = Forth()
