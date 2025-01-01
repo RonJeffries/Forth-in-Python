@@ -49,9 +49,21 @@ class Forth:
         lex.append(PrimaryWord('CR', lambda f: print()))
 
     def define_immediates(self, lex):
-        lex.append(PrimaryWord(':', lambda f: f.imm_colon(), immediate=True))
-        lex.append(PrimaryWord(';', lambda f: f.imm_semi(), immediate=True))
-        lex.append(PrimaryWord('IF', lambda f: f.imm_if(), immediate=True))
+        def _colon(f):
+            self.compile_stack.push((':', (self.next_token())))
+        lex.append(PrimaryWord(':', _colon, immediate=True))
+
+        def _semi(f):
+            key, definition_name = self.compile_stack.pop()
+            word = SecondaryWord(definition_name, self.word_list[:])
+            self.lexicon.append(word)
+            self.word_list.clear()
+        lex.append(PrimaryWord(';', _semi, immediate=True))
+
+        def _if(f):
+            self.compile_conditional('*IF', self.word_list)
+        lex.append(PrimaryWord('IF', _if, immediate=True))
+
         lex.append(PrimaryWord('ELSE', lambda f: f.imm_else(), immediate=True))
         lex.append(PrimaryWord('THEN', lambda f: f.imm_then(), immediate=True))
         lex.append(PrimaryWord('BEGIN', lambda f: f.imm_begin(), immediate=True))
@@ -131,10 +143,6 @@ class Forth:
     def imm_begin(self):
         self.compile_stack.push(('BEGIN', len(self.word_list)))
 
-    def imm_colon(self):
-        definition_name = self.next_token()
-        self.compile_stack.push((':', definition_name))
-
     def imm_do(self):
         self.compile_stack.push(('DO', len(self.word_list)))
         self.word_list.append(self.find_word('*DO'))
@@ -151,12 +159,6 @@ class Forth:
         loop = self.find_word('*LOOP')
         self.word_list.append(loop)
         self.word_list.append(jump_loc - len(self.word_list))
-
-    def imm_semi(self):
-        key, definition_name = self.compile_stack.pop()
-        word = SecondaryWord(definition_name, self.word_list[:])
-        self.lexicon.append(word)
-        self.word_list.clear()
 
     def imm_then(self):
         self.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
