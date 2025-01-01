@@ -49,27 +49,52 @@ class Forth:
         lex.append(PrimaryWord('CR', lambda f: print()))
 
     def define_immediates(self, lex):
-        def _colon(f):
-            self.compile_stack.push((':', (self.next_token())))
+        def _colon(forth):
+            forth.compile_stack.push((':', (forth.next_token())))
         lex.append(PrimaryWord(':', _colon, immediate=True))
 
-        def _semi(f):
-            key, definition_name = self.compile_stack.pop()
-            word = SecondaryWord(definition_name, self.word_list[:])
-            self.lexicon.append(word)
-            self.word_list.clear()
+        def _semi(forth):
+            key, definition_name = forth.compile_stack.pop()
+            word = SecondaryWord(definition_name, forth.word_list[:])
+            forth.lexicon.append(word)
+            forth.word_list.clear()
         lex.append(PrimaryWord(';', _semi, immediate=True))
 
-        def _if(f):
-            self.compile_conditional('*IF', self.word_list)
+        def _if(forth):
+            forth.compile_conditional('*IF', self.word_list)
         lex.append(PrimaryWord('IF', _if, immediate=True))
 
-        lex.append(PrimaryWord('ELSE', lambda f: f.imm_else(), immediate=True))
-        lex.append(PrimaryWord('THEN', lambda f: f.imm_then(), immediate=True))
-        lex.append(PrimaryWord('BEGIN', lambda f: f.imm_begin(), immediate=True))
-        lex.append(PrimaryWord('UNTIL', lambda f: f.imm_until(), immediate=True))
-        lex.append(PrimaryWord('DO', lambda f: f.imm_do(), immediate=True))
-        lex.append(PrimaryWord('LOOP', lambda f: f.imm_loop(), immediate=True))
+        def _else(forth):
+            forth.patch_the_skip(['*IF'], 1, forth.word_list)
+            forth.compile_conditional('*ELSE', forth.word_list)
+        lex.append(PrimaryWord('ELSE', _else, immediate=True))
+
+        def _then(forth):
+            forth.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
+        lex.append(PrimaryWord('THEN', _then, immediate=True))
+
+        def _begin(forth):
+            forth.compile_stack.push(('BEGIN', len(forth.word_list)))
+        lex.append(PrimaryWord('BEGIN', _begin, immediate=True))
+
+        def _until(forth):
+            key, jump_loc = forth.compile_stack.pop()
+            until = forth.find_word('*UNTIL')
+            forth.word_list.append(until)
+            forth.word_list.append(jump_loc - len(forth.word_list) - 1)
+        lex.append(PrimaryWord('UNTIL', _until, immediate=True))
+
+        def _do(forth):
+            forth.compile_stack.push(('DO', len(forth.word_list)))
+            forth.word_list.append(forth.find_word('*DO'))
+        lex.append(PrimaryWord('DO', _do, immediate=True))
+
+        def _loop(forth):
+            key, jump_loc = forth.compile_stack.pop()
+            loop = forth.find_word('*LOOP')
+            forth.word_list.append(loop)
+            forth.word_list.append(jump_loc - len(forth.word_list))
+        lex.append(PrimaryWord('LOOP', _loop, immediate=True))
 
     @staticmethod
     def define_skippers(lex):
@@ -139,35 +164,6 @@ class Forth:
     def append_number(self, num, word_list):
         word_list.append(self.find_word('*#'))
         word_list.append(num)
-
-    def imm_begin(self):
-        self.compile_stack.push(('BEGIN', len(self.word_list)))
-
-    def imm_do(self):
-        self.compile_stack.push(('DO', len(self.word_list)))
-        self.word_list.append(self.find_word('*DO'))
-
-    def imm_else(self):
-        self.patch_the_skip(['*IF'], 1, self.word_list)
-        self.compile_conditional('*ELSE', self.word_list)
-
-    def imm_if(self):
-        self.compile_conditional('*IF', self.word_list)
-
-    def imm_loop(self):
-        key, jump_loc = self.compile_stack.pop()
-        loop = self.find_word('*LOOP')
-        self.word_list.append(loop)
-        self.word_list.append(jump_loc - len(self.word_list))
-
-    def imm_then(self):
-        self.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
-
-    def imm_until(self):
-        key, jump_loc = self.compile_stack.pop()
-        until = self.find_word('*UNTIL')
-        self.word_list.append(until)
-        self.word_list.append(jump_loc - len(self.word_list) - 1)
 
     def patch_the_skip(self, expected, skip_adjustment, word_list):
         key, patch_loc = self.compile_stack.pop()
