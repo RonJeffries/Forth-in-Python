@@ -49,52 +49,69 @@ class Forth:
         lex.append(PrimaryWord('CR', lambda f: print()))
 
     def define_immediates(self, lex):
-        def _colon(forth):
-            forth.compile_stack.push((':', (forth.next_token())))
-        lex.append(PrimaryWord(':', _colon, immediate=True))
+        self._define_begin_until(lex)
+        self._define_colon_semi(lex)
+        self._define_do_loop(lex)
+        self._define_if_else_then(lex)
 
-        def _semi(forth):
-            key, definition_name = forth.compile_stack.pop()
-            word = SecondaryWord(definition_name, forth.word_list[:])
-            forth.lexicon.append(word)
-            forth.word_list.clear()
-        lex.append(PrimaryWord(';', _semi, immediate=True))
-
-        def _if(forth):
-            forth.compile_conditional('*IF', self.word_list)
-        lex.append(PrimaryWord('IF', _if, immediate=True))
-
-        def _else(forth):
-            forth.patch_the_skip(['*IF'], 1, forth.word_list)
-            forth.compile_conditional('*ELSE', forth.word_list)
-        lex.append(PrimaryWord('ELSE', _else, immediate=True))
-
-        def _then(forth):
-            forth.patch_the_skip(['*IF', '*ELSE'], -1, self.word_list)
-        lex.append(PrimaryWord('THEN', _then, immediate=True))
-
+    @staticmethod
+    def _define_begin_until(lex):
         def _begin(forth):
             forth.compile_stack.push(('BEGIN', len(forth.word_list)))
-        lex.append(PrimaryWord('BEGIN', _begin, immediate=True))
 
         def _until(forth):
             key, jump_loc = forth.compile_stack.pop()
             until = forth.find_word('*UNTIL')
             forth.word_list.append(until)
             forth.word_list.append(jump_loc - len(forth.word_list) - 1)
+
+        lex.append(PrimaryWord('BEGIN', _begin, immediate=True))
         lex.append(PrimaryWord('UNTIL', _until, immediate=True))
 
+    @staticmethod
+    def _define_colon_semi(lex):
+        def _colon(forth):
+            forth.compile_stack.push((':', (forth.next_token())))
+
+        def _semi(forth):
+            key, definition_name = forth.compile_stack.pop()
+            word = SecondaryWord(definition_name, forth.word_list[:])
+            forth.lexicon.append(word)
+            forth.word_list.clear()
+
+        lex.append(PrimaryWord(':', _colon, immediate=True))
+        lex.append(PrimaryWord(';', _semi, immediate=True))
+
+    @staticmethod
+    def _define_do_loop(lex):
         def _do(forth):
             forth.compile_stack.push(('DO', len(forth.word_list)))
             forth.word_list.append(forth.find_word('*DO'))
-        lex.append(PrimaryWord('DO', _do, immediate=True))
 
         def _loop(forth):
             key, jump_loc = forth.compile_stack.pop()
             loop = forth.find_word('*LOOP')
             forth.word_list.append(loop)
             forth.word_list.append(jump_loc - len(forth.word_list))
+
+        lex.append(PrimaryWord('DO', _do, immediate=True))
         lex.append(PrimaryWord('LOOP', _loop, immediate=True))
+
+    @staticmethod
+    def _define_if_else_then(lex):
+        def _if(forth):
+            forth.compile_conditional('*IF', forth.word_list)
+
+        def _else(forth):
+            forth.patch_the_skip(['*IF'], 1, forth.word_list)
+            forth.compile_conditional('*ELSE', forth.word_list)
+
+        def _then(forth):
+            forth.patch_the_skip(['*IF', '*ELSE'], -1, forth.word_list)
+
+        lex.append(PrimaryWord('IF', _if, immediate=True))
+        lex.append(PrimaryWord('ELSE', _else, immediate=True))
+        lex.append(PrimaryWord('THEN', _then, immediate=True))
 
     @staticmethod
     def define_skippers(lex):
