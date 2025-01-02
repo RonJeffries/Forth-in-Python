@@ -116,9 +116,9 @@ class Forth:
     @staticmethod
     def define_skippers(lex):
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
-        lex.append(PrimaryWord('*IF', lambda f: f.star_if()))
+        lex.append(PrimaryWord('*IF', lambda f: f.zero_branch()))
         lex.append(PrimaryWord('*ELSE', lambda f: f.active_word.skip(f.next_word())))
-        lex.append(PrimaryWord('*UNTIL', lambda f: f.star_until()))
+        lex.append(PrimaryWord('*UNTIL', lambda f: f.zero_branch()))
         lex.append(PrimaryWord('*DO', lambda f: f.star_do()))
         lex.append(PrimaryWord('*LOOP', lambda f: f.star_loop()))
 
@@ -222,10 +222,10 @@ class Forth:
             self.return_stack.push((index, limit))
             self.active_word.skip(jump)
 
-    def star_if(self):
-        jump = self.next_word()
+    def zero_branch(self):
+        branch_distance = self.next_word()
         if self.stack.pop() == 0:
-            self.active_word.skip(jump)
+            self.active_word.skip(branch_distance)
 
     def star_until(self):
         skip_back = self.next_word()
