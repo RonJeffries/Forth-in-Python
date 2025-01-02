@@ -224,13 +224,10 @@ class Forth:
 
     def star_if(self):
         jump = self.next_word()
-        flag = self.stack.pop()
-        if flag == 0:
+        if self.stack.pop() == 0:
             self.active_word.skip(jump)
 
     def star_until(self):
         skip_back = self.next_word()
-        to_check = self.stack.pop()
-        if to_check == 0:
+        if self.stack.pop() == 0:
             self.active_word.skip(skip_back)
-
