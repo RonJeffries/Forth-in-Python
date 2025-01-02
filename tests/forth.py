@@ -226,8 +226,3 @@ class Forth:
         branch_distance = self.next_word()
         if self.stack.pop() == 0:
             self.active_word.skip(branch_distance)
-
-    def star_until(self):
-        skip_back = self.next_word()
-        if self.stack.pop() == 0:
-            self.active_word.skip(skip_back)
