@@ -225,13 +225,12 @@ class Forth:
     def star_if(self):
         jump = self.next_word()
         flag = self.stack.pop()
-        if not flag:
+        if flag == 0:
             self.active_word.skip(jump)
 
     def star_until(self):
-        # if pop is true, skip one else skip in word + 1
-        to_check = self.stack.pop()
         skip_back = self.next_word()
+        to_check = self.stack.pop()
         if to_check == 0:
             self.active_word.skip(skip_back)
 
