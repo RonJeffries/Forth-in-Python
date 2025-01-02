@@ -215,12 +215,12 @@ class Forth:
         self.return_stack.push((start, limit))
 
     def star_loop(self):
-        jump = self.next_word()
+        beginning_of_do_loop = self.next_word()
         index, limit = self.return_stack.pop()
         index += 1
         if index < limit:
             self.return_stack.push((index, limit))
-            self.active_word.skip(jump)
+            self.active_word.skip(beginning_of_do_loop)
 
     def zero_branch(self):
         branch_distance = self.next_word()
