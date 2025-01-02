@@ -39,9 +39,9 @@ class Forth:
 
     def define_primaries(self):
         lex = self.lexicon
+        self.define_stack_ops(lex)
         self.define_immediates(lex)
         self.define_skippers(lex)
-        self.define_stack_ops(lex)
         self.define_arithmetic(lex)
         self.define_comparators(lex)
         lex.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
@@ -113,14 +113,13 @@ class Forth:
         lex.append(PrimaryWord('ELSE', _else, immediate=True))
         lex.append(PrimaryWord('THEN', _then, immediate=True))
 
-    @staticmethod
-    def define_skippers(lex):
+    def define_skippers(self,lex):
         lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
         lex.append(PrimaryWord('*IF', lambda f: f.zero_branch()))
         lex.append(PrimaryWord('*ELSE', lambda f: f.active_word.skip(f.next_word())))
         lex.append(PrimaryWord('*UNTIL', lambda f: f.zero_branch()))
-        lex.append(PrimaryWord('*DO', lambda f: f.star_do()))
         lex.append(PrimaryWord('*LOOP', lambda f: f.star_loop()))
+        self.compile(': *DO SWAP >R >R ;')
 
     @staticmethod
     def define_stack_ops(lex):
@@ -130,8 +129,8 @@ class Forth:
         lex.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
         lex.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
         lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
-        lex.append(PrimaryWord('R>', lambda f: f.return_stack.push(f.stack.pop())))
-        lex.append(PrimaryWord('>R', lambda f: f.stack.push(f.return_stack.pop())))
+        lex.append(PrimaryWord('>R', lambda f: f.return_stack.push(f.stack.pop())))
+        lex.append(PrimaryWord('R>', lambda f: f.stack.push(f.return_stack.pop())))
         lex.append(PrimaryWord('I', lambda f: f.i_word()))
 
     def define_arithmetic(self, lex):
@@ -203,10 +202,11 @@ class Forth:
         self.stack.dump(self.active_word.name, self.active_word.pc)
 
     def find_word(self, word):
-        return next(filter(lambda d: d.name == word, self.lexicon), None)
+        result = next(filter(lambda d: d.name == word, self.lexicon), None)
+        return result
 
     def i_word(self):
-        index, limit = self.return_stack[-1]
+        index = self.return_stack[-1]
         self.stack.push(index)
 
     def star_do(self):
@@ -216,10 +216,12 @@ class Forth:
 
     def star_loop(self):
         beginning_of_do_loop = self.next_word()
-        index, limit = self.return_stack.pop()
+        index = self.return_stack.pop()
+        limit = self.return_stack.pop()
         index += 1
         if index < limit:
-            self.return_stack.push((index, limit))
+            self.return_stack.push(limit)
+            self.return_stack.push(index)
             self.active_word.skip(beginning_of_do_loop)
 
     def zero_branch(self):
