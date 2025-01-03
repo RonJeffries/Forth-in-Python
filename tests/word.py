@@ -21,6 +21,7 @@ class SecondaryWord:
         self.pc = 0
 
     def do(self, forth):
+        print(self)
         forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
@@ -37,4 +38,8 @@ class SecondaryWord:
         self.pc += n
 
     def __repr__(self):
-        return f'SW: {self.name}'
+        result = f'(SW: {self.name}:'
+        for word in self.words:
+            result += f' {word}'
+        return result + ')'
+

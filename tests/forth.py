@@ -124,6 +124,13 @@ class Forth:
 
     @staticmethod
     def define_stack_ops(lex):
+        def _2dup(forth):
+            top = forth.stack[-1]
+            bot = forth.stack[-2]
+            forth.stack.push(bot)
+            forth.stack.push(top)
+
+        lex.append(PrimaryWord('2DUP', _2dup))
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
@@ -203,12 +210,8 @@ class Forth:
         self.stack.dump(self.active_word.name, self.active_word.pc)
 
     def find_word(self, word):
-        result = next(filter(lambda d: d.name == word, self.lexicon), None)
+        result = next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
         return result
-
-    def i_word(self):
-        index = self.return_stack[-1]
-        self.stack.push(index)
 
     def star_loop(self):
         beginning_of_do_loop = self.next_word()

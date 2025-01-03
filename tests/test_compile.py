@@ -284,6 +284,22 @@ class TestCompile:
         f.compile(s)
         assert f.stack.pop() == 7
 
+    def test_2DUP(self):
+        f = Forth()
+        s = '1 5 2DUP'
+        f.compile(s)
+        assert f.stack.stack == [1, 5, 1, 5]
+
+    def test_compiled_star_loop(self):
+        f = Forth()
+        f.compile(': JUMP_BACK ;')
+        f.compile(': SKIP ;')
+        star_loop = ': *LOOP R> R> SWAP 1 + 2DUP < IF SWAP >R >R JUMP_BACK ELSE DROP DROP SKIP THEN ;'
+        # f.compile(star_loop)
+        s = ' 5 0 DO I 10 * LOOP '
+        f.compile(s)
+        assert f.stack.stack == [0, 10, 20, 30, 40]
+
 
 
 
