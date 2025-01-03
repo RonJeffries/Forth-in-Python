@@ -1,6 +1,7 @@
 import math
 import re
 
+from tests.lexicon import Lexicon
 from tests.stack import Stack
 from tests.word import PrimaryWord, SecondaryWord
 
@@ -9,7 +10,7 @@ class Forth:
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
-        self.lexicon = []
+        self.lexicon = Lexicon()
         self.define_primaries(self.lexicon)
         self.return_stack = Stack()
         self.stack = Stack()
@@ -223,4 +224,4 @@ class Forth:
             return None
 
     def find_word(self, word):
-        return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
+        return self.lexicon.find_word(word)
