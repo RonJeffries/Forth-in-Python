@@ -24,23 +24,16 @@ class Forth:
         self.token_index += 1
         return token
 
-    @property
-    def active_word(self):
-        return self.active_words[-1]
-
     def begin(self, word):
         self.active_words.append(word)
 
     def end(self):
         self.active_words.pop()
 
-    def next_word(self):
-        return self.active_word.next_word()
-
     def define_primaries(self):
         lex = self.lexicon
         self.define_stack_ops(lex)
-        self.define_immediates(lex)
+        self.define_immediate_words(lex)
         self.define_skippers(lex)
         self.define_arithmetic(lex)
         self.define_comparators(lex)
@@ -48,7 +41,7 @@ class Forth:
         lex.append(PrimaryWord('.', lambda f: print(f.stack.pop(), end=' ')))
         lex.append(PrimaryWord('CR', lambda f: print()))
 
-    def define_immediates(self, lex):
+    def define_immediate_words(self, lex):
         self._define_begin_until(lex)
         self._define_colon_semi(lex)
         self._define_do_loop(lex)
@@ -124,26 +117,36 @@ class Forth:
         lex.append(PrimaryWord('THEN', _then, immediate=True))
 
     def define_skippers(self,lex):
+        def _active_word(forth):
+            return forth.active_words[-1]
+
+        def _next_word(forth):
+            return _active_word(forth).next_word()
+
         def _star_loop(forth):
-            beginning_of_do_loop = forth.next_word()
+            beginning_of_do_loop = _next_word(forth)
             index = forth.return_stack.pop()
             limit = forth.return_stack.pop()
             index += 1
             if index < limit:
                 forth.return_stack.push(limit)
                 forth.return_stack.push(index)
-                forth.active_word.skip(beginning_of_do_loop)
+                _active_word(forth).skip(beginning_of_do_loop)
 
         def _zero_branch(forth):
-            branch_distance = forth.next_word()
+            branch_distance = _next_word(forth)
             if forth.stack.pop() == 0:
-                forth.active_word.skip(branch_distance)
+                _active_word(forth).skip(branch_distance)
+
+        def _dump_stack(forth):
+            forth.stack.dump(_active_word(forth).name, _active_word(forth).pc)
 
         lex.append(PrimaryWord('*LOOP', _star_loop))
-        lex.append(PrimaryWord('*#', lambda f: f.stack.push(f.next_word())))
+        lex.append(PrimaryWord('*#', lambda f: f.stack.push(_next_word(f))))
         lex.append(PrimaryWord('*IF', _zero_branch))
-        lex.append(PrimaryWord('*ELSE', lambda f: f.active_word.skip(f.next_word())))
+        lex.append(PrimaryWord('*ELSE', lambda f: _active_word(f).skip(_next_word(f))))
         lex.append(PrimaryWord('*UNTIL', _zero_branch))
+        lex.append(PrimaryWord('DUMP', _dump_stack))
         self.compile(': *DO SWAP >R >R ;')
         self.compile(': I R@ ;')
 
@@ -155,11 +158,7 @@ class Forth:
             forth.stack.push(bot)
             forth.stack.push(top)
 
-        def _dump_stack(forth):
-            forth.stack.dump(forth.active_word.name, forth.active_word.pc)
-
         lex.append(PrimaryWord('2DUP', _2dup))
-        lex.append(PrimaryWord('DUMP', _dump_stack))
         lex.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         lex.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
         lex.append(PrimaryWord('OVER', lambda f: f.stack.over()))
