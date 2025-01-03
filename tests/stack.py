@@ -40,6 +40,9 @@ class Stack:
         # (_ under top -> _ top ) -> under
         return self.stack.pop(-2)
 
+    def top(self):
+        return self[-1]
+
     def __eq__(self, other):
         return other == self.stack
 

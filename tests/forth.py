@@ -120,6 +120,7 @@ class Forth:
         lex.append(PrimaryWord('*UNTIL', lambda f: f.zero_branch()))
         lex.append(PrimaryWord('*LOOP', lambda f: f.star_loop()))
         self.compile(': *DO SWAP >R >R ;')
+        self.compile(': I R@ ;')
 
     @staticmethod
     def define_stack_ops(lex):
@@ -131,7 +132,7 @@ class Forth:
         lex.append(PrimaryWord('DUMP', lambda f: f.dump_stack()))
         lex.append(PrimaryWord('>R', lambda f: f.return_stack.push(f.stack.pop())))
         lex.append(PrimaryWord('R>', lambda f: f.stack.push(f.return_stack.pop())))
-        lex.append(PrimaryWord('I', lambda f: f.i_word()))
+        lex.append(PrimaryWord('R@', lambda f: f.stack.push(f.return_stack.top())))
 
     def define_arithmetic(self, lex):
         self.define_arithmetic_with_swap_pop(lex)
@@ -208,11 +209,6 @@ class Forth:
     def i_word(self):
         index = self.return_stack[-1]
         self.stack.push(index)
-
-    def star_do(self):
-        start = self.stack.pop()
-        limit = self.stack.pop()
-        self.return_stack.push((start, limit))
 
     def star_loop(self):
         beginning_of_do_loop = self.next_word()

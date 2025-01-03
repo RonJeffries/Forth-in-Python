@@ -261,10 +261,10 @@ class TestCompile:
 
     def test_return_stack(self):
         f = Forth()
-        s = ' 3 >R 4 5 + R> + '
+        s = ' 3 >R 4 5 + R@ + R> +'
         f.compile(s)
         assert f.return_stack == []
-        assert f.stack.pop() == 12
+        assert f.stack.pop() == 15
 
     def test_initial_do(self):
         f = Forth()
