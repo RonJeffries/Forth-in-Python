@@ -10,7 +10,7 @@ class Forth:
         self.active_words = []
         self.compile_stack = Stack()
         self.lexicon = []
-        self.define_primaries()
+        self.define_primaries(self.lexicon)
         self.return_stack = Stack()
         self.stack = Stack()
         self.tokens = None
@@ -30,8 +30,7 @@ class Forth:
     def end(self):
         self.active_words.pop()
 
-    def define_primaries(self):
-        lex = self.lexicon
+    def define_primaries(self, lex):
         self.define_stack_ops(lex)
         self.define_immediate_words(lex)
         self.define_skippers(lex)
@@ -224,6 +223,4 @@ class Forth:
             return None
 
     def find_word(self, word):
-        result = next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
-        return result
-
+        return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
