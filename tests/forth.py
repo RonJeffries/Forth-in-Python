@@ -99,15 +99,25 @@ class Forth:
 
     @staticmethod
     def _define_if_else_then(lex):
+        def _compile_conditional(forth, word_to_compile, word_list):
+            forth.compile_stack.push((word_to_compile, len(word_list) + 1))
+            word_list.append(forth.find_word(word_to_compile))
+            word_list.append(0)
+
+        def _patch_the_skip(forth, expected, skip_adjustment, word_list):
+            key, patch_loc = forth.compile_stack.pop()
+            last_loc = len(word_list) + skip_adjustment
+            word_list[patch_loc] = last_loc - patch_loc
+
         def _if(forth):
-            forth.compile_conditional('*IF', forth.word_list)
+            _compile_conditional(forth,'*IF', forth.word_list)
 
         def _else(forth):
-            forth.patch_the_skip(['*IF'], 1, forth.word_list)
-            forth.compile_conditional('*ELSE', forth.word_list)
+            _patch_the_skip(forth, ['*IF'], 1, forth.word_list)
+            _compile_conditional(forth, '*ELSE', forth.word_list)
 
         def _then(forth):
-            forth.patch_the_skip(['*IF', '*ELSE'], -1, forth.word_list)
+            _patch_the_skip(forth, ['*IF', '*ELSE'], -1, forth.word_list)
 
         lex.append(PrimaryWord('IF', _if, immediate=True))
         lex.append(PrimaryWord('ELSE', _else, immediate=True))
@@ -207,25 +217,12 @@ class Forth:
         word_list.append(self.find_word('*#'))
         word_list.append(num)
 
-    def patch_the_skip(self, expected, skip_adjustment, word_list):
-        key, patch_loc = self.compile_stack.pop()
-        last_loc = len(word_list) + skip_adjustment
-        word_list[patch_loc] = last_loc - patch_loc
-
-    def compile_conditional(self, word_to_compile, word_list):
-        self.compile_stack.push((word_to_compile, len(word_list) + 1))
-        word_list.append(self.find_word(word_to_compile))
-        word_list.append(0)
-
     def compile_number(self, word):
         try:
             num = int(word)
             return num
         except ValueError:
             return None
-
-    def dump_stack(self):
-        self.stack.dump(self.active_word.name, self.active_word.pc)
 
     def find_word(self, word):
         result = next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
