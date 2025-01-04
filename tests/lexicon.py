@@ -95,6 +95,9 @@ class Lexicon:
         self.append(PrimaryWord('THEN', _then, immediate=True))
 
     def define_skippers(self, forth):
+        def _2_pc_at(forth):
+            forth.stack.push(forth.active_words[-2].pc)
+
         def _active_word(forth):
             return forth.active_words[-1]
 
@@ -125,6 +128,7 @@ class Lexicon:
         self.append(PrimaryWord('*ELSE', lambda f: _active_word(f).skip(_next_word(f))))
         self.append(PrimaryWord('*UNTIL', _zero_branch))
         self.append(PrimaryWord('DUMP', _dump_stack))
+        self.append(PrimaryWord('2PC@', _2_pc_at))
         forth.compile(': *DO SWAP >R >R ;')
         forth.compile(': I R@ ;')
 

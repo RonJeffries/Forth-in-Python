@@ -61,8 +61,7 @@ class Forth:
 
     def compile_number(self, word):
         try:
-            num = int(word)
-            return num
+            return int(word)
         except ValueError:
             return None
 

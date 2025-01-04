@@ -300,6 +300,15 @@ class TestCompile:
         f.compile(s)
         assert f.stack.stack == [0, 10, 20, 30, 40]
 
+    def test_2_pc_at(self):
+        f = Forth()
+        s = ': TEST 2PC@ ;'
+        f.compile(s)
+        s = ': FOO 3 4 + TEST 10 20 + ;'
+        f.compile(s)
+        f.compile('FOO')
+        assert f.stack.stack == [7, 6, 30]
+
 
 
 

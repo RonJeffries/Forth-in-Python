@@ -21,7 +21,7 @@ class SecondaryWord:
         self.pc = 0
 
     def do(self, forth):
-        print(self)
+        # print(self)
         forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
