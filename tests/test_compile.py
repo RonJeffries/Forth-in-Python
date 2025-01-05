@@ -316,6 +316,18 @@ class TestCompile:
         f.compile('4 @')
         assert f.stack.pop() == 666
 
+    def test_rudimentary_heap_arithmetic(self):
+        f = Forth()
+        f.compile('666 4 !')
+        f.compile('1 3 + @')
+        assert f.stack.pop() == 666
+
+    def test_rudimentary_heap_overflow(self):
+        f = Forth()
+        with pytest.raises(IndexError):
+            f.compile('666 10 !')
+
+
 
 
 
