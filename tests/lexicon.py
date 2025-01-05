@@ -139,6 +139,17 @@ class Lexicon:
             forth.stack.push(bot)
             forth.stack.push(top)
 
+        def _at(forth):
+            index = forth.stack.pop()
+            forth.stack.push(forth.heap[index])
+
+        def _put(forth):
+            index = forth.stack.pop()
+            value = forth.stack.pop()
+            forth.heap[index] = value
+
+        self.append(PrimaryWord('@', _at))
+        self.append(PrimaryWord('!', _put))
         self.append(PrimaryWord('2DUP', _2dup))
         self.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
         self.append(PrimaryWord('DUP', lambda f: f.stack.dup()))

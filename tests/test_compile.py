@@ -309,6 +309,13 @@ class TestCompile:
         f.compile('FOO')
         assert f.stack.stack == [7, 6, 30]
 
+    def test_rudimentary_heap(self):
+        f = Forth()
+        f.compile('666 4 !')
+        assert f.heap[4] == 666
+        f.compile('4 @')
+        assert f.stack.pop() == 666
+
 
 
 
