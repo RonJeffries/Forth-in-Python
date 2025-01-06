@@ -384,7 +384,11 @@ class TestCompile:
     on the CREATE and exit it on the DOES. Or DOES it do that?
     
     It needs tick so as to be able to write a literal ' DOES>
-    into the definition? 
+    into the definition?
+    
+    Need to read Loeliger and see what it might be good for.
+    Perhaps lets things like variable and constant be done
+    as CREATEs? 
     """
 
 
