@@ -386,6 +386,8 @@ class TestCompile:
     It needs tick so as to be able to write a literal ' DOES>
     into the definition?
     
+    Needs to open the word and append to it? Or not?
+    
     Need to read Loeliger and see what it might be good for.
     Perhaps lets things like variable and constant be done
     as CREATEs? 
