@@ -44,6 +44,7 @@ class Lexicon:
         self.append(PrimaryWord('UNTIL', _until, immediate=True))
 
     def _define_colon_semi(self):
+        # exactly like create does>
         def _colon(forth):
             forth.compile_stack.push((':', (forth.next_token())))
 
@@ -57,6 +58,7 @@ class Lexicon:
         self.append(PrimaryWord(';', _semi, immediate=True))
 
     def _define_create_does(self):
+        # exactly like : ;
         def _create(forth):
             forth.compile_stack.push(('CREATE', forth.next_token()))
 
