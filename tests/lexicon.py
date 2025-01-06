@@ -7,6 +7,9 @@ class Lexicon:
     def __init__(self):
         self.lexicon = []
 
+    def pw(self, name, code, immediate=False):
+        self.append(PrimaryWord(name, code, immediate=immediate))
+
     def append(self, word):
         self.lexicon.append(word)
 
@@ -19,9 +22,9 @@ class Lexicon:
         self.define_skippers(forth)
         self.define_arithmetic()
         self.define_comparators()
-        self.append(PrimaryWord('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop()))))
-        self.append(PrimaryWord('.', lambda f: print(f.stack.pop(), end=' ')))
-        self.append(PrimaryWord('CR', lambda f: print()))
+        self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
+        self.pw('.', lambda f: print(f.stack.pop(), end=' '))
+        self.pw('CR', lambda f: print())
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
@@ -40,8 +43,8 @@ class Lexicon:
             forth.word_list.append(until)
             forth.word_list.append(jump_loc - len(forth.word_list) - 1)
 
-        self.append(PrimaryWord('BEGIN', _begin, immediate=True))
-        self.append(PrimaryWord('UNTIL', _until, immediate=True))
+        self.pw('BEGIN', _begin, immediate=True)
+        self.pw('UNTIL', _until, immediate=True)
 
     def _define_colon_semi(self):
         # exactly like create does>
@@ -54,8 +57,8 @@ class Lexicon:
             forth.lexicon.append(word)
             forth.word_list.clear()
 
-        self.append(PrimaryWord(':', _colon, immediate=True))
-        self.append(PrimaryWord(';', _semi, immediate=True))
+        self.pw(':', _colon, immediate=True)
+        self.pw(';', _semi, immediate=True)
 
     def _define_create_does(self):
         # exactly like : ;
@@ -82,10 +85,10 @@ class Lexicon:
             word = SecondaryWord(name, [literal, value])
             forth.lexicon.append(word)
 
-        self.append(PrimaryWord('VARIABLE', _variable))
-        self.append(PrimaryWord('CREATE', _create, immediate=True))
-        self.append(PrimaryWord('DOES>', _does, immediate=True))
-        self.append(PrimaryWord('CONSTANT', _constant))
+        self.pw('VARIABLE', _variable)
+        self.pw('CREATE', _create, immediate=True)
+        self.pw('DOES>', _does, immediate=True)
+        self.pw('CONSTANT', _constant)
 
     def _define_do_loop(self):
         def _do(forth):
@@ -98,8 +101,8 @@ class Lexicon:
             forth.word_list.append(loop)
             forth.word_list.append(jump_loc - len(forth.word_list))
 
-        self.append(PrimaryWord('DO', _do, immediate=True))
-        self.append(PrimaryWord('LOOP', _loop, immediate=True))
+        self.pw('DO', _do, immediate=True)
+        self.pw('LOOP', _loop, immediate=True)
 
     def _define_if_else_then(self):
         def _compile_conditional(forth, word_to_compile, word_list):
@@ -122,9 +125,9 @@ class Lexicon:
         def _then(forth):
             _patch_the_skip(forth, ['*IF', '*ELSE'], -1, forth.word_list)
 
-        self.append(PrimaryWord('IF', _if, immediate=True))
-        self.append(PrimaryWord('ELSE', _else, immediate=True))
-        self.append(PrimaryWord('THEN', _then, immediate=True))
+        self.pw('IF', _if, immediate=True)
+        self.pw('ELSE', _else, immediate=True)
+        self.pw('THEN', _then, immediate=True)
 
     def define_skippers(self, forth):
         def _2_pc_at(forth):
@@ -154,13 +157,13 @@ class Lexicon:
         def _dump_stack(forth):
             forth.stack.dump(_active_word(forth).name, _active_word(forth).pc)
 
-        self.append(PrimaryWord('*LOOP', _star_loop))
-        self.append(PrimaryWord('*#', lambda f: f.stack.push(_next_word(f))))
-        self.append(PrimaryWord('*IF', _zero_branch))
-        self.append(PrimaryWord('*ELSE', lambda f: _active_word(f).skip(_next_word(f))))
-        self.append(PrimaryWord('*UNTIL', _zero_branch))
-        self.append(PrimaryWord('DUMP', _dump_stack))
-        self.append(PrimaryWord('2PC@', _2_pc_at))
+        self.pw('*LOOP', _star_loop)
+        self.pw('*#', lambda f: f.stack.push(_next_word(f)))
+        self.pw('*IF', _zero_branch)
+        self.pw('*ELSE', lambda f: _active_word(f).skip(_next_word(f)))
+        self.pw('*UNTIL', _zero_branch)
+        self.pw('DUMP', _dump_stack)
+        self.pw('2PC@', _2_pc_at)
         forth.compile(': *DO SWAP >R >R ;')
         forth.compile(': I R@ ;')
 
@@ -183,34 +186,34 @@ class Lexicon:
         def _allot(forth):
             forth.heap.extend([0]*forth.stack.pop())
 
-        self.append(PrimaryWord('ALLOT', _allot))
-        self.append(PrimaryWord('@', _at))
-        self.append(PrimaryWord('!', _put))
-        self.append(PrimaryWord('2DUP', _2dup))
-        self.append(PrimaryWord('DROP', lambda f: f.stack.pop()))
-        self.append(PrimaryWord('DUP', lambda f: f.stack.dup()))
-        self.append(PrimaryWord('OVER', lambda f: f.stack.over()))
-        self.append(PrimaryWord('ROT', lambda f: f.stack.rot()))
-        self.append(PrimaryWord('SWAP', lambda f: f.stack.swap()))
-        self.append(PrimaryWord('>R', lambda f: f.return_stack.push(f.stack.pop())))
-        self.append(PrimaryWord('R>', lambda f: f.stack.push(f.return_stack.pop())))
-        self.append(PrimaryWord('R@', lambda f: f.stack.push(f.return_stack.top())))
+        self.pw('ALLOT', _allot)
+        self.pw('@', _at)
+        self.pw('!', _put)
+        self.pw('2DUP', _2dup)
+        self.pw('DROP', lambda f: f.stack.pop())
+        self.pw('DUP', lambda f: f.stack.dup())
+        self.pw('OVER', lambda f: f.stack.over())
+        self.pw('ROT', lambda f: f.stack.rot())
+        self.pw('SWAP', lambda f: f.stack.swap())
+        self.pw('>R', lambda f: f.return_stack.push(f.stack.pop()))
+        self.pw('R>', lambda f: f.stack.push(f.return_stack.pop()))
+        self.pw('R@', lambda f: f.stack.push(f.return_stack.top()))
 
     def define_arithmetic(self):
         self.define_arithmetic_with_swap_pop()
-        self.append(PrimaryWord('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop())))
-        self.append(PrimaryWord('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop())))
-        self.append(PrimaryWord('1+', lambda f: f.stack.push(f.stack.pop() + 1)))
-        self.append(PrimaryWord('1-', lambda f: f.stack.push(f.stack.pop() - 1)))
+        self.pw('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop()))
+        self.pw('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop()))
+        self.pw('1+', lambda f: f.stack.push(f.stack.pop() + 1))
+        self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
 
     def define_arithmetic_with_swap_pop(self):
-        self.append(PrimaryWord('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop())))
-        self.append(PrimaryWord('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop())))
+        self.pw('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))
+        self.pw('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop()))
 
     def define_comparators(self):
-        self.append(PrimaryWord('=', lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0)))
-        self.append(PrimaryWord('>', lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0)))
-        self.append(PrimaryWord('<', lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0)))
-        self.append(PrimaryWord('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0)))
-        self.append(PrimaryWord('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0)))
+        self.pw('=', lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0))
+        self.pw('>', lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0))
+        self.pw('<', lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0))
+        self.pw('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0))
+        self.pw('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0))
 
