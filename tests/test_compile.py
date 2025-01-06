@@ -311,6 +311,7 @@ class TestCompile:
 
     def test_rudimentary_heap(self):
         f = Forth()
+        f.compile('9 ALLOT')
         f.compile('666 4 !')
         assert f.heap[4] == 666
         f.compile('4 @')
@@ -318,6 +319,7 @@ class TestCompile:
 
     def test_rudimentary_heap_arithmetic(self):
         f = Forth()
+        f.compile('9 ALLOT')
         f.compile('666 4 !')
         f.compile('1 3 + @')
         assert f.stack.pop() == 666
@@ -326,6 +328,35 @@ class TestCompile:
         f = Forth()
         with pytest.raises(IndexError):
             f.compile('666 10 !')
+
+    def test_create_does(self):
+        f = Forth()
+        f.compile('CREATE FOO 666 DOES>')
+        assert f.stack.stack == []
+        f.compile('FOO')
+        assert f.stack.stack == [666]
+
+    def test_constant(self):
+        f = Forth()
+        f.compile('666 CONSTANT FOO')
+        f.compile('777 CONSTANT BAR')
+        f.compile('888 CONSTANT BAZ')
+        assert f.stack.stack == []
+        f.compile('BAZ BAR FOO')
+        assert f.stack.stack == [888, 777, 666]
+
+    def test_variable(self):
+        f = Forth()
+        f.compile('VARIABLE FOO 1 ALLOT')
+        f.compile('VARIABLE BAR 1 ALLOT')
+        f.compile('VARIABLE BAZ 1 ALLOT')
+        f.compile('666 FOO !')
+        f.compile('777 BAR !')
+        f.compile('888 BAZ !')
+        f.compile('BAZ @ BAR @ FOO @')
+        assert f.stack.stack == [888, 777, 666]
+
+
 
 
 

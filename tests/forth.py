@@ -10,7 +10,7 @@ class Forth:
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
-        self.heap = [0] * 10
+        self.heap = [0]
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
         self.return_stack = Stack()

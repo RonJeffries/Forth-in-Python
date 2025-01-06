@@ -26,6 +26,7 @@ class Lexicon:
     def define_immediate_words(self, forth):
         self._define_begin_until()
         self._define_colon_semi()
+        self._define_create_does()
         self._define_do_loop()
         self._define_if_else_then()
 
@@ -54,6 +55,35 @@ class Lexicon:
 
         self.append(PrimaryWord(':', _colon, immediate=True))
         self.append(PrimaryWord(';', _semi, immediate=True))
+
+    def _define_create_does(self):
+        def _create(forth):
+            forth.compile_stack.push(('CREATE', forth.next_token()))
+
+        def _does(forth):
+            key, definition_name = forth.compile_stack.pop()
+            word = SecondaryWord(definition_name, forth.word_list[:])
+            forth.lexicon.append(word)
+            forth.word_list.clear()
+
+        def _constant(forth):
+            name = forth.next_token()
+            value = forth.stack.pop()
+            literal = forth.find_word('*#')
+            word = SecondaryWord(name, [literal, value])
+            forth.lexicon.append(word)
+
+        def _variable(forth):
+            name = forth.next_token()
+            value = len(forth.heap)
+            literal = forth.find_word('*#')
+            word = SecondaryWord(name, [literal, value])
+            forth.lexicon.append(word)
+
+        self.append(PrimaryWord('VARIABLE', _variable))
+        self.append(PrimaryWord('CREATE', _create, immediate=True))
+        self.append(PrimaryWord('DOES>', _does, immediate=True))
+        self.append(PrimaryWord('CONSTANT', _constant))
 
     def _define_do_loop(self):
         def _do(forth):
@@ -148,6 +178,10 @@ class Lexicon:
             value = forth.stack.pop()
             forth.heap[index] = value
 
+        def _allot(forth):
+            forth.heap.extend([0]*forth.stack.pop())
+
+        self.append(PrimaryWord('ALLOT', _allot))
         self.append(PrimaryWord('@', _at))
         self.append(PrimaryWord('!', _put))
         self.append(PrimaryWord('2DUP', _2dup))
