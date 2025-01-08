@@ -24,7 +24,7 @@ class Forth:
             return None
         token = self.tokens[self.token_index]
         self.token_index += 1
-        return token
+        return token.upper()
 
     def begin(self, word):
         self.active_words.append(word)
