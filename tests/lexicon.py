@@ -88,8 +88,8 @@ class Lexicon:
             forth.lexicon.append(word)
 
         self.pw('VARIABLE', _variable)
-        self.pw('CREATE', _create)
-        self.pw('DOES>', _does)
+        self.pw('CREATE', _create, immediate=True)
+        self.pw('DOES>', _does, immediate=True)
         self.pw('CONSTANT', _constant)
 
     def _define_do_loop(self):
