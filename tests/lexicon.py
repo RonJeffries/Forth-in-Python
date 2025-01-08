@@ -35,10 +35,10 @@ class Lexicon:
 
     def _define_begin_until(self):
         def _begin(forth):
-            forth.compile_stack.push(('BEGIN', len(forth.word_list)))
+            forth.compile_stack.push(len(forth.word_list))
 
         def _until(forth):
-            key, jump_loc = forth.compile_stack.pop()
+            jump_loc = forth.compile_stack.pop()
             until = forth.find_word('*UNTIL')
             forth.word_list.append(until)
             forth.word_list.append(jump_loc - len(forth.word_list) - 1)
@@ -49,10 +49,10 @@ class Lexicon:
     def _define_colon_semi(self):
         # exactly like create does>
         def _colon(forth):
-            forth.compile_stack.push((':', (forth.next_token())))
+            forth.compile_stack.push(forth.next_token())
 
         def _semi(forth):
-            key, definition_name = forth.compile_stack.pop()
+            definition_name = forth.compile_stack.pop()
             word = SecondaryWord(definition_name, forth.word_list[:])
             forth.lexicon.append(word)
             forth.word_list.clear()
