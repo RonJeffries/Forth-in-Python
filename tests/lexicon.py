@@ -81,11 +81,11 @@ class Lexicon:
 
     def _define_do_loop(self):
         def _do(forth):
-            forth.compile_stack.push(('DO', len(forth.word_list)))
+            forth.compile_stack.push(len(forth.word_list))
             forth.word_list.append(forth.find_word('*DO'))
 
         def _loop(forth):
-            key, jump_loc = forth.compile_stack.pop()
+            jump_loc = forth.compile_stack.pop()
             loop = forth.find_word('*LOOP')
             forth.word_list.append(loop)
             forth.word_list.append(jump_loc - len(forth.word_list))
@@ -95,12 +95,12 @@ class Lexicon:
 
     def _define_if_else_then(self):
         def _compile_conditional(forth, word_to_compile, word_list):
-            forth.compile_stack.push((word_to_compile, len(word_list) + 1))
+            forth.compile_stack.push(len(word_list) + 1)
             word_list.append(forth.find_word(word_to_compile))
             word_list.append(0)
 
         def _patch_the_skip(forth, expected, skip_adjustment, word_list):
-            key, patch_loc = forth.compile_stack.pop()
+            patch_loc = forth.compile_stack.pop()
             last_loc = len(word_list) + skip_adjustment
             word_list[patch_loc] = last_loc - patch_loc
 
