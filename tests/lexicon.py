@@ -63,6 +63,7 @@ class Lexicon:
     def _define_create_does(self):
         # exactly like : ;
         # create and does are run time. See py4fun.
+        # need to think what these ares supposed to be
         def _create(forth):
             forth.compile_stack.push(('CREATE', forth.next_token()))
 
@@ -87,8 +88,8 @@ class Lexicon:
             forth.lexicon.append(word)
 
         self.pw('VARIABLE', _variable)
-        self.pw('CREATE', _create, immediate=True)
-        self.pw('DOES>', _does, immediate=True)
+        self.pw('CREATE', _create)
+        self.pw('DOES>', _does)
         self.pw('CONSTANT', _constant)
 
     def _define_do_loop(self):
