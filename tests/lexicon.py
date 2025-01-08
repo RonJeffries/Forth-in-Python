@@ -62,6 +62,7 @@ class Lexicon:
 
     def _define_create_does(self):
         # exactly like : ;
+        # create and does are run time. See py4fun.
         def _create(forth):
             forth.compile_stack.push(('CREATE', forth.next_token()))
 
