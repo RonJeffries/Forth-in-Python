@@ -29,7 +29,7 @@ class Lexicon:
     def define_immediate_words(self, forth):
         self._define_begin_until()
         self._define_colon_semi()
-        self._define_create_does()
+        self._define_create_does_const_var()
         self._define_do_loop()
         self._define_if_else_then()
 
@@ -60,18 +60,7 @@ class Lexicon:
         self.pw(':', _colon, immediate=True)
         self.pw(';', _semi, immediate=True)
 
-    def _define_create_does(self):
-        # exactly like : ;
-        # create and does are run time. See py4fun.
-        # need to think what these ares supposed to be
-        def _create(forth):
-            forth.compile_stack.push(('CREATE', forth.next_token()))
-
-        def _does(forth):
-            key, definition_name = forth.compile_stack.pop()
-            word = SecondaryWord(definition_name, forth.word_list[:])
-            forth.lexicon.append(word)
-            forth.word_list.clear()
+    def _define_create_does_const_var(self):
 
         def _constant(forth):
             name = forth.next_token()
@@ -88,8 +77,6 @@ class Lexicon:
             forth.lexicon.append(word)
 
         self.pw('VARIABLE', _variable)
-        self.pw('CREATE', _create, immediate=True)
-        self.pw('DOES>', _does, immediate=True)
         self.pw('CONSTANT', _constant)
 
     def _define_do_loop(self):

@@ -350,49 +350,6 @@ class TestCompile:
         f.compile('BAZ @ BAR @ FOO @')
         assert f.stack.stack == [888, 777, 666]
 
-    def test_create_does(self):
-        f = Forth()
-        f.compile('CREATE FOO 666 DOES>')
-        assert f.stack.stack == []
-        f.compile('FOO')
-        assert f.stack.stack == [666]
-
-    def test_power_via_create_does(self):
-        # but how is this any better?
-        f = Forth()
-        colon = 'CREATE : CREATE'
-        semi = 'CREATE ; DOES>'
-        f.compile('CREATE 2ROT ROT ROT DOES>')
-        pow_step = ('CREATE POW_STEP '
-                    '(prod base -- prod*base base)'
-                    'DUP ROT * SWAP DOES>')
-        f.compile(pow_step)
-        f.compile('CREATE POWER'
-                  '(base power -- base**power) '
-                  '1 2ROT           (1 base power)'
-                  'BEGIN 2ROT       (power 1 base)'
-                  'POW_STEP         (power product base)'
-                  'ROT              (product base power)'
-                  '1- DUP 0 = UNTIL (product base power)'
-                  'DROP DROP        (product) DOES>')
-        f.compile(' 3 4 POWER ')
-        assert f.stack.pop() == 81
-
-    """
-    For CREATE-DOES> to be useful as a primitive under things
-    like : ;, one needs a way to set the system in compile mode
-    on the CREATE and exit it on the DOES. Or DOES it do that?
-    
-    It needs tick so as to be able to write a literal ' DOES>
-    into the definition?
-    
-    Needs to open the word and append to it? Or not?
-    
-    Need to read Loeliger and see what it might be good for.
-    Perhaps lets things like variable and constant be done
-    as CREATEs? 
-    """
-
 
 
 
