@@ -99,7 +99,7 @@ class Lexicon:
             word_list.append(forth.find_word(word_to_compile))
             word_list.append(0)
 
-        def _patch_the_skip(forth, expected, skip_adjustment, word_list):
+        def _patch_the_skip(forth, skip_adjustment, word_list):
             patch_loc = forth.compile_stack.pop()
             last_loc = len(word_list) + skip_adjustment
             word_list[patch_loc] = last_loc - patch_loc
@@ -108,11 +108,11 @@ class Lexicon:
             _compile_conditional(forth,'*IF', forth.word_list)
 
         def _else(forth):
-            _patch_the_skip(forth, ['*IF'], 1, forth.word_list)
+            _patch_the_skip(forth, 1, forth.word_list)
             _compile_conditional(forth, '*ELSE', forth.word_list)
 
         def _then(forth):
-            _patch_the_skip(forth, ['*IF', '*ELSE'], -1, forth.word_list)
+            _patch_the_skip(forth, -1, forth.word_list)
 
         self.pw('IF', _if, immediate=True)
         self.pw('ELSE', _else, immediate=True)
