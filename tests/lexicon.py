@@ -38,9 +38,9 @@ class Lexicon:
             forth.compile_stack.push(len(forth.word_list))
 
         def _until(forth):
-            jump_loc = forth.compile_stack.pop()
             until = forth.find_word('*UNTIL')
             forth.word_list.append(until)
+            jump_loc = forth.compile_stack.pop()
             forth.word_list.append(jump_loc - len(forth.word_list) - 1)
 
         self.pw('BEGIN', _begin, immediate=True)
@@ -76,6 +76,14 @@ class Lexicon:
             word = SecondaryWord(name, [literal, value])
             forth.lexicon.append(word)
 
+        def _create(forth):
+            pass
+
+        def _does(forth):
+            pass
+
+        self.pw('DOES>', _does)
+        self.pw('CREATE', _create)
         self.pw('VARIABLE', _variable)
         self.pw('CONSTANT', _constant)
 
@@ -175,6 +183,10 @@ class Lexicon:
         def _allot(forth):
             forth.heap.extend([0]*forth.stack.pop())
 
+        def _comma(forth):
+            pass
+
+        self.pw(',', _comma)
         self.pw('ALLOT', _allot)
         self.pw('@', _at)
         self.pw('!', _put)

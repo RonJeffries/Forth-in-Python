@@ -350,6 +350,11 @@ class TestCompile:
         f.compile('BAZ @ BAR @ FOO @')
         assert f.stack.stack == [888, 777, 666]
 
+    def test_compile_create_does(self):
+        f = Forth()
+        s = ': CONSTANT CREATE , DOES> @ ;'
+        f.compile(s)
+
 
 
 
