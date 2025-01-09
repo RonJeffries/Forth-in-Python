@@ -37,6 +37,9 @@ class SecondaryWord:
     def skip(self, n):
         self.pc += n
 
+    def finish(self):
+        self.pc = len(self.words)
+
     def __repr__(self):
         result = f'(SW: {self.name}:'
         for word in self.words:

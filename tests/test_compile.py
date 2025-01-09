@@ -354,6 +354,9 @@ class TestCompile:
         f = Forth()
         s = ': CONSTANT CREATE , DOES> @ ;'
         f.compile(s)
+        word = f.find_word('CONSTANT')
+        print(word)
+        f.compile('11 22 33 2025 CONSTANT YEAR')
 
 
 

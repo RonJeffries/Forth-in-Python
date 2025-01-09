@@ -19,6 +19,10 @@ class Forth:
         self.token_index = 0
         self.word_list = None
 
+    @property
+    def active_word(self):
+        return self.active_words[-1]
+
     def next_token(self):
         if self.token_index >= len(self.tokens):
             return None

@@ -77,9 +77,15 @@ class Lexicon:
             forth.lexicon.append(word)
 
         def _create(forth):
+            name = forth.next_token()
+            print(f'create {name}')
+            forth.compile_stack.push(name)
             pass
 
         def _does(forth):
+            name = forth.compile_stack.pop()
+            print(f'does {name}')
+            forth.active_word.finish()
             pass
 
         self.pw('DOES>', _does)
@@ -130,11 +136,8 @@ class Lexicon:
         def _2_pc_at(forth):
             forth.stack.push(forth.active_words[-2].pc)
 
-        def _active_word(forth):
-            return forth.active_words[-1]
-
         def _next_word(forth):
-            return _active_word(forth).next_word()
+            return forth.active_word.next_word()
 
         def _star_loop(forth):
             beginning_of_do_loop = _next_word(forth)
@@ -144,20 +147,20 @@ class Lexicon:
             if index < limit:
                 forth.return_stack.push(limit)
                 forth.return_stack.push(index)
-                _active_word(forth).skip(beginning_of_do_loop)
+                forth.active_word.skip(beginning_of_do_loop)
 
         def _zero_branch(forth):
             branch_distance = _next_word(forth)
             if forth.stack.pop() == 0:
-                _active_word(forth).skip(branch_distance)
+                forth.active_word.skip(branch_distance)
 
         def _dump_stack(forth):
-            forth.stack.dump(_active_word(forth).name, _active_word(forth).pc)
+            forth.stack.dump(forth.active_word.name, forth.active_word.pc)
 
         self.pw('*LOOP', _star_loop)
         self.pw('*#', lambda f: f.stack.push(_next_word(f)))
         self.pw('*IF', _zero_branch)
-        self.pw('*ELSE', lambda f: _active_word(f).skip(_next_word(f)))
+        self.pw('*ELSE', lambda f: f.active_word.skip(_next_word(f)))
         self.pw('*UNTIL', _zero_branch)
         self.pw('DUMP', _dump_stack)
         self.pw('2PC@', _2_pc_at)
