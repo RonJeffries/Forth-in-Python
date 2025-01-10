@@ -379,9 +379,9 @@ class TestCompile:
         f = Forth()
         f.compile('VARIABLE FOO 3 ALLOT')
         assert len(f.heap) == 3
-        # f.compile('CREATE BAR')
-        # f. compile('BAR')
-        # assert f.stack.pop() == 3
+        f.compile('CREATE BAR')
+        f. compile('BAR')
+        assert f.stack.pop() == 3
 
 
 
