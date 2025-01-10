@@ -350,6 +350,12 @@ class TestCompile:
         f.compile('BAZ @ BAR @ FOO @')
         assert f.stack.stack == [888, 777, 666]
 
+    def test_variable_without_allot_fails(self):
+        f = Forth()
+        f.compile('VARIABLE FOO')
+        with pytest.raises(IndexError):
+            f.compile('FOO @')
+
     def test_compile_create_does(self):
         f = Forth()
         s = ': CONSTANT CREATE , DOES> @ ;'
@@ -368,6 +374,14 @@ class TestCompile:
         f.compile('CREATE FOO')
         f. compile('FOO')
         assert f.stack.pop() == 0
+
+    def test_create_is_at_heap_end(self):
+        f = Forth()
+        f.compile('VARIABLE FOO 3 ALLOT')
+        assert len(f.heap) == 3
+        # f.compile('CREATE BAR')
+        # f. compile('BAR')
+        # assert f.stack.pop() == 3
 
 
 
