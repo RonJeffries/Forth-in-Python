@@ -402,6 +402,11 @@ class TestCompile:
         assert len(f.heap) == 1
         assert f.heap[0] == 33
 
+    def test_create_comma(self):
+        f = Forth()
+        f.compile('CREATE BAR 19 , BAR @  23 +')
+        assert f.stack.pop() == 42
+
 
 
 
