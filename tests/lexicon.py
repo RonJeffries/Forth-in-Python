@@ -78,7 +78,8 @@ class Lexicon:
 
         def _create(forth):
             name = forth.next_token()
-            word = SecondaryWord(name, list())
+            lit = forth.find_word('*#')
+            word = SecondaryWord(name, [lit, 0])
             forth.lexicon.append(word)
 
         def _does(forth):

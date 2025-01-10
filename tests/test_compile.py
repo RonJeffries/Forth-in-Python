@@ -363,6 +363,12 @@ class TestCompile:
         f.compile('CREATE FOO')
         f. compile('FOO')
 
+    def test_first_create_is_at_zero(self):
+        f = Forth()
+        f.compile('CREATE FOO')
+        f. compile('FOO')
+        assert f.stack.pop() == 0
+
 
 
 
