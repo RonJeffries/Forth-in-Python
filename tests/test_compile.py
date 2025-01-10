@@ -395,6 +395,13 @@ class TestCompile:
         f. compile('BAR @')
         assert f.stack.pop() == 42
 
+    def test_comma(self):
+        f = Forth()
+        assert len(f.heap) == 0
+        f.compile('33 ,')
+        assert len(f.heap) == 1
+        assert f.heap[0] == 33
+
 
 
 

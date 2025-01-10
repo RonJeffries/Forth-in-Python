@@ -184,7 +184,7 @@ class Lexicon:
             forth.heap.extend([0]*forth.stack.pop())
 
         def _comma(forth):
-            pass
+            forth.heap.append(forth.stack.pop())
 
         self.pw(',', _comma)
         self.pw('ALLOT', _allot)
