@@ -6,12 +6,17 @@ from tests.word import PrimaryWord, SecondaryWord
 class Lexicon:
     def __init__(self):
         self.lexicon = []
+        self._latest = None
 
     def pw(self, name, code, immediate=False):
         self.append(PrimaryWord(name, code, immediate=immediate))
 
     def append(self, word):
+        self._latest = word
         self.lexicon.append(word)
+
+    def latest_word(self):
+        return self._latest
 
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
@@ -83,7 +88,7 @@ class Lexicon:
             forth.lexicon.append(word)
 
         def _does(forth):
-            forth.active_word.finish()
+            forth.active_word.copy_to_latest(forth.lexicon)
 
         self.pw('DOES>', _does)
         self.pw('CREATE', _create)

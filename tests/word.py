@@ -20,6 +20,9 @@ class SecondaryWord:
         self.immediate = immediate
         self.pc = 0
 
+    def append(self, word):
+        self.words.append(word)
+
     def do(self, forth):
         # print(self)
         forth.begin(self)
@@ -37,8 +40,11 @@ class SecondaryWord:
     def skip(self, n):
         self.pc += n
 
-    def finish(self):
-        self.pc = len(self.words)
+    def copy_to_latest(self, lexicon):
+        latest = lexicon.latest_word()
+        while self.pc < len(self.words):
+            w = self.next_word()
+            latest.append(w)
 
     def __repr__(self):
         result = f'(SW: {self.name}:'

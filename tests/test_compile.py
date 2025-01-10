@@ -358,11 +358,23 @@ class TestCompile:
 
     def test_compile_create_does(self):
         f = Forth()
+        f.compile('1 , 2 , 3 ,')
         s = ': CONSTANT CREATE , DOES> @ ;'
         f.compile(s)
-        word = f.find_word('CONSTANT')
-        print(word)
-        f.compile('11 22 33 2025 CONSTANT YEAR')
+        f.compile('2025 CONSTANT YEAR')
+        assert f.heap[-1] == 2025
+        f. compile('YEAR')
+        assert f.stack.pop() == 2025
+
+    def test_compile_two_constants(self):
+        f = Forth()
+        f.compile('1 , 2 , 3 ,')
+        s = ': CONSTANT CREATE , DOES> @ ;'
+        f.compile(s)
+        f.compile('2025 CONSTANT YEAR')
+        f.compile('1939 CONSTANT BIRTH_YEAR')
+        f. compile('YEAR BIRTH_YEAR - 1 -')
+        assert f.stack.pop() == 85
 
     def test_create_makes_a_word(self):
         f = Forth()
