@@ -78,15 +78,11 @@ class Lexicon:
 
         def _create(forth):
             name = forth.next_token()
-            print(f'create {name}')
-            forth.compile_stack.push(name)
-            pass
+            word = SecondaryWord(name, list())
+            forth.lexicon.append(word)
 
         def _does(forth):
-            name = forth.compile_stack.pop()
-            print(f'does {name}')
             forth.active_word.finish()
-            pass
 
         self.pw('DOES>', _does)
         self.pw('CREATE', _create)
