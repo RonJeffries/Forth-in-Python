@@ -383,6 +383,17 @@ class TestCompile:
         f. compile('BAR')
         assert f.stack.pop() == 3
 
+    def test_demo_create(self):
+        f = Forth()
+        f.compile('VARIABLE FOO 3 ALLOT')
+        assert len(f.heap) == 3
+        f.compile('CREATE BAR 1 ALLOT')
+        f. compile('BAR @')
+        assert f.stack.pop() == 0
+        f.compile('42 BAR !')
+        assert f.stack.stack == []
+        f. compile('BAR @')
+        assert f.stack.pop() == 42
 
 
 
