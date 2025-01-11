@@ -76,15 +76,15 @@ class Lexicon:
 
         def _variable(forth):
             name = forth.next_token()
-            value = len(forth.heap)
+            address = forth.heap.next_available()
             literal = forth.find_word('*#')
-            word = SecondaryWord(name, [literal, value])
+            word = SecondaryWord(name, [literal, address])
             forth.lexicon.append(word)
 
         def _create(forth):
             name = forth.next_token()
             lit = forth.find_word('*#')
-            word = SecondaryWord(name, [lit, len(forth.heap)])
+            word = SecondaryWord(name, [lit, forth.heap.next_available()])
             forth.lexicon.append(word)
 
         def _does(forth):
@@ -178,18 +178,18 @@ class Lexicon:
 
         def _at(forth):
             index = forth.stack.pop()
-            forth.stack.push(forth.heap[index])
+            forth.stack.push(forth.heap.at(index))
 
         def _put(forth):
             index = forth.stack.pop()
             value = forth.stack.pop()
-            forth.heap[index] = value
+            forth.heap.put(index, value)
 
         def _allot(forth):
-            forth.heap.extend([0]*forth.stack.pop())
+            forth.heap.allot(forth.stack.pop())
 
         def _comma(forth):
-            forth.heap.append(forth.stack.pop())
+            forth.heap.comma(forth.stack.pop())
 
         self.pw(',', _comma)
         self.pw('ALLOT', _allot)

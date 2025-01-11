@@ -313,7 +313,7 @@ class TestCompile:
         f = Forth()
         f.compile('9 ALLOT')
         f.compile('666 4 !')
-        assert f.heap[4] == 666
+        assert f.heap.at(4) == 666
         f.compile('4 @')
         assert f.stack.pop() == 666
 
@@ -361,8 +361,9 @@ class TestCompile:
         f.compile('1 , 2 , 3 ,')
         s = ': CONSTANT CREATE , DOES> @ ;'
         f.compile(s)
+        expected = f.heap.next_available()
         f.compile('2025 CONSTANT YEAR')
-        assert f.heap[-1] == 2025
+        assert f.heap.at(expected) == 2025
         f. compile('YEAR')
         assert f.stack.pop() == 2025
 
@@ -390,7 +391,7 @@ class TestCompile:
     def test_create_is_at_heap_end(self):
         f = Forth()
         f.compile('VARIABLE FOO 3 ALLOT')
-        assert len(f.heap) == 3
+        assert f.heap.next_available() == 3
         f.compile('CREATE BAR')
         f. compile('BAR')
         assert f.stack.pop() == 3
@@ -398,7 +399,7 @@ class TestCompile:
     def test_demo_create(self):
         f = Forth()
         f.compile('VARIABLE FOO 3 ALLOT')
-        assert len(f.heap) == 3
+        assert f.heap.next_available() == 3
         f.compile('CREATE BAR 1 ALLOT')
         f. compile('BAR @')
         assert f.stack.pop() == 0
@@ -409,10 +410,10 @@ class TestCompile:
 
     def test_comma(self):
         f = Forth()
-        assert len(f.heap) == 0
+        assert f.heap.next_available() == 0
         f.compile('33 ,')
-        assert len(f.heap) == 1
-        assert f.heap[0] == 33
+        assert f.heap.next_available() == 1
+        assert f.heap.at(0) == 33
 
     def test_create_comma(self):
         f = Forth()

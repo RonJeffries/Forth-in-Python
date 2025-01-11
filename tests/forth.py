@@ -1,16 +1,16 @@
-import math
 import re
 
+from tests.heap import Heap
 from tests.lexicon import Lexicon
 from tests.stack import Stack
-from tests.word import PrimaryWord, SecondaryWord
+from tests.word import SecondaryWord
 
 
 class Forth:
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
-        self.heap = []
+        self.heap = Heap()
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
         self.return_stack = Stack()
