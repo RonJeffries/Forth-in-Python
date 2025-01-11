@@ -30,11 +30,13 @@ class Lexicon:
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
         self.pw('.', lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR', lambda f: print())
+        forth.compile(': CONSTANT CREATE , DOES> @ ;')
+        forth.compile(': VARIABLE CREATE ;')
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
         self._define_colon_semi()
-        self._define_create_does_const_var()
+        self._define_create_does()
         self._define_do_loop()
         self._define_if_else_then()
 
@@ -65,26 +67,12 @@ class Lexicon:
         self.pw(':', _colon, immediate=True)
         self.pw(';', _semi, immediate=True)
 
-    def _define_create_does_const_var(self):
-
-        def _constant(forth):
-            name = forth.next_token()
-            value = forth.stack.pop()
-            literal = forth.find_word('*#')
-            word = SecondaryWord(name, [literal, value])
-            forth.lexicon.append(word)
-
-        def _variable(forth):
-            name = forth.next_token()
+    def _define_create_does(self):
+        def _create(forth):
             address = forth.heap.next_available()
             literal = forth.find_word('*#')
-            word = SecondaryWord(name, [literal, address])
-            forth.lexicon.append(word)
-
-        def _create(forth):
             name = forth.next_token()
-            lit = forth.find_word('*#')
-            word = SecondaryWord(name, [lit, forth.heap.next_available()])
+            word = SecondaryWord(name, [literal, address])
             forth.lexicon.append(word)
 
         def _does(forth):
@@ -92,8 +80,6 @@ class Lexicon:
 
         self.pw('DOES>', _does)
         self.pw('CREATE', _create)
-        self.pw('VARIABLE', _variable)
-        self.pw('CONSTANT', _constant)
 
     def _define_do_loop(self):
         def _do(forth):
@@ -186,10 +172,12 @@ class Lexicon:
             forth.heap.put(index, value)
 
         def _allot(forth):
-            forth.heap.allot(forth.stack.pop())
+            number_to_allot = forth.stack.pop()
+            forth.heap.allot(number_to_allot)
 
         def _comma(forth):
-            forth.heap.comma(forth.stack.pop())
+            value_to_store = forth.stack.pop()
+            forth.heap.comma(value_to_store)
 
         self.pw(',', _comma)
         self.pw('ALLOT', _allot)
