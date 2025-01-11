@@ -72,3 +72,26 @@ class TestPython:
             w()
         assert stack[0] == 8 # not 7 as one might hope
 
+    def test_new_list_every_time(self):
+        def make_list():
+            return [1, 2]
+
+        list_1 = make_list()
+        list_1.append(3)
+        list_2 = make_list()
+        assert list_2 == [1, 2]
+        assert list_1 is not list_2
+
+    def test_default_list_is_not_new(self):
+        def put_3_in_list(x=[]):
+            x.append(3)
+            return x
+
+        list_1 = put_3_in_list()
+        assert list_1 == [3]
+        list_2 = put_3_in_list()
+        assert list_2 == [3, 3]
+        list_2.append(5)
+        list_3 = put_3_in_list()
+        assert list_3 == [3, 3, 5, 3]
+
