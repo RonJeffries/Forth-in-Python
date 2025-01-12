@@ -32,6 +32,8 @@ class Lexicon:
         self.pw('CR', lambda f: print())
         forth.compile(': CONSTANT CREATE , DOES> @ ;')
         forth.compile(': VARIABLE CREATE ;')
+        forth.compile(': *DO SWAP >R >R ;')
+        forth.compile(': I R@ ;')
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
@@ -41,30 +43,23 @@ class Lexicon:
         self._define_if_else_then()
 
     def _define_begin_until(self):
-        def _begin(forth):
-            forth.compile_stack.push(len(forth.word_list))
-
         def _until(forth):
             until = forth.find_word('*UNTIL')
             forth.word_list.append(until)
             jump_loc = forth.compile_stack.pop()
             forth.word_list.append(jump_loc - len(forth.word_list) - 1)
 
-        self.pw('BEGIN', _begin, immediate=True)
+        self.pw('BEGIN', lambda f: f.compile_stack.push(len(f.word_list)), immediate=True)
         self.pw('UNTIL', _until, immediate=True)
 
     def _define_colon_semi(self):
-        # exactly like create does>
-        def _colon(forth):
-            forth.compile_stack.push(forth.next_token())
-
         def _semi(forth):
             definition_name = forth.compile_stack.pop()
             word = SecondaryWord(definition_name, forth.word_list[:])
             forth.lexicon.append(word)
             forth.word_list.clear()
 
-        self.pw(':', _colon, immediate=True)
+        self.pw(':', lambda f: f.compile_stack.push(f.next_token()), immediate=True)
         self.pw(';', _semi, immediate=True)
 
     def _define_create_does(self):
@@ -75,10 +70,7 @@ class Lexicon:
             word = SecondaryWord(name, [literal, address])
             forth.lexicon.append(word)
 
-        def _does(forth):
-            forth.active_word.copy_to_latest(forth.lexicon)
-
-        self.pw('DOES>', _does)
+        self.pw('DOES>', lambda f: f.active_word.copy_to_latest(f.lexicon))
         self.pw('CREATE', _create)
 
     def _define_do_loop(self):
@@ -152,8 +144,6 @@ class Lexicon:
         self.pw('*UNTIL', _zero_branch)
         self.pw('DUMP', _dump_stack)
         self.pw('2PC@', _2_pc_at)
-        forth.compile(': *DO SWAP >R >R ;')
-        forth.compile(': I R@ ;')
 
     def define_stack_ops(self):
         self.pw('2DUP', lambda f: f.stack.two_dup())
