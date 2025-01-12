@@ -43,6 +43,12 @@ class Stack:
     def top(self):
         return self[-1]
 
+    def two_dup(self):
+        top = self[-1]
+        bot = self[-2]
+        self.push(bot)
+        self.push(top)
+
     def __eq__(self, other):
         return other == self.stack
 

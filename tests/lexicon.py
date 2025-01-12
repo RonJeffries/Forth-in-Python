@@ -156,17 +156,11 @@ class Lexicon:
         forth.compile(': I R@ ;')
 
     def define_stack_ops(self):
-        def _2dup(forth):
-            top = forth.stack[-1]
-            bot = forth.stack[-2]
-            forth.stack.push(bot)
-            forth.stack.push(top)
-
+        self.pw('2DUP', lambda f: f.stack.two_dup())
         self.pw(',', lambda f: f.heap.comma(f.stack.pop()))
         self.pw('ALLOT', lambda f: f.heap.allot(f.stack.pop()))
         self.pw('@', lambda f: f.stack.push(f.heap.at(f.stack.pop())))
         self.pw('!', lambda f: f.heap.put(f.stack.pop(), f.stack.pop()))
-        self.pw('2DUP', _2dup)
         self.pw('DROP', lambda f: f.stack.pop())
         self.pw('DUP', lambda f: f.stack.dup())
         self.pw('OVER', lambda f: f.stack.over())
