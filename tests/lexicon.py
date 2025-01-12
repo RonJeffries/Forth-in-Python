@@ -161,15 +161,12 @@ class Lexicon:
         self.pw('R@',    lambda f: f.stack.push(f.return_stack.top()))
 
     def define_arithmetic(self):
-        self.define_arithmetic_with_swap_pop()
-        self.pw('+', lambda f: f.stack.push(f.stack.pop() + f.stack.pop()))
-        self.pw('*', lambda f: f.stack.push(f.stack.pop() * f.stack.pop()))
-        self.pw('1+', lambda f: f.stack.push(f.stack.pop() + 1))
-        self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
-
-    def define_arithmetic_with_swap_pop(self):
         self.pw('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))
         self.pw('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop()))
+        self.pw('+',  lambda f: f.stack.push(f.stack.pop() + f.stack.pop()))
+        self.pw('*',  lambda f: f.stack.push(f.stack.pop() * f.stack.pop()))
+        self.pw('1+', lambda f: f.stack.push(f.stack.pop() + 1))
+        self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
 
     def define_comparators(self):
         self.pw('=', lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0))
