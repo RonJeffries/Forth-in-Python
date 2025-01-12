@@ -162,13 +162,9 @@ class Lexicon:
             forth.stack.push(bot)
             forth.stack.push(top)
 
-        def _at(forth):
-            index = forth.stack.pop()
-            forth.stack.push(forth.heap.at(index))
-
         self.pw(',', lambda f: f.heap.comma(f.stack.pop()))
         self.pw('ALLOT', lambda f: f.heap.allot(f.stack.pop()))
-        self.pw('@', _at)
+        self.pw('@', lambda f: f.stack.push(f.heap.at(f.stack.pop())))
         self.pw('!', lambda f: f.heap.put(f.stack.pop(), f.stack.pop()))
         self.pw('2DUP', _2dup)
         self.pw('DROP', lambda f: f.stack.pop())
