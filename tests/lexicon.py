@@ -131,15 +131,12 @@ class Lexicon:
             if forth.stack.pop() == 0:
                 forth.active_word.skip(branch_distance)
 
-        def _dump_stack(forth):
-            forth.stack.dump(forth.active_word.name, forth.active_word.pc)
-
-        self.pw('*LOOP', _star_loop)
-        self.pw('*#', lambda f: f.stack.push(_next_word(f)))
-        self.pw('*IF', _zero_branch)
-        self.pw('*ELSE', lambda f: f.active_word.skip(_next_word(f)))
+        self.pw('*LOOP',  _star_loop)
+        self.pw('*IF',    _zero_branch)
         self.pw('*UNTIL', _zero_branch)
-        self.pw('DUMP', _dump_stack)
+        self.pw('*#',     lambda f: f.stack.push(_next_word(f)))
+        self.pw('*ELSE',  lambda f: f.active_word.skip(_next_word(f)))
+        self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
 
     def define_stack_ops(self):
         self.pw('2DUP',  lambda f: f.stack.two_dup())
@@ -157,17 +154,17 @@ class Lexicon:
         self.pw('R@',    lambda f: f.stack.push(f.return_stack.top()))
 
     def define_arithmetic(self):
-        self.pw('-', lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))
-        self.pw('/', lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop()))
+        self.pw('-',  lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))
+        self.pw('/',  lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop()))
         self.pw('+',  lambda f: f.stack.push(f.stack.pop() + f.stack.pop()))
         self.pw('*',  lambda f: f.stack.push(f.stack.pop() * f.stack.pop()))
         self.pw('1+', lambda f: f.stack.push(f.stack.pop() + 1))
         self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
 
     def define_comparators(self):
-        self.pw('=', lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0))
-        self.pw('>', lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0))
-        self.pw('<', lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0))
+        self.pw('=',  lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0))
+        self.pw('>',  lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0))
+        self.pw('<',  lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0))
         self.pw('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0))
         self.pw('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0))
 
