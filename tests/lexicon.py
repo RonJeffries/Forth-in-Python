@@ -108,7 +108,7 @@ class Lexicon:
         def _then(forth):
             _patch_the_skip(forth, -1, forth.word_list)
 
-        self.pw('IF', _if, immediate=True)
+        self.pw('IF',   _if,   immediate=True)
         self.pw('ELSE', _else, immediate=True)
         self.pw('THEN', _then, immediate=True)
 
