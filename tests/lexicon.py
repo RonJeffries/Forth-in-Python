@@ -28,8 +28,11 @@ class Lexicon:
         self.define_arithmetic()
         self.define_comparators()
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
-        self.pw('.', lambda f: print(f.stack.pop(), end=' '))
-        self.pw('CR', lambda f: print())
+        self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
+        self.pw('CR',   lambda f: print())
+        self.define_secondaries(forth)
+
+    def define_secondaries(self, forth):
         forth.compile(': CONSTANT CREATE , DOES> @ ;')
         forth.compile(': VARIABLE CREATE ;')
         forth.compile(': *DO SWAP >R >R ;')
