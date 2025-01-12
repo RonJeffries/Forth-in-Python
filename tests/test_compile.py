@@ -420,6 +420,12 @@ class TestCompile:
         f.compile('CREATE BAR 19 , BAR @  23 +')
         assert f.stack.pop() == 42
 
+    def test_get_lexicon_info(self):
+        f = Forth()
+        print(len(f.lexicon.lexicon))
+        words = sorted([w.name for w in (f.lexicon.lexicon)])
+        print(" ".join(words))
+
 
 
 
