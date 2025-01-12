@@ -113,9 +113,6 @@ class Lexicon:
         self.pw('THEN', _then, immediate=True)
 
     def define_skippers(self, forth):
-        def _2_pc_at(forth):
-            forth.stack.push(forth.active_words[-2].pc)
-
         def _next_word(forth):
             return forth.active_word.next_word()
 
@@ -143,7 +140,6 @@ class Lexicon:
         self.pw('*ELSE', lambda f: f.active_word.skip(_next_word(f)))
         self.pw('*UNTIL', _zero_branch)
         self.pw('DUMP', _dump_stack)
-        self.pw('2PC@', _2_pc_at)
 
     def define_stack_ops(self):
         self.pw('2DUP',  lambda f: f.stack.two_dup())
