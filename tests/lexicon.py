@@ -171,12 +171,8 @@ class Lexicon:
             value = forth.stack.pop()
             forth.heap.put(index, value)
 
-        def _allot(forth):
-            number_to_allot = forth.stack.pop()
-            forth.heap.allot(number_to_allot)
-
         self.pw(',', lambda f: f.heap.comma(f.stack.pop()))
-        self.pw('ALLOT', _allot)
+        self.pw('ALLOT', lambda f: f.heap.allot(f.stack.pop()))
         self.pw('@', _at)
         self.pw('!', _put)
         self.pw('2DUP', _2dup)
