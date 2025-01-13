@@ -1,9 +1,9 @@
 import re
 
-from tests.heap import Heap
-from tests.lexicon import Lexicon
-from tests.stack import Stack
-from tests.word import SecondaryWord
+from source.heap import Heap
+from source.lexicon import Lexicon
+from source.stack import Stack
+from source.word import SecondaryWord
 
 
 class Forth:

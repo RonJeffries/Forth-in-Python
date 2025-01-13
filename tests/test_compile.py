@@ -1,8 +1,8 @@
 import pytest
 
-from tests.forth import Forth
-from tests.stack import Stack
-from tests.word import SecondaryWord
+from source.forth import Forth
+from source.stack import Stack
+from source.word import SecondaryWord
 
 
 class TestCompile:

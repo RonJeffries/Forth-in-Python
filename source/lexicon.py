@@ -1,6 +1,6 @@
 import math
 
-from tests.word import PrimaryWord, SecondaryWord
+from source.word import PrimaryWord, SecondaryWord
 
 
 class Lexicon:
