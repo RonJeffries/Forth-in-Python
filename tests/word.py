@@ -24,7 +24,6 @@ class SecondaryWord:
         self.words.append(word)
 
     def do(self, forth):
-        # print(self)
         forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
