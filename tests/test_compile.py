@@ -35,6 +35,15 @@ class TestCompile:
         forth.find_word('-',).do(forth)
         assert forth.stack.pop() == 3
 
+    def test_mod(self):
+        forth = Forth()
+        forth.stack.extend([192, 128])
+        forth.find_word('%').do(forth)
+        assert forth.stack.pop() == 64
+        forth.stack.extend([192, 128])
+        forth.find_word('MOD').do(forth)
+        assert forth.stack.pop() == 64
+
     def test_divide(self):
         f = Forth()
         f.stack.extend([4, 2])

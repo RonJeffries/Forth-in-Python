@@ -158,7 +158,9 @@ class Lexicon:
 
     def define_arithmetic(self):
         self.pw('-',  lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))
-        self.pw('/',  lambda f: f.stack.push(f.stack.swap_pop() / f.stack.pop()))
+        self.pw('%', lambda f: f.stack.push(f.stack.swap_pop() % f.stack.pop()))
+        self.pw('MOD', lambda f: f.stack.push(f.stack.swap_pop() % f.stack.pop()))
+        self.pw('/',  lambda f: f.stack.push(f.stack.swap_pop() // f.stack.pop()))
         self.pw('+',  lambda f: f.stack.push(f.stack.pop() + f.stack.pop()))
         self.pw('*',  lambda f: f.stack.push(f.stack.pop() * f.stack.pop()))
         self.pw('1+', lambda f: f.stack.push(f.stack.pop() + 1))
