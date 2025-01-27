@@ -426,6 +426,13 @@ class TestCompile:
         words = sorted([w.name for w in f.lexicon.lexicon])
         print(" ".join(words))
 
+    def test_destroy_world(self):
+        f = Forth()
+        f.compile(': EXECUTE BEGIN 666 0 UNTIL ;')
+        with pytest.raises(ValueError) as e:
+            f.compile(' EXECUTE ' )
+        assert str(e.value) == 'Stack is full'
+
 
 
 

@@ -1,7 +1,12 @@
 
 class Stack:
-    def __init__(self):
+    def __init__(self, limit=100):
         self.stack = []
+        self.limit = limit
+
+    def _check_limit(self):
+        if len(self.stack) > self.limit:
+            raise ValueError("Stack is full")
 
     def is_not_empty(self):
         return len(self.stack) > 0
@@ -17,6 +22,7 @@ class Stack:
 
     def extend(self, items):
         self.stack.extend(items)
+        self._check_limit()
 
     def over(self):
         self.push(self.stack[-2])
@@ -26,6 +32,7 @@ class Stack:
 
     def push(self, item):
         self.stack.append(item)
+        self._check_limit()
 
     def rot(self):
         stack = self.stack
