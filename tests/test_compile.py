@@ -433,6 +433,12 @@ class TestCompile:
             f.compile(' EXECUTE ' )
         assert str(e.value) == 'Stack is full'
 
+    def test_partial_definition(self):
+        f = Forth()
+        with pytest.raises(ValueError) as e:
+            f.compile(': FOO 444 222 +')
+        assert str(e.value) == 'Unexpected end of input'
+
 
 
 

@@ -47,6 +47,8 @@ class Forth:
         self.word_list = []
         while True:
             token = self.next_token()
+            if token is None:
+                raise ValueError('Unexpected end of input')
             if (definition := self.find_word(token)) is not None:
                 if definition.immediate:
                     definition.do(self)
