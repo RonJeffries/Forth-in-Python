@@ -440,9 +440,3 @@ class TestCompile:
         assert str(e.value) == 'Unexpected end of input'
 
 
-
-
-
-
-
-
