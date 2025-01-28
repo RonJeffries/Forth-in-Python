@@ -55,19 +55,19 @@ class Forth:
                     definition.do(self)
                 else:
                     self.word_list.append(definition)
-            elif (num := self.compile_number(token)) is not None:
-                self.append_number(num, self.word_list)
+            elif (num := self.parse_number(token)) is not None:
+                self.compile_literal(num, self.word_list)
             else:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
             if self.compile_stack.is_empty():
                 break
         return SecondaryWord('nameless', self.word_list)
 
-    def append_number(self, num, word_list):
+    def compile_literal(self, num, word_list):
         word_list.append(self.find_word('*#'))
         word_list.append(num)
 
-    def compile_number(self, word):
+    def parse_number(self, word):
         try:
             return int(word)
         except ValueError:
