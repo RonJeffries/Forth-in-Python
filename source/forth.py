@@ -24,9 +24,10 @@ class Forth:
         return self.active_words[-1]
 
     def next_token(self):
-        if self.token_index >= len(self.tokens):
+        try:
+            token = self.tokens[self.token_index]
+        except IndexError:
             return None
-        token = self.tokens[self.token_index]
         self.token_index += 1
         return token.upper()
 
