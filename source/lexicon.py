@@ -155,6 +155,9 @@ class Lexicon:
         self.pw('>R',    lambda f: f.return_stack.push(f.stack.pop()))
         self.pw('R>',    lambda f: f.stack.push(f.return_stack.pop()))
         self.pw('R@',    lambda f: f.stack.push(f.return_stack.top()))
+        dup_lambda = lambda f: f.stack.dup()
+        dup_word = SecondaryWord('DUP', [dup_lambda])
+        self.append(dup_word)
 
     def define_arithmetic(self):
         self.pw('-',  lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))

@@ -28,7 +28,10 @@ class SecondaryWord:
         self.pc = 0
         while self.pc < len(self.words):
             w =  self.next_word()
-            w.do(forth)
+            try:
+                w(forth)
+            except Exception:
+                w.do(forth)
         forth.end()
 
     def next_word(self):
