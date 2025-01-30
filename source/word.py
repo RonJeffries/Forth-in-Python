@@ -14,25 +14,28 @@ class PrimaryWord:
 
 
 class SecondaryWord:
-    def __init__(self, name, word_list, immediate=False):
+    def __init__(self, name, word_list, immediate=False, secondary=True):
         self.name = name
         self.words = word_list
         self.immediate = immediate
+        self.secondary = secondary
         self.pc = 0
 
     def append(self, word):
         self.words.append(word)
 
     def do(self, forth):
-        forth.begin(self)
+        if self.secondary:
+            forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
             w =  self.next_word()
-            try:
+            if callable(w):
                 w(forth)
-            except Exception:
+            else:
                 w.do(forth)
-        forth.end()
+        if self.secondary:
+            forth.end()
 
     def next_word(self):
         word =  self.words[self.pc]

@@ -9,7 +9,7 @@ class Lexicon:
         self._latest = None
 
     def pw(self, name, code, immediate=False):
-        self.append(PrimaryWord(name, code, immediate=immediate))
+        self.append(SecondaryWord(name, [code], immediate=immediate, secondary=False))
 
     def append(self, word):
         self._latest = word
