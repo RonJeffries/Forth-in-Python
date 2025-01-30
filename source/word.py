@@ -11,16 +11,16 @@ class Word:
     def append(self, word):
         self.words.append(word)
 
+    def __call__(self, *args, **kwargs):
+        self.do(*args, **kwargs)
+
     def do(self, forth):
         if self.secondary:
             forth.begin(self)
         self.pc = 0
         while self.pc < len(self.words):
             w =  self.next_word()
-            if callable(w):
-                w(forth)
-            else:
-                w.do(forth)
+            w(forth)
         if self.secondary:
             forth.end()
 
