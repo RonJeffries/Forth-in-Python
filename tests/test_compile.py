@@ -2,7 +2,7 @@ import pytest
 
 from source.forth import Forth
 from source.stack import Stack
-from source.word import SecondaryWord
+from source.word import Word
 
 
 class TestCompile:
@@ -98,7 +98,7 @@ class TestCompile:
         dup = f.find_word('DUP')
         plus = f.find_word('+')
         indices = [lit, 3, dup, plus]
-        sw = SecondaryWord('TEST', indices)
+        sw = Word('TEST', indices)
         sw.do(f)
         assert f.stack.pop() == 6
 

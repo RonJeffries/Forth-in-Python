@@ -1,6 +1,6 @@
 import math
 
-from source.word import SecondaryWord
+from source.word import Word
 
 
 class Lexicon:
@@ -9,7 +9,7 @@ class Lexicon:
         self._latest = None
 
     def pw(self, name, code, immediate=False):
-        self.append(SecondaryWord(name, [code], immediate=immediate, secondary=False))
+        self.append(Word(name, [code], immediate=immediate, secondary=False))
 
     def append(self, word):
         self._latest = word
@@ -58,7 +58,7 @@ class Lexicon:
     def _define_colon_semi(self):
         def _semi(forth):
             definition_name = forth.compile_stack.pop()
-            word = SecondaryWord(definition_name, forth.word_list[:])
+            word = Word(definition_name, forth.word_list[:])
             forth.lexicon.append(word)
             forth.word_list.clear()
 
@@ -70,7 +70,7 @@ class Lexicon:
             address = forth.heap.next_available()
             literal = forth.find_word('*#')
             name = forth.next_token()
-            word = SecondaryWord(name, [literal, address])
+            word = Word(name, [literal, address])
             forth.lexicon.append(word)
 
         self.pw('DOES>', lambda f: f.active_word.copy_to_latest(f.lexicon))
@@ -156,7 +156,7 @@ class Lexicon:
         self.pw('R>',    lambda f: f.stack.push(f.return_stack.pop()))
         self.pw('R@',    lambda f: f.stack.push(f.return_stack.top()))
         dup_lambda = lambda f: f.stack.dup()
-        dup_word = SecondaryWord('DUP', [dup_lambda])
+        dup_word = Word('DUP', [dup_lambda])
         self.append(dup_word)
 
     def define_arithmetic(self):

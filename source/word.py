@@ -1,6 +1,6 @@
 
 
-class SecondaryWord:
+class Word:
     def __init__(self, name, word_list, immediate=False, secondary=True):
         self.name = name
         self.words = word_list

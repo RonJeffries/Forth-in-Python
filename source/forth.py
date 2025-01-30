@@ -3,7 +3,7 @@ import re
 from source.heap import Heap
 from source.lexicon import Lexicon
 from source.stack import Stack
-from source.word import SecondaryWord
+from source.word import Word
 
 
 class Forth:
@@ -61,7 +61,7 @@ class Forth:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
             if self.compile_stack.is_empty():
                 break
-        return SecondaryWord('nameless', self.word_list)
+        return Word('nameless', self.word_list)
 
     def compile_literal(self, num, word_list):
         word_list.append(self.find_word('*#'))
