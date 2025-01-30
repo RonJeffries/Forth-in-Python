@@ -11,10 +11,7 @@ class Word:
     def append(self, word):
         self.words.append(word)
 
-    def __call__(self, *args, **kwargs):
-        self.do(*args, **kwargs)
-
-    def do(self, forth):
+    def __call__(self, forth):
         if self.secondary:
             forth.begin(self)
         self.pc = 0

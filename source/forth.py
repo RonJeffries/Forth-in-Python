@@ -42,7 +42,7 @@ class Forth:
         self.tokens = new_text.split()
         self.token_index = 0
         while self.token_index < len(self.tokens):
-            self.compile_a_word().do(self)
+            self.compile_a_word()(self)
 
     def compile_a_word(self):
         self.word_list = []
@@ -52,7 +52,7 @@ class Forth:
                 raise ValueError('Unexpected end of input')
             if (definition := self.find_word(token)) is not None:
                 if definition.immediate:
-                    definition.do(self)
+                    definition(self)
                 else:
                     self.word_list.append(definition)
             elif (num := self.parse_number(token)) is not None:
