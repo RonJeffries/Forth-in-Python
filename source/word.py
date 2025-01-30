@@ -1,18 +1,5 @@
 
 
-class PrimaryWord:
-    def __init__(self, name, code, immediate=False):
-        self.name = name
-        self.code = code
-        self.immediate = immediate
-
-    def do(self, forth):
-        self.code(forth)
-
-    def __repr__(self):
-        return f' {self.name}'
-
-
 class SecondaryWord:
     def __init__(self, name, word_list, immediate=False, secondary=True):
         self.name = name
