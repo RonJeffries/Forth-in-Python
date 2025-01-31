@@ -1,4 +1,10 @@
 
+
+
+class IForth:
+    pass
+
+
 class TestInterpreter:
-    def test_hookup(self):
-        assert True
+    def test_exists(self):
+        forth = IForth()
