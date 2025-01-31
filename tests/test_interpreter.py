@@ -23,18 +23,8 @@ class IForth:
 
     def execute(self, command):
         if self.if_active:
-            if command == 'then':
-                self.if_active = False
-                result = self.pop()
-                if result != 0:
-                    line = ' '.join(self.if_words)
-                    self.if_words = []
-                    self.execute_line(line)
-                    return
-            else:
-                self.if_words.append(command)
-                print(f'{self.if_words=}')
-                return
+            self.handle_if(command)
+            return
 
         if command == 'dup':
             self.stack.append(self.stack[-1])
@@ -45,6 +35,19 @@ class IForth:
             self.if_words = []
         elif self.was_number(command):
             pass
+
+    def handle_if(self, command):
+        if command == 'then':
+            self.if_active = False
+            result = self.pop()
+            if result != 0:
+                line = ' '.join(self.if_words)
+                self.if_words = []
+                self.execute_line(line)
+                return
+        else:
+            self.if_words.append(command)
+            return
 
     def was_number(self, command):
         try:
