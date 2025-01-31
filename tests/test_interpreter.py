@@ -24,6 +24,16 @@ class IForth:
             self.stack.append(self.stack[-1])
         elif command == "+":
             self.push(self.pop() + self.pop())
+        elif self.was_number(command):
+            pass
+
+    def was_number(self, command):
+        try:
+            number = int(command)
+            self.push(number)
+            return True
+        except ValueError:
+            return False
 
 
 class TestInterpreter:
@@ -56,4 +66,9 @@ class TestInterpreter:
         forth = IForth()
         forth.stack.append(21)
         forth.execute_line('dup +')
+        assert forth.stack == [42]
+
+    def test_numbers(self):
+        forth = IForth()
+        forth.execute_line('11 31 +')
         assert forth.stack == [42]
