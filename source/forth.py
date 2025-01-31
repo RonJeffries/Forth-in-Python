@@ -42,7 +42,8 @@ class Forth:
         self.tokens = new_text.split()
         self.token_index = 0
         while self.token_index < len(self.tokens):
-            self.compile_a_word()(self)
+            word = self.compile_a_word()
+            word(self)
 
     def compile_a_word(self):
         self.word_list = []
