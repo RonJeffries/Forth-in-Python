@@ -104,3 +104,8 @@ class TestInterpreter:
         forth = IForth()
         forth.execute_line('21 0 if dup + then')
         assert forth.stack == [21]
+
+    # def test_nested_if(self):
+    #     forth = IForth()
+    #     forth.execute_line('5 1 if 4 > if 42 then 666 then')
+    #     assert forth.stack == [42, 666]
