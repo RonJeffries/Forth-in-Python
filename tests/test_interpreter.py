@@ -4,6 +4,8 @@
 class IForth:
     def __init__(self):
         self.stack = []
+        self.if_active = False
+        self.if_words = []
 
     def push(self, value):
         self.stack.append(value)
@@ -20,10 +22,27 @@ class IForth:
             self.execute(token)
 
     def execute(self, command):
+        if self.if_active:
+            if command == 'then':
+                self.if_active = False
+                result = self.pop()
+                if result != 0:
+                    line = ' '.join(self.if_words)
+                    self.if_words = []
+                    self.execute_line(line)
+                    return
+            else:
+                self.if_words.append(command)
+                print(f'{self.if_words=}')
+                return
+
         if command == 'dup':
             self.stack.append(self.stack[-1])
         elif command == "+":
             self.push(self.pop() + self.pop())
+        elif command == 'if':
+            self.if_active = True
+            self.if_words = []
         elif self.was_number(command):
             pass
 
@@ -72,3 +91,13 @@ class TestInterpreter:
         forth = IForth()
         forth.execute_line('11 31 +')
         assert forth.stack == [42]
+
+    def test_if_then_true(self):
+        forth = IForth()
+        forth.execute_line('21 1 if dup + then')
+        assert forth.stack == [42]
+
+    def test_if_then_false(self):
+        forth = IForth()
+        forth.execute_line('21 0 if dup + then')
+        assert forth.stack == [21]
