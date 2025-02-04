@@ -439,4 +439,16 @@ class TestCompile:
             f.compile(': FOO 444 222 +')
         assert str(e.value) == 'Unexpected end of input'
 
+    def test_safe_compile(self):
+        f = Forth()
+        result = f.safe_compile('1 2 3 2 /')
+        assert result == "ok"
+        result = f.safe_compile('1 2 3 0 /')
+        assert result == 'integer division or modulo by zero ?'
+        assert f.stack.is_empty()
+
+    def test_safe_compile_needs_more_input(self):
+        f = Forth()
+        result = f.safe_compile(': FOO 42 ')  # no semicolon
+        assert result == '...'
 

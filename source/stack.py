@@ -14,6 +14,9 @@ class Stack:
     def is_empty(self):
         return len(self.stack) == 0
 
+    def clear(self):
+        self.stack.clear()
+
     def dump(self, name, pc):
         print(f'{name}[{pc}]: {self.stack}')
 

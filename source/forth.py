@@ -19,6 +19,12 @@ class Forth:
         self.token_index = 0
         self.word_list = None
 
+    def abend(self):
+        self.stack.clear()
+        self.compile_stack.clear()
+        self.return_stack.clear()
+        self.active_words = []
+
     @property
     def active_word(self):
         return self.active_words[-1]
@@ -37,6 +43,18 @@ class Forth:
     def end(self):
         self.active_words.pop()
 
+    def safe_compile(self, text):
+        try:
+            self.compile(text)
+        except Exception as e:
+            msg = str(e)
+            if msg  == 'Unexpected end of input':
+                return '...'
+            else:
+                self.abend()
+                return f'{e} ?'
+        return 'ok'
+
     def compile(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
         self.tokens = new_text.split()
@@ -46,7 +64,8 @@ class Forth:
             word(self)
 
     def compile_a_word(self):
-        self.word_list = []
+        if self.compile_stack.is_empty():
+            self.word_list = []
         while True:
             token = self.next_token()
             if token is None:
