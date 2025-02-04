@@ -43,9 +43,9 @@ class Forth:
     def end(self):
         self.active_words.pop()
 
-    def safe_compile(self, text):
+    def compile(self, text):
         try:
-            self.compile(text)
+            self.unsafe_compile(text)
         except Exception as e:
             msg = str(e)
             if msg  == 'Unexpected end of input':
@@ -55,7 +55,7 @@ class Forth:
                 return f'{e} ?'
         return 'ok'
 
-    def compile(self, text):
+    def unsafe_compile(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
         self.tokens = new_text.split()
         self.token_index = 0

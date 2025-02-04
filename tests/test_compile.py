@@ -9,10 +9,10 @@ class TestCompile:
 
     def test_compiler_hyp(self):
         f = Forth()
-        f.compile(': SQUARE DUP * ;')
-        f.compile(': HYPSQ SQUARE SWAP SQUARE + ;')
-        f.compile(': HYP HYPSQ SQRT ;')
-        f.compile('3 4 HYP')
+        f.unsafe_compile(': SQUARE DUP * ;')
+        f.unsafe_compile(': HYPSQ SQUARE SWAP SQUARE + ;')
+        f.unsafe_compile(': HYP HYPSQ SQRT ;')
+        f.unsafe_compile('3 4 HYP')
         assert f.stack.pop() == 5
         assert f.active_words == []
 
@@ -66,7 +66,7 @@ class TestCompile:
         f = Forth()
         s = '; SQUARE DUP + ;'
         with pytest.raises(IndexError) as e:
-            f.compile(s)
+            f.unsafe_compile(s)
         assert (str(e.value) ==
                 'pop from empty list')
 
@@ -74,14 +74,14 @@ class TestCompile:
         f = Forth()
         s = ': SQUARE UNKNOWN_WORD + ;'
         with pytest.raises(SyntaxError) as e:
-            f.compile(s)
+            f.unsafe_compile(s)
         assert (str(e.value) ==
                 'Syntax error: "UNKNOWN_WORD" unrecognized')
 
     def test_compile_if(self):
         f = Forth()
         s = ': TEST IF DUP + THEN ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         print(test_word.words)
         f.stack.extend([5, 0])
@@ -104,13 +104,13 @@ class TestCompile:
 
     def test_lit_compiled(self):
         f = Forth()
-        f.compile('3 4 +')
+        f.unsafe_compile('3 4 +')
         assert f.stack.pop() == 7
 
     def test_if_true(self):
         f = Forth()
         s = ': TEST 5 1 IF DUP + THEN 100 + ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         test_word(f)
         assert f.stack.pop() == 110
@@ -118,7 +118,7 @@ class TestCompile:
     def test_if_false(self):
         f = Forth()
         s = ': TEST 5 0 IF DUP + THEN 100 + ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         test_word(f)
         assert f.stack.pop() == 105
@@ -126,7 +126,7 @@ class TestCompile:
     def test_if_nested(self):
         f = Forth()
         s = ': TEST 200 100 1 1 IF 5 SWAP IF DUP THEN THEN + ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         test_word(f)
         assert f.stack.pop() == 10
@@ -134,14 +134,14 @@ class TestCompile:
 
         f = Forth()
         s = ': TEST 200 100 0 1 IF 5 SWAP IF DUP THEN THEN + ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         test_word(f)
         assert f.stack.pop() == 105
 
         f = Forth()
         s = ': TEST 200 100 0 IF 5 SWAP IF DUP THEN THEN + ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         test_word(f)
         assert f.stack.pop() == 300
@@ -149,7 +149,7 @@ class TestCompile:
     def test_else(self):
         f = Forth()
         s = ': TEST IF 5 ELSE 50 THEN ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test_word = f.find_word('TEST')
         f.stack.push(1)
         test_word(f)
@@ -160,46 +160,46 @@ class TestCompile:
 
     def test_conditionals(self):
         f = Forth()
-        f.compile(' 1 1 = ')
+        f.unsafe_compile(' 1 1 = ')
         assert f.stack.pop() == 1
-        f.compile(' 2 1 = ')
+        f.unsafe_compile(' 2 1 = ')
         assert f.stack.pop() == 0
-        f.compile(' 2 1 < ')
+        f.unsafe_compile(' 2 1 < ')
         assert f.stack.pop() == 1
-        f.compile(' 1 2 < ')
+        f.unsafe_compile(' 1 2 < ')
         assert f.stack.pop() == 0
-        f.compile(' 2 1 > ')
+        f.unsafe_compile(' 2 1 > ')
         assert f.stack.pop() == 0
-        f.compile(' 1 2 > ')
+        f.unsafe_compile(' 1 2 > ')
         assert f.stack.pop() == 1
-        f.compile(' 2 1 >= ')
+        f.unsafe_compile(' 2 1 >= ')
         assert f.stack.pop() == 0
-        f.compile(' 1 2 >= ')
+        f.unsafe_compile(' 1 2 >= ')
         assert f.stack.pop() == 1
-        f.compile(' 2 2 >= ')
+        f.unsafe_compile(' 2 2 >= ')
         assert f.stack.pop() == 1
-        f.compile(' 2 1 <= ')
+        f.unsafe_compile(' 2 1 <= ')
         assert f.stack.pop() == 1
-        f.compile(' 1 2 <= ')
+        f.unsafe_compile(' 1 2 <= ')
         assert f.stack.pop() == 0
-        f.compile(' 2 2 <= ')
+        f.unsafe_compile(' 2 2 <= ')
         assert f.stack.pop() == 1
 
     def test_double(self):
         f = Forth()
         s = ': DOUBLE 2 * ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         s = ': TEST 5 DOUBLE DOUBLE DOUBLE ;'
-        f.compile(s)
-        f.compile('TEST')
+        f.unsafe_compile(s)
+        f.unsafe_compile('TEST')
         assert f.stack.pop() == 40
 
     def test_double_under(self):
         f = Forth()
-        f.compile(': DOUBLE 2 * ;')
-        f.compile(': DU SWAP DOUBLE SWAP ;')
+        f.unsafe_compile(': DOUBLE 2 * ;')
+        f.unsafe_compile(': DU SWAP DOUBLE SWAP ;')
         s = ': TEST 2 5 DU DU DU DU ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         test = f.find_word('TEST')
         test(f)
         assert f.stack.pop() == 5
@@ -207,46 +207,46 @@ class TestCompile:
 
     def test_double_under_direct(self):
         f = Forth()
-        f.compile(': DOUBLE 2 * ;')
-        f.compile(': DU SWAP DOUBLE SWAP ;')
+        f.unsafe_compile(': DOUBLE 2 * ;')
+        f.unsafe_compile(': DU SWAP DOUBLE SWAP ;')
         s = ' 2 5 DU DU DU DU '
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.pop() == 5
         assert f.stack.pop() == 32
 
     def test_begin_until_hard(self):
         f = Forth()
-        f.compile(': DOUBLE 2 * ;')
-        f.compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
+        f.unsafe_compile(': DOUBLE 2 * ;')
+        f.unsafe_compile(': DOUBLE_UNDER SWAP DOUBLE SWAP ;')
         s = ': TEST 2 5 BEGIN DOUBLE_UNDER 1- DUP 0 >= UNTIL ;'
-        f.compile(s)
-        f.compile('TEST')
+        f.unsafe_compile(s)
+        f.unsafe_compile('TEST')
         assert f.stack.pop() == 0
         assert f.stack.pop() == 64
 
     def test_begin_until_inline(self):
         f = Forth()
         s = ' 2 5 BEGIN SWAP 2 * SWAP 1- DUP 0 >= UNTIL '
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.pop() == 0
         assert f.stack.pop() == 64
 
     def test_pow_step(self):
         f = Forth()
         pow_step = ': POW_STEP DUP ROT * SWAP ;'
-        f.compile(pow_step)
-        f.compile(' 9 3 POW_STEP ')
+        f.unsafe_compile(pow_step)
+        f.unsafe_compile(' 9 3 POW_STEP ')
         assert f.stack.pop() == 3
         assert f.stack.pop() == 27
 
     def test_power(self):
         f = Forth()
-        f.compile(': 2ROT ROT ROT ;')
+        f.unsafe_compile(': 2ROT ROT ROT ;')
         pow_step = (': POW_STEP '
                     '(prod base -- prod*base base)'
                     'DUP ROT * SWAP ;')
-        f.compile(pow_step)
-        f.compile(': POWER'
+        f.unsafe_compile(pow_step)
+        f.unsafe_compile(': POWER'
                   '(base power -- base**power) '
                   '1 2ROT           (1 base power)'
                   'BEGIN 2ROT       (power 1 base)'
@@ -254,13 +254,13 @@ class TestCompile:
                   'ROT              (product base power)'
                   '1- DUP 0 = UNTIL (product base power)'
                   'DROP DROP        (product) ;')
-        f.compile(' 3 4 POWER ')
+        f.unsafe_compile(' 3 4 POWER ')
         assert f.stack.pop() == 81
 
     def test_comment(self):
         f = Forth()
-        f.compile(': TEST ( a b -- b a ) SWAP ;')
-        f.compile(': TEST (a b -- b a) SWAP ;')
+        f.unsafe_compile(': TEST ( a b -- b a ) SWAP ;')
+        f.unsafe_compile(': TEST (a b -- b a) SWAP ;')
 
     def test_different_loop(self):
         p = (': POWER'
@@ -271,153 +271,153 @@ class TestCompile:
     def test_return_stack(self):
         f = Forth()
         s = ' 3 >R 4 5 + R@ + R> +'
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.return_stack == []
         assert f.stack.pop() == 15
 
     def test_initial_do(self):
         f = Forth()
         s = ' 5 0 DO I 10 * LOOP '
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.stack == [0, 10, 20, 30, 40]
 
     def test_direct_execute(self):
         f = Forth()
-        f.compile('3 4')
+        f.unsafe_compile('3 4')
         assert f.stack.stack == [3, 4]
 
     def test_direct_harder(self):
         f = Forth()
         s = (': SUM + ; '
              ' 3 4 SUM')
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.pop() == 7
 
     def test_2DUP(self):
         f = Forth()
         s = '1 5 2DUP'
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.stack == [1, 5, 1, 5]
 
     def test_compiled_star_loop(self):
         f = Forth()
-        f.compile(': JUMP_BACK ;')
-        f.compile(': SKIP ;')
+        f.unsafe_compile(': JUMP_BACK ;')
+        f.unsafe_compile(': SKIP ;')
         star_loop = ': *LOOP R> R> SWAP 1 + 2DUP < IF SWAP >R >R JUMP_BACK ELSE DROP DROP SKIP THEN ;'
         # f.compile(star_loop)
         s = ' 5 0 DO I 10 * LOOP '
-        f.compile(s)
+        f.unsafe_compile(s)
         assert f.stack.stack == [0, 10, 20, 30, 40]
 
     def test_rudimentary_heap(self):
         f = Forth()
-        f.compile('9 ALLOT')
-        f.compile('666 4 !')
+        f.unsafe_compile('9 ALLOT')
+        f.unsafe_compile('666 4 !')
         assert f.heap.at(4) == 666
-        f.compile('4 @')
+        f.unsafe_compile('4 @')
         assert f.stack.pop() == 666
 
     def test_rudimentary_heap_arithmetic(self):
         f = Forth()
-        f.compile('9 ALLOT')
-        f.compile('666 4 !')
-        f.compile('1 3 + @')
+        f.unsafe_compile('9 ALLOT')
+        f.unsafe_compile('666 4 !')
+        f.unsafe_compile('1 3 + @')
         assert f.stack.pop() == 666
 
     def test_rudimentary_heap_overflow(self):
         f = Forth()
         with pytest.raises(IndexError):
-            f.compile('666 10 !')
+            f.unsafe_compile('666 10 !')
 
 
     def test_constant(self):
         f = Forth()
-        f.compile('666 CONSTANT FOO')
-        f.compile('777 CONSTANT BAR')
-        f.compile('888 CONSTANT BAZ')
+        f.unsafe_compile('666 CONSTANT FOO')
+        f.unsafe_compile('777 CONSTANT BAR')
+        f.unsafe_compile('888 CONSTANT BAZ')
         assert f.stack.stack == []
-        f.compile('BAZ BAR FOO')
+        f.unsafe_compile('BAZ BAR FOO')
         assert f.stack.stack == [888, 777, 666]
 
     def test_variable(self):
         f = Forth()
-        f.compile('VARIABLE FOO 1 ALLOT')
-        f.compile('VARIABLE BAR 1 ALLOT')
-        f.compile('VARIABLE BAZ 1 ALLOT')
-        f.compile('666 FOO !')
-        f.compile('777 BAR !')
-        f.compile('888 BAZ !')
-        f.compile('BAZ @ BAR @ FOO @')
+        f.unsafe_compile('VARIABLE FOO 1 ALLOT')
+        f.unsafe_compile('VARIABLE BAR 1 ALLOT')
+        f.unsafe_compile('VARIABLE BAZ 1 ALLOT')
+        f.unsafe_compile('666 FOO !')
+        f.unsafe_compile('777 BAR !')
+        f.unsafe_compile('888 BAZ !')
+        f.unsafe_compile('BAZ @ BAR @ FOO @')
         assert f.stack.stack == [888, 777, 666]
 
     def test_variable_without_allot_fails(self):
         f = Forth()
-        f.compile('VARIABLE FOO')
+        f.unsafe_compile('VARIABLE FOO')
         with pytest.raises(IndexError):
-            f.compile('FOO @')
+            f.unsafe_compile('FOO @')
 
     def test_compile_create_does(self):
         f = Forth()
-        f.compile('1 , 2 , 3 ,')
+        f.unsafe_compile('1 , 2 , 3 ,')
         s = ': CONSTANT CREATE , DOES> @ ;'
-        f.compile(s)
+        f.unsafe_compile(s)
         expected = f.heap.next_available()
-        f.compile('2025 CONSTANT YEAR')
+        f.unsafe_compile('2025 CONSTANT YEAR')
         assert f.heap.at(expected) == 2025
-        f. compile('YEAR')
+        f. unsafe_compile('YEAR')
         assert f.stack.pop() == 2025
 
     def test_compile_two_constants(self):
         f = Forth()
-        f.compile('1 , 2 , 3 ,')
+        f.unsafe_compile('1 , 2 , 3 ,')
         s = ': CONSTANT CREATE , DOES> @ ;'
-        f.compile(s)
-        f.compile('2025 CONSTANT YEAR')
-        f.compile('1939 CONSTANT BIRTH_YEAR')
-        f. compile('YEAR BIRTH_YEAR - 1 -')
+        f.unsafe_compile(s)
+        f.unsafe_compile('2025 CONSTANT YEAR')
+        f.unsafe_compile('1939 CONSTANT BIRTH_YEAR')
+        f. unsafe_compile('YEAR BIRTH_YEAR - 1 -')
         assert f.stack.pop() == 85
 
     def test_create_makes_a_word(self):
         f = Forth()
-        f.compile('CREATE FOO')
-        f. compile('FOO')
+        f.unsafe_compile('CREATE FOO')
+        f. unsafe_compile('FOO')
 
     def test_first_create_is_at_zero(self):
         f = Forth()
-        f.compile('CREATE FOO')
-        f. compile('FOO')
+        f.unsafe_compile('CREATE FOO')
+        f. unsafe_compile('FOO')
         assert f.stack.pop() == 0
 
     def test_create_is_at_heap_end(self):
         f = Forth()
-        f.compile('VARIABLE FOO 3 ALLOT')
+        f.unsafe_compile('VARIABLE FOO 3 ALLOT')
         assert f.heap.next_available() == 3
-        f.compile('CREATE BAR')
-        f. compile('BAR')
+        f.unsafe_compile('CREATE BAR')
+        f. unsafe_compile('BAR')
         assert f.stack.pop() == 3
 
     def test_demo_create(self):
         f = Forth()
-        f.compile('VARIABLE FOO 3 ALLOT')
+        f.unsafe_compile('VARIABLE FOO 3 ALLOT')
         assert f.heap.next_available() == 3
-        f.compile('CREATE BAR 1 ALLOT')
-        f. compile('BAR @')
+        f.unsafe_compile('CREATE BAR 1 ALLOT')
+        f. unsafe_compile('BAR @')
         assert f.stack.pop() == 0
-        f.compile('42 BAR !')
+        f.unsafe_compile('42 BAR !')
         assert f.stack.stack == []
-        f. compile('BAR @')
+        f. unsafe_compile('BAR @')
         assert f.stack.pop() == 42
 
     def test_comma(self):
         f = Forth()
         assert f.heap.next_available() == 0
-        f.compile('33 ,')
+        f.unsafe_compile('33 ,')
         assert f.heap.next_available() == 1
         assert f.heap.at(0) == 33
 
     def test_create_comma(self):
         f = Forth()
-        f.compile('CREATE BAR 19 , BAR @  23 +')
+        f.unsafe_compile('CREATE BAR 19 , BAR @  23 +')
         assert f.stack.pop() == 42
 
     def test_get_lexicon_info(self):
@@ -428,27 +428,27 @@ class TestCompile:
 
     def test_destroy_world(self):
         f = Forth()
-        f.compile(': EXECUTE BEGIN 666 0 UNTIL ;')
+        f.unsafe_compile(': EXECUTE BEGIN 666 0 UNTIL ;')
         with pytest.raises(ValueError) as e:
-            f.compile(' EXECUTE ' )
+            f.unsafe_compile(' EXECUTE ')
         assert str(e.value) == 'Stack is full'
 
     def test_partial_definition(self):
         f = Forth()
         with pytest.raises(ValueError) as e:
-            f.compile(': FOO 444 222 +')
+            f.unsafe_compile(': FOO 444 222 +')
         assert str(e.value) == 'Unexpected end of input'
 
     def test_safe_compile(self):
         f = Forth()
-        result = f.safe_compile('1 2 3 2 /')
+        result = f.compile('1 2 3 2 /')
         assert result == "ok"
-        result = f.safe_compile('1 2 3 0 /')
+        result = f.compile('1 2 3 0 /')
         assert result == 'integer division or modulo by zero ?'
         assert f.stack.is_empty()
 
     def test_safe_compile_needs_more_input(self):
         f = Forth()
-        result = f.safe_compile(': FOO 42 ')  # no semicolon
+        result = f.compile(': FOO 42 ')  # no semicolon
         assert result == '...'
 

@@ -9,7 +9,7 @@ if __name__ == '__main__':
         line = input(prompt)
         if line == 'bye':
             break
-        result = forth.safe_compile(line)
+        result = forth.compile(line)
         prompt = 'Forth> '
         if result == '...':
             prompt = '...> '
