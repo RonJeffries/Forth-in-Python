@@ -36,11 +36,12 @@ class Word:
             latest.append(w)
 
     def __repr__(self):
-        result = f'{self.name}:'
         if self.secondary:
+            result = f': {self.name}'
             for word in self.words:
                 result += f' {word.name}'
+            result += ' ;'
         else:
-            result += ' <code>'
+            result = self.name + ': <code>'
         return result
 

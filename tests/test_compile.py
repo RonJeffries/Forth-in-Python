@@ -455,10 +455,10 @@ class TestCompile:
         f = Forth()
         f.compile(': double dup + ;')
         w = f.find_word('DOUBLE')
-        assert repr(w) == 'DOUBLE: DUP +'
+        assert repr(w) == ': DOUBLE DUP + ;'
         f.compile(': QUAD double double ;')
         w = f.find_word('QUAD')
-        assert repr(w) == 'QUAD: DOUBLE DOUBLE'
+        assert repr(w) == ': QUAD DOUBLE DOUBLE ;'
         w = f.find_word('DUP')
         assert repr(w) == 'DUP: <code>'
 
