@@ -83,7 +83,6 @@ class TestCompile:
         s = ': TEST IF DUP + THEN ;'
         f.unsafe_compile(s)
         test_word = f.find_word('TEST')
-        print(test_word.words)
         f.stack.extend([5, 0])
         test_word(f)
         assert f.stack.pop() == 5
@@ -451,4 +450,15 @@ class TestCompile:
         f = Forth()
         result = f.compile(': FOO 42 ')  # no semicolon
         assert result == '...'
+
+    def test_repr(self):
+        f = Forth()
+        f.compile(': double dup + ;')
+        w = f.find_word('DOUBLE')
+        assert repr(w) == 'DOUBLE: DUP +'
+        f.compile(': QUAD double double ;')
+        w = f.find_word('QUAD')
+        assert repr(w) == 'QUAD: DOUBLE DOUBLE'
+        w = f.find_word('DUP')
+        assert repr(w) == 'DUP: <code>'
 
