@@ -462,3 +462,9 @@ class TestCompile:
         w = f.find_word('DUP')
         assert repr(w) == 'DUP: <code>'
 
+    # def test_repr_if(self):
+    #     f = Forth()
+    #     f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
+    #     w = f.find_word('FOO')
+    #     assert repr(w) == 'FOO'
+
