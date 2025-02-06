@@ -85,14 +85,14 @@ class Forth:
 
     def find_word_or_literal(self, token):
         found_word = self.find_word(token)
-        if found_word is None:
-            num = self.parse_number(token)
-            if num is not None:
-                literal = self.find_word('*#')
-                found_word = Word('', [literal, num])
-            else:
-                raise SyntaxError(f'Syntax error: "{token}" unrecognized')
-        return found_word
+        if found_word:
+            return found_word
+        num = self.parse_number(token)
+        if num is not None:  # might be zero
+            literal = self.find_word('*#')
+            return Word('', [literal, num])
+        else:
+            raise SyntaxError(f'Syntax error: "{token}" unrecognized')
 
     def compile_literal(self, num, word_list):
         word_list.append(self.find_word('*#'))
