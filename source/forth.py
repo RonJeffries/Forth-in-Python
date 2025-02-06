@@ -72,16 +72,12 @@ class Forth:
             found_word = self.find_word_or_literal(token)
             if not self.compilation_state:
                 return found_word
-            if (definition := found_word) is not None:
-                if definition.immediate:
-                    definition(self)
-                else:
-                    self.word_list.append(found_word)
+            if found_word.immediate:
+                found_word(self)
+            else:
+                self.word_list.append(found_word)
             if not self.compilation_state:
-                break
-        word = Word('nameless', self.word_list[:])
-        self.word_list.clear()
-        return word
+                return Word('no-op', [])
 
     def find_word_or_literal(self, token):
         found_word = self.find_word(token)
