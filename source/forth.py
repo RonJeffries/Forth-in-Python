@@ -86,11 +86,8 @@ class Forth:
         else:
             raise SyntaxError(f'Syntax error: "{token}" unrecognized')
 
-    def compile_literal(self, num, word_list):
-        word_list.append(self.find_word('*#'))
-        word_list.append(num)
-
-    def parse_number(self, word):
+    @staticmethod
+    def parse_number(word):
         try:
             return int(word)
         except ValueError:
