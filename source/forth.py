@@ -28,7 +28,10 @@ class Forth:
 
     @property
     def active_word(self):
-        return self.active_words[-1]
+        if self.active_words:
+            return self.active_words[-1]
+        else:
+            return Word('no active word', [])
 
     def next_token(self):
         try:

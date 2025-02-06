@@ -5,10 +5,7 @@ if __name__ == '__main__':
     forth = Forth()
     prompt = 'Forth> '
     while True:
-        line = input(prompt)
-        if line == 'bye':
-            break
-        result = forth.compile(line)
+        result = forth.compile(input(prompt))
         prompt = 'Forth> '
         if result == '...':
             prompt = '...> '

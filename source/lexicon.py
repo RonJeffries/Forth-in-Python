@@ -1,4 +1,5 @@
 import math
+import sys
 
 from source.word import Word
 
@@ -30,6 +31,7 @@ class Lexicon:
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
         self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR',   lambda f: print())
+        self.pw('BYE', lambda f: sys.exit())
         self.define_secondaries(forth)
 
     def define_secondaries(self, forth):
