@@ -69,20 +69,30 @@ class Forth:
             token = self.next_token()
             if token is None:
                 raise ValueError('Unexpected end of input')
-            if (definition := self.find_word(token)) is not None:
+            found_word = self.find_word_or_literal(token)
+            if not self.compilation_state:
+                return found_word
+            if (definition := found_word) is not None:
                 if definition.immediate:
                     definition(self)
                 else:
-                    self.word_list.append(definition)
-            elif (num := self.parse_number(token)) is not None:
-                self.compile_literal(num, self.word_list)
-            else:
-                raise SyntaxError(f'Syntax error: "{token}" unrecognized')
+                    self.word_list.append(found_word)
             if not self.compilation_state:
                 break
         word = Word('nameless', self.word_list[:])
         self.word_list.clear()
         return word
+
+    def find_word_or_literal(self, token):
+        found_word = self.find_word(token)
+        if found_word is None:
+            num = self.parse_number(token)
+            if num is not None:
+                literal = self.find_word('*#')
+                found_word = Word('', [literal, num])
+            else:
+                raise SyntaxError(f'Syntax error: "{token}" unrecognized')
+        return found_word
 
     def compile_literal(self, num, word_list):
         word_list.append(self.find_word('*#'))
