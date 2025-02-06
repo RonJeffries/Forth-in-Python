@@ -49,7 +49,7 @@ class Forth:
 
     def compile(self, text):
         try:
-            self.unsafe_compile(text)
+            self.process_line(text)
         except Exception as e:
             msg = str(e)
             if msg  == 'Unexpected end of input':
@@ -59,24 +59,21 @@ class Forth:
                 return f'{e} ?'
         return 'ok'
 
-    def unsafe_compile(self, text):
+    def process_line(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
         self.tokens = new_text.split()
         self.token_index = 0
         while self.token_index < len(self.tokens):
-            token = self.next_token()
-            word = self.compile_a_word(token)
-            word(self)
+            self.process_token(self.next_token())
         if self.compilation_state:
             raise ValueError('Unexpected end of input')
 
-    def compile_a_word(self, token):
+    def process_token(self, token):
         found_word = self.find_word_or_literal(token)
         if not self.compilation_state or found_word.immediate:
-            return found_word
+            found_word(self)
         else:
             self.word_list.append(found_word)
-            return Word('no-op', [])
 
     def find_word_or_literal(self, token):
         found_word = self.find_word(token)
