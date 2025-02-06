@@ -6,8 +6,8 @@ if __name__ == '__main__':
     prompt = 'Forth> '
     while True:
         result = forth.compile(input(prompt))
-        prompt = 'Forth> '
-        if result == '...':
-            prompt = '...> '
+        if forth.compilation_state:
+            prompt = '...'
         else:
+            prompt = 'Forth> '
             print(result)
