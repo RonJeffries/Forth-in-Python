@@ -78,15 +78,14 @@ class Forth:
     def get_definition(self, token):
         if definition := self.find_word(token):
             return definition
-        if (num := self.parse_number(token)) is not None:  # might be zero
-            return Word('', [(self.find_word('*#')), num])
+        elif (num := self.get_literal(token)) is not None:  # might be zero
+            return num
         else:
             raise SyntaxError(f'Syntax error: "{token}" unrecognized')
 
-    @staticmethod
-    def parse_number(word):
+    def get_literal(self, token):
         try:
-            return int(word)
+            return Word('', [self.find_word('*#'), int(token)])
         except ValueError:
             return None
 
