@@ -9,5 +9,5 @@ if __name__ == '__main__':
         if forth.compilation_state:
             prompt = '...'
         else:
-            prompt = 'Forth> '
             print(result)
+            prompt = 'Forth> '
