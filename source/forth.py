@@ -69,16 +69,16 @@ class Forth:
             raise ValueError('Unexpected end of input')
 
     def process_token(self, token):
-        found_word = self.find_word_or_literal(token)
-        if not self.compilation_state or found_word.immediate:
-            found_word(self)
+        definition = self.get_definition(token)
+        if not self.compilation_state or definition.immediate:
+            definition(self)
         else:
-            self.word_list.append(found_word)
+            self.word_list.append(definition)
 
-    def find_word_or_literal(self, token):
-        found_word = self.find_word(token)
-        if found_word:
-            return found_word
+    def get_definition(self, token):
+        definition = self.find_word(token)
+        if definition:
+            return definition
         num = self.parse_number(token)
         if num is not None:  # might be zero
             literal = self.find_word('*#')
