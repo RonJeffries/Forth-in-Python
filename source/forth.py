@@ -73,7 +73,7 @@ class Forth:
             if not self.compilation_state:
                 return found_word
             if found_word.immediate:
-                found_word(self)
+                return found_word
             else:
                 self.word_list.append(found_word)
             if not self.compilation_state:
