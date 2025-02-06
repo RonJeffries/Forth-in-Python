@@ -76,11 +76,9 @@ class Forth:
             self.word_list.append(definition)
 
     def get_definition(self, token):
-        definition = self.find_word(token)
-        if definition:
+        if (definition := self.find_word(token)):
             return definition
-        num = self.parse_number(token)
-        if num is not None:  # might be zero
+        if (num := self.parse_number(token)) is not None:  # might be zero
             literal = self.find_word('*#')
             return Word('', [literal, num])
         else:
