@@ -39,7 +39,10 @@ class Word:
         if self.secondary:
             result = f': {self.name}'
             for word in self.words:
-                result += f' {word.name}'
+                if type(word) is Word:
+                    result += f' {word.name}'
+                else:
+                    result += f' {word}'
             result += ' ;'
         else:
             result = self.name + ': <code>'

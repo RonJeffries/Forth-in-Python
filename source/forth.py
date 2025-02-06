@@ -10,14 +10,15 @@ class Forth:
     def __init__(self):
         self.active_words = []
         self.compile_stack = Stack()
+        self.compilation_state = False
         self.heap = Heap()
         self.lexicon = Lexicon()
-        self.lexicon.define_primaries(self)
         self.return_stack = Stack()
         self.stack = Stack()
         self.tokens = None
         self.token_index = 0
-        self.word_list = None
+        self.word_list = []
+        self.lexicon.define_primaries(self)
 
     def abend(self):
         self.stack.clear()
@@ -64,8 +65,6 @@ class Forth:
             word(self)
 
     def compile_a_word(self):
-        if self.compile_stack.is_empty():
-            self.word_list = []
         while True:
             token = self.next_token()
             if token is None:
@@ -79,9 +78,11 @@ class Forth:
                 self.compile_literal(num, self.word_list)
             else:
                 raise SyntaxError(f'Syntax error: "{token}" unrecognized')
-            if self.compile_stack.is_empty():
+            if not self.compilation_state:
                 break
-        return Word('nameless', self.word_list)
+        word = Word('nameless', self.word_list[:])
+        self.word_list.clear()
+        return word
 
     def compile_literal(self, num, word_list):
         word_list.append(self.find_word('*#'))

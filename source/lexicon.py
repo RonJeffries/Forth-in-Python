@@ -56,13 +56,19 @@ class Lexicon:
         self.pw('UNTIL', _until, immediate=True)
 
     def _define_colon_semi(self):
+        def _colon(forth):
+            forth.word_list.clear()
+            forth.compile_stack.push(forth.next_token())
+            forth.compilation_state = True
+
         def _semi(forth):
             definition_name = forth.compile_stack.pop()
             word = Word(definition_name, forth.word_list[:])
             forth.lexicon.append(word)
             forth.word_list.clear()
+            forth.compilation_state = False
 
-        self.pw(':', lambda f: f.compile_stack.push(f.next_token()), immediate=True)
+        self.pw(':', _colon, immediate=True)
         self.pw(';', _semi, immediate=True)
 
     def _define_create_does(self):
