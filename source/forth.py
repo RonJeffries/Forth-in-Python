@@ -61,23 +61,19 @@ class Forth:
         self.tokens = new_text.split()
         self.token_index = 0
         while self.token_index < len(self.tokens):
-            word = self.compile_a_word()
-            word(self)
-
-    def compile_a_word(self):
-        while True:
             token = self.next_token()
-            if token is None:
-                raise ValueError('Unexpected end of input')
-            found_word = self.find_word_or_literal(token)
-            if not self.compilation_state:
-                return found_word
-            if found_word.immediate:
-                return found_word
-            else:
-                self.word_list.append(found_word)
-            if not self.compilation_state:
-                return Word('no-op', [])
+            word = self.compile_a_word(token)
+            word(self)
+        if self.compilation_state:
+            raise ValueError('Unexpected end of input')
+
+    def compile_a_word(self, token):
+        found_word = self.find_word_or_literal(token)
+        if not self.compilation_state or found_word.immediate:
+            return found_word
+        else:
+            self.word_list.append(found_word)
+            return Word('no-op', [])
 
     def find_word_or_literal(self, token):
         found_word = self.find_word(token)
