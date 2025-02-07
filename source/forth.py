@@ -23,6 +23,7 @@ class Forth:
     def abend(self):
         self.stack.clear()
         self.compile_stack.clear()
+        self.compilation_state = False
         self.return_stack.clear()
         self.active_words = []
 

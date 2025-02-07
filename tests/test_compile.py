@@ -465,6 +465,12 @@ class TestCompile:
         w = f.find_word('DUP')
         assert repr(w) == 'DUP: <code>'
 
+    def test_clears_compilation_state(self):
+        f = Forth()
+        msg = f.compile(': foo bar ;')
+        assert msg == 'Syntax error: "BAR" unrecognized ?'
+        assert f.compilation_state == False
+
     # def test_repr_if(self):
     #     f = Forth()
     #     f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
