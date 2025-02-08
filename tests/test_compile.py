@@ -505,3 +505,10 @@ class TestCompile:
         assert f.stack.pop() == 0
         f.compile('1 1 and')
         assert f.stack.pop() == 1
+
+    def test_invert(self):
+        f = Forth()
+        f.compile('1 invert')
+        assert f.stack.pop() == 0
+        f.compile('0 invert')
+        assert f.stack.pop() == 1
