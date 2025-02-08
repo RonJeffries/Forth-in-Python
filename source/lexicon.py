@@ -183,15 +183,5 @@ class Lexicon:
         self.pw('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0))
 
     def define_logical_operators(self):
-        def _or(forth):
-            a = forth.stack.pop()
-            b = forth.stack.pop()
-            forth.stack.push(0 if a==0 and b==0 else 1)
-
-        def _and(forth):
-            a = forth.stack.pop()
-            b = forth.stack.pop()
-            forth.stack.push(1 if a!=0 and b!=0 else 0)
-
-        self.pw('OR', _or)
-        self.pw('AND', _and)
+        self.pw('OR', lambda f: f.stack.push(0 if f.stack.pop() == 0 and f.stack.pop() == 0 else 1))
+        self.pw('AND', lambda f: f.stack.push(1 if f.stack.pop() != 0 and f.stack.pop() != 0 else 0))
