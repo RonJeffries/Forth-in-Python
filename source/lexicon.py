@@ -28,6 +28,7 @@ class Lexicon:
         self.define_skippers(forth)
         self.define_arithmetic()
         self.define_comparators()
+        self.define_logical_operators()
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
         self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR',   lambda f: print())
@@ -181,3 +182,16 @@ class Lexicon:
         self.pw('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0))
         self.pw('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0))
 
+    def define_logical_operators(self):
+        def _or(forth):
+            a = forth.stack.pop()
+            b = forth.stack.pop()
+            forth.stack.push(0 if a==0 and b==0 else 1)
+
+        def _and(forth):
+            a = forth.stack.pop()
+            b = forth.stack.pop()
+            forth.stack.push(1 if a!=0 and b!=0 else 0)
+
+        self.pw('OR', _or)
+        self.pw('AND', _and)

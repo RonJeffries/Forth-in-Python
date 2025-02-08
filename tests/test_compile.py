@@ -477,3 +477,31 @@ class TestCompile:
     #     w = f.find_word('FOO')
     #     assert repr(w) == 'FOO'
 
+    def test_minus_1(self):
+        i = 0xFFFFFFFF
+        j = i ^ 0x80000000
+        k = 0x00000000
+        print(f'{hex(i)} {hex(j)} {hex(k)}')
+        # assert False
+
+    def test_or(self):
+        f = Forth()
+        f.compile('0 0 or')
+        assert f.stack.pop() == 0
+        f.compile('1 0 or')
+        assert f.stack.pop() == 1
+        f.compile('0 1 or')
+        assert f.stack.pop() == 1
+        f.compile('1 1 or')
+        assert f.stack.pop() == 1
+
+    def test_and(self):
+        f = Forth()
+        f.compile('0 0 and')
+        assert f.stack.pop() == 0
+        f.compile('1 0 and')
+        assert f.stack.pop() == 0
+        f.compile('0 1 and')
+        assert f.stack.pop() == 0
+        f.compile('1 1 and')
+        assert f.stack.pop() == 1
