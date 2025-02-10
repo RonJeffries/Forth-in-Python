@@ -509,9 +509,9 @@ class TestCompile:
     def test_invert(self):
         f = Forth()
         f.compile('1 1 = invert')
-        assert f.stack.pop() == f.false
+        assert f.stack.flush() == [f.false]
         f.compile('0 1 = invert')
-        assert f.stack.pop() == f.true
+        assert f.stack.flush() == [f.true]
 
     def test_and_or_invert_on_integers(self):
         f = Forth()
