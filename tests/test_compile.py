@@ -160,29 +160,29 @@ class TestCompile:
     def test_conditionals(self):
         f = Forth()
         f.process_line(' 1 1 = ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 2 1 = ')
-        assert f.stack.pop() == 0
+        assert f.stack.pop() == f.false
         f.process_line(' 2 1 < ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 1 2 < ')
-        assert f.stack.pop() == 0
+        assert f.stack.pop() == f.false
         f.process_line(' 2 1 > ')
-        assert f.stack.pop() == 0
+        assert f.stack.pop() == f.false
         f.process_line(' 1 2 > ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 2 1 >= ')
-        assert f.stack.pop() == 0
+        assert f.stack.pop() == f.false
         f.process_line(' 1 2 >= ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 2 2 >= ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 2 1 <= ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
         f.process_line(' 1 2 <= ')
-        assert f.stack.pop() == 0
+        assert f.stack.pop() == f.false
         f.process_line(' 2 2 <= ')
-        assert f.stack.pop() == 1
+        assert f.stack.pop() == f.true
 
     def test_double(self):
         f = Forth()
@@ -487,28 +487,41 @@ class TestCompile:
     def test_or(self):
         f = Forth()
         f.compile('0 0 or')
-        assert f.stack.pop() == 0
-        f.compile('1 0 or')
-        assert f.stack.pop() == 1
-        f.compile('0 1 or')
-        assert f.stack.pop() == 1
-        f.compile('1 1 or')
-        assert f.stack.pop() == 1
+        assert f.stack.flush() == [f.false]
+        f.compile('-1 0 or')
+        assert f.stack.flush() == [f.true]
+        f.compile('0 -1 or')
+        assert f.stack.flush() == [f.true]
+        f.compile('-1 -1 or')
+        assert f.stack.flush() == [f.true]
 
     def test_and(self):
         f = Forth()
         f.compile('0 0 and')
-        assert f.stack.pop() == 0
-        f.compile('1 0 and')
-        assert f.stack.pop() == 0
-        f.compile('0 1 and')
-        assert f.stack.pop() == 0
-        f.compile('1 1 and')
-        assert f.stack.pop() == 1
+        assert f.stack.flush() == [f.false]
+        f.compile('-1 0 and')
+        assert f.stack.flush() == [f.false]
+        f.compile('0 -1 and')
+        assert f.stack.flush() == [f.false]
+        f.compile('-1 -1 and')
+        assert f.stack.flush() == [f.true]
 
     def test_invert(self):
         f = Forth()
-        f.compile('1 invert')
-        assert f.stack.pop() == 0
-        f.compile('0 invert')
-        assert f.stack.pop() == 1
+        f.compile('1 1 = invert')
+        assert f.stack.pop() == f.false
+        f.compile('0 1 = invert')
+        assert f.stack.pop() == f.true
+
+    def test_and_or_invert_on_integers(self):
+        f = Forth()
+        f.compile('7 2 and')
+        assert f.stack.flush() == [2]
+        f.compile('3 7 and')
+        assert f.stack.flush() == [3]
+        f.compile('2 5 or')
+        assert f.stack.flush() == [7]
+        f.compile(' 2 2 = invert')
+        assert f.stack.flush() == [f.false]
+        f.compile(' 2 3 = invert')
+        assert f.stack.flush() == [f.true]

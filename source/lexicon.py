@@ -176,15 +176,15 @@ class Lexicon:
         self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
 
     def define_comparators(self):
-        self.pw('=',  lambda f: f.stack.push(1 if f.stack.pop() == f.stack.pop() else 0))
-        self.pw('>',  lambda f: f.stack.push(1 if f.stack.pop() > f.stack.pop() else 0))
-        self.pw('<',  lambda f: f.stack.push(1 if f.stack.pop() < f.stack.pop() else 0))
-        self.pw('>=', lambda f: f.stack.push(1 if f.stack.pop() >= f.stack.pop() else 0))
-        self.pw('<=', lambda f: f.stack.push(1 if f.stack.pop() <= f.stack.pop() else 0))
+        self.pw('=',  lambda f: f.stack.push(f.true if f.stack.pop() == f.stack.pop() else f.false))
+        self.pw('>',  lambda f: f.stack.push(f.true if f.stack.pop() > f.stack.pop() else f.false))
+        self.pw('<',  lambda f: f.stack.push(f.true if f.stack.pop() < f.stack.pop() else f.false))
+        self.pw('>=', lambda f: f.stack.push(f.true if f.stack.pop() >= f.stack.pop() else f.false))
+        self.pw('<=', lambda f: f.stack.push(f.true if f.stack.pop() <= f.stack.pop() else f.false))
 
     def define_logical_operators(self):
         self.pw('OR',
-                lambda f: f.stack.push(0 if f.stack.pop() == 0 and f.stack.pop() == 0 else 1))
+                lambda f: f.stack.push(f.stack.pop() | f.stack.pop()))
         self.pw('AND',
-                lambda f: f.stack.push(1 if f.stack.pop() != 0 and f.stack.pop() != 0 else 0))
-        self.pw('INVERT', lambda f: f.stack.push(1 if f.stack.pop() == 0 else 0))
+                lambda f: f.stack.push(f.stack.pop() & f.stack.pop()))
+        self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))

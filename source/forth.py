@@ -8,6 +8,8 @@ from source.word import Word
 
 class Forth:
     def __init__(self):
+        self.true = -1
+        self.false = 0
         self.active_words = []
         self.compile_stack = Stack()
         self.compilation_state = False

@@ -17,6 +17,11 @@ class Stack:
     def clear(self):
         self.stack.clear()
 
+    def flush(self):
+        copy = self.stack[:]
+        self.stack.clear()
+        return copy
+
     def dump(self, name, pc):
         print(f'{name}[{pc}]: {self.stack}')
 
