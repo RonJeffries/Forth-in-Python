@@ -367,7 +367,7 @@ class TestCompile:
         f.process_line('2025 CONSTANT YEAR')
         assert f.heap.at(expected) == 2025
         f. process_line('YEAR')
-        assert f.stack.pop() == 2025
+        assert f.stack.flush() == [2025]
 
     def test_compile_two_constants(self):
         f = Forth()
@@ -377,7 +377,7 @@ class TestCompile:
         f.process_line('2025 CONSTANT YEAR')
         f.process_line('1939 CONSTANT BIRTH_YEAR')
         f. process_line('YEAR BIRTH_YEAR - 1 -')
-        assert f.stack.pop() == 85
+        assert f.stack.flush() == [85]
 
     def test_create_makes_a_word(self):
         f = Forth()
@@ -388,7 +388,7 @@ class TestCompile:
         f = Forth()
         f.process_line('CREATE FOO')
         f. process_line('FOO')
-        assert f.stack.pop() == 0
+        assert f.stack.flush() == [0]
 
     def test_create_is_at_heap_end(self):
         f = Forth()
@@ -396,7 +396,7 @@ class TestCompile:
         assert f.heap.next_available() == 3
         f.process_line('CREATE BAR')
         f. process_line('BAR')
-        assert f.stack.pop() == 3
+        assert f.stack.flush() == [3]
 
     def test_demo_create(self):
         f = Forth()
@@ -404,11 +404,11 @@ class TestCompile:
         assert f.heap.next_available() == 3
         f.process_line('CREATE BAR 1 ALLOT')
         f. process_line('BAR @')
-        assert f.stack.pop() == 0
+        assert f.stack.flush() == [0]
         f.process_line('42 BAR !')
         assert f.stack.stack == []
         f. process_line('BAR @')
-        assert f.stack.pop() == 42
+        assert f.stack.flush() == [42]
 
     def test_comma(self):
         f = Forth()
@@ -420,7 +420,7 @@ class TestCompile:
     def test_create_comma(self):
         f = Forth()
         f.process_line('CREATE BAR 19 , BAR @  23 +')
-        assert f.stack.pop() == 42
+        assert f.stack.flush() == [42]
 
     def test_get_lexicon_info(self):
         f = Forth()
