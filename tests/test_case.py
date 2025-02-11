@@ -19,3 +19,16 @@ class TestCase:
         assert f.c_stack.name == 'CASE'
         assert f.c_stack.cells == []
 
+    def test_for_discussion(self):
+        f = Forth()
+        test = (': TEST'
+                '  2 CASE'
+                '    1 OF 111 ENDOF'
+                '    2 OF 222 ENDOF'
+                '  ENDCASE '
+                ';')
+        expected_stack = [222]
+        f.process_line(test)
+        w = f.find_word('TEST')
+        # assert str(w) == ''
+

@@ -182,11 +182,16 @@ class Lexicon:
         self.pw('1-', lambda f: f.stack.push(f.stack.pop() - 1))
 
     def define_comparators(self):
-        self.pw('=',  lambda f: f.stack.push(f.true if f.stack.pop() == f.stack.pop() else f.false))
-        self.pw('>',  lambda f: f.stack.push(f.true if f.stack.pop() > f.stack.pop() else f.false))
-        self.pw('<',  lambda f: f.stack.push(f.true if f.stack.pop() < f.stack.pop() else f.false))
-        self.pw('>=', lambda f: f.stack.push(f.true if f.stack.pop() >= f.stack.pop() else f.false))
-        self.pw('<=', lambda f: f.stack.push(f.true if f.stack.pop() <= f.stack.pop() else f.false))
+        self.pw('=',
+                lambda f: f.stack.push(f.true if f.stack.pop() == f.stack.pop() else f.false))
+        self.pw('>',
+                lambda f: f.stack.push(f.true if f.stack.pop() > f.stack.pop() else f.false))
+        self.pw('<',
+                lambda f: f.stack.push(f.true if f.stack.pop() < f.stack.pop() else f.false))
+        self.pw('>=',
+                lambda f: f.stack.push(f.true if f.stack.pop() >= f.stack.pop() else f.false))
+        self.pw('<=',
+                lambda f: f.stack.push(f.true if f.stack.pop() <= f.stack.pop() else f.false))
 
     def define_logical_operators(self):
         self.pw('OR',
@@ -207,6 +212,27 @@ class Lexicon:
             f.word_list.append(f.find_word('DROP'))
             f.compile_stack.pop()
 
+        def _of(f):
+            f.word_list.append(f.find_word('OVER'))
+            f.word_list.append(f.find_word('='))
+            f.word_list.append(f.find_word('0BR'))
+            f.word_list.append(0)
+            f.word_list.append(f.find_word('DROP'))
+
+        def _endof(f):
+            f.word_list.append(f.find_word('BR'))
+            f.word_list.append(0)
+
+        def _0br(f):
+            pass
+
+        def _br(f):
+            pass
+
+        self.pw('OF', _of, immediate=True)
+        self.pw('ENDOF', _endof, immediate=True)
         self.pw('CASE', _case, immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
         self.pw('GET_C_STACK', _get_c_stack, immediate=True)
+        self.pw('0BR', _0br, immediate=True)
+        self.pw('BR', _br, immediate=True)
