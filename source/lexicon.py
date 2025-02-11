@@ -1,7 +1,12 @@
 import math
 import sys
-
 from source.word import Word
+
+
+class Sys:
+    def __init__(self, name):
+        self.name = name
+        self.cells = []
 
 
 class Lexicon:
@@ -191,8 +196,17 @@ class Lexicon:
         self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))
 
     def define_case_of_endof_endcase(self):
+        def _get_c_stack(f):
+            f.c_stack = f.compile_stack[-1]
+
+        def _case(f):
+            sys = Sys('CASE')
+            f.compile_stack.push(sys)
+
         def _endcase(f):
             f.word_list.append(f.find_word('DROP'))
+            f.compile_stack.pop()
 
-        self.pw('CASE', lambda f: None, immediate=True)
+        self.pw('CASE', _case, immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
+        self.pw('GET_C_STACK', _get_c_stack, immediate=True)
