@@ -463,7 +463,7 @@ class TestCompile:
         w = f.find_word('QUAD')
         assert repr(w) == ': QUAD DOUBLE DOUBLE ;'
         w = f.find_word('DUP')
-        assert repr(w) == 'DUP: <code>'
+        assert repr(w) == 'DUP'
 
     def test_clears_compilation_state(self):
         f = Forth()

@@ -29,6 +29,7 @@ class Lexicon:
         self.define_arithmetic()
         self.define_comparators()
         self.define_logical_operators()
+        self.define_case_of_endof_endcase()
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
         self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR',   lambda f: print())
@@ -188,3 +189,10 @@ class Lexicon:
         self.pw('AND',
                 lambda f: f.stack.push(f.stack.pop() & f.stack.pop()))
         self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))
+
+    def define_case_of_endof_endcase(self):
+        def _endcase(f):
+            f.word_list.append(f.find_word('DROP'))
+
+        self.pw('CASE', lambda f: None, immediate=True)
+        self.pw('ENDCASE', _endcase, immediate=True)

@@ -88,7 +88,7 @@ class Forth:
 
     def get_literal(self, token):
         try:
-            return Word('', [self.find_word('*#'), int(token)])
+            return Word(f'*# {int(token)}', [self.find_word('*#'), int(token)])
         except ValueError:
             return None
 

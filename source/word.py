@@ -45,6 +45,6 @@ class Word:
                     result += f' {word}'
             result += ' ;'
         else:
-            result = self.name + ': <code>'
+            result = self.name # + ': <code>'
         return result
 
