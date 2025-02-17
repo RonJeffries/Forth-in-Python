@@ -201,19 +201,18 @@ class Lexicon:
             f.c_stack_top = f.compile_stack[-1]
 
         def _case(f):
-            sys = CompileInfo('CASE')
-            f.compile_stack.push(sys)
+            f.compile_stack.push(CompileInfo('CASE', f.word_list))
 
         def _endcase(f):
             f.word_list.append(f.find_word('DROP'))
-            f.compile_stack.pop()
+            ci = f.compile_stack.pop()
+            assert ci.name == 'CASE', f'expected CASE on compile stack, found {ci.name}'
 
         def _of(f):
             f.word_list.append(f.find_word('OVER'))
             f.word_list.append(f.find_word('='))
             f.word_list.append(f.find_word('0BR'))
-            info = CompileInfo('OF')
-            info.add_target(len(f.word_list))
+            info = CompileInfo('OF', f.word_list, len(f.word_list))
             f.compile_stack.push(info)
             f.word_list.append(f.find_word('BR_TARGET'))
             f.word_list.append(f.find_word('DROP'))
