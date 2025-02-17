@@ -221,8 +221,9 @@ class Lexicon:
             f.word_list.append(f.find_word('BR'))
             f.word_list.append(f.find_word('BR_TARGET'))
             info = f.compile_stack.pop()
-            location = info.locations[0]
-            f.word_list[location] = len(f.word_list)
+            assert info.name == 'OF', f'expected OF, found {info.name}'
+            for location in info.locations:
+                f.word_list[location] = len(f.word_list)
 
         def _0br(f):
             pass
