@@ -21,6 +21,12 @@ class Word:
         if self.secondary:
             forth.end()
 
+    def index(self, word_name, start=0):
+        for i, word in enumerate(self.words[start:]):
+            if type(word) == Word and word.name == word_name or word == word_name:
+                return i + start
+        return None
+
     def next_word(self):
         word =  self.words[self.pc]
         self.pc += 1

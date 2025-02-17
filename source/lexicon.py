@@ -1,5 +1,7 @@
 import math
 import sys
+
+from source.compile_info import CompileInfo
 from source.word import Word
 
 
@@ -216,12 +218,18 @@ class Lexicon:
             f.word_list.append(f.find_word('OVER'))
             f.word_list.append(f.find_word('='))
             f.word_list.append(f.find_word('0BR'))
+            info = CompileInfo('OF')
+            info.add_target(len(f.word_list))
+            f.compile_stack.push(info)
             f.word_list.append(f.find_word('BR_TARGET'))
             f.word_list.append(f.find_word('DROP'))
 
         def _endof(f):
             f.word_list.append(f.find_word('BR'))
             f.word_list.append(f.find_word('BR_TARGET'))
+            info = f.compile_stack.pop()
+            location = info.locations[0]
+            f.word_list[location] = len(f.word_list)
 
         def _0br(f):
             pass
