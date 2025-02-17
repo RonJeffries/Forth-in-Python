@@ -19,6 +19,15 @@ class TestCase:
         assert f.c_stack.name == 'CASE'
         assert f.c_stack.cells == []
 
+    def test_br_target(self):
+        f = Forth()
+        test = ': TEST BR_TARGET ;'
+        result = f.compile(test)
+        result = f.compile('TEST')
+        assert (result ==
+                'branch not patched in '
+                ': TEST BR_TARGET ; ?')
+
     def test_for_discussion(self):
         f = Forth()
         test = (': TEST'

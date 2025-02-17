@@ -216,12 +216,12 @@ class Lexicon:
             f.word_list.append(f.find_word('OVER'))
             f.word_list.append(f.find_word('='))
             f.word_list.append(f.find_word('0BR'))
-            f.word_list.append(0)
+            f.word_list.append(f.find_word('BR_TARGET'))
             f.word_list.append(f.find_word('DROP'))
 
         def _endof(f):
             f.word_list.append(f.find_word('BR'))
-            f.word_list.append(0)
+            f.word_list.append(f.find_word('BR_TARGET'))
 
         def _0br(f):
             pass
@@ -229,10 +229,15 @@ class Lexicon:
         def _br(f):
             pass
 
+        def _br_target(f):
+            msg = f'branch not patched in {f.active_word}'
+            raise NotImplementedError(msg)
+
         self.pw('OF', _of, immediate=True)
         self.pw('ENDOF', _endof, immediate=True)
         self.pw('CASE', _case, immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
         self.pw('GET_C_STACK', _get_c_stack, immediate=True)
-        self.pw('0BR', _0br, immediate=True)
-        self.pw('BR', _br, immediate=True)
+        self.pw('0BR', _0br)
+        self.pw('BR', _br)
+        self.pw('BR_TARGET', _br_target)
