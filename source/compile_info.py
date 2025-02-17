@@ -9,3 +9,9 @@ class CompileInfo:
 
     def add_target(self, location: int):
         self.locations.append(location)
+
+    def patch(self, name):
+        assert self.name == name, f'expected {name}, found {self.name}'
+        for location in self.locations:
+            self.word_list[location] = len(self.word_list)
+

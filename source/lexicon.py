@@ -212,18 +212,14 @@ class Lexicon:
             f.word_list.append(f.find_word('OVER'))
             f.word_list.append(f.find_word('='))
             f.word_list.append(f.find_word('0BR'))
-            info = CompileInfo('OF', f.word_list, len(f.word_list))
-            f.compile_stack.push(info)
+            f.compile_stack.push(CompileInfo('OF', f.word_list, len(f.word_list)))
             f.word_list.append(f.find_word('BR_TARGET'))
             f.word_list.append(f.find_word('DROP'))
 
         def _endof(f):
             f.word_list.append(f.find_word('BR'))
             f.word_list.append(f.find_word('BR_TARGET'))
-            info = f.compile_stack.pop()
-            assert info.name == 'OF', f'expected OF, found {info.name}'
-            for location in info.locations:
-                f.word_list[location] = len(f.word_list)
+            f.compile_stack.pop().patch('OF')
 
         def _0br(f):
             pass
