@@ -5,12 +5,6 @@ from source.compile_info import CompileInfo
 from source.word import Word
 
 
-class Sys:
-    def __init__(self, name):
-        self.name = name
-        self.cells = []
-
-
 class Lexicon:
     def __init__(self):
         self.lexicon = []
@@ -203,11 +197,11 @@ class Lexicon:
         self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))
 
     def define_case_of_endof_endcase(self):
-        def _get_c_stack(f):
-            f.c_stack = f.compile_stack[-1]
+        def _get_c_stack_top(f):
+            f.c_stack_top = f.compile_stack[-1]
 
         def _case(f):
-            sys = Sys('CASE')
+            sys = CompileInfo('CASE')
             f.compile_stack.push(sys)
 
         def _endcase(f):
@@ -245,7 +239,7 @@ class Lexicon:
         self.pw('ENDOF', _endof, immediate=True)
         self.pw('CASE', _case, immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
-        self.pw('GET_C_STACK', _get_c_stack, immediate=True)
+        self.pw('GET_C_STACK_TOP', _get_c_stack_top, immediate=True)
         self.pw('0BR', _0br)
         self.pw('BR', _br)
         self.pw('BR_TARGET', _br_target)

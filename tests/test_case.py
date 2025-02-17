@@ -1,5 +1,4 @@
 from source.forth import Forth
-from source.lexicon import Sys
 
 
 class TestCase:
@@ -15,9 +14,9 @@ class TestCase:
 
     def test_c_stack_set_up(self):
         f = Forth()
-        f.process_line(': TEST 3 CASE GET_C_STACK ENDCASE ;')
-        assert f.c_stack.name == 'CASE'
-        assert f.c_stack.cells == []
+        f.process_line(': TEST 3 CASE GET_C_STACK_TOP ENDCASE ;')
+        assert f.c_stack_top.name == 'CASE'
+        assert f.c_stack_top.locations == []
 
     def test_br_target(self):
         f = Forth()

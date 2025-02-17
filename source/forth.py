@@ -13,7 +13,7 @@ class Forth:
         self.active_words = []
         self.compile_stack = Stack()
         self.compilation_state = False
-        self.c_stack = None
+        self.c_stack_top = None
         self.heap = Heap()
         self.lexicon = Lexicon()
         self.return_stack = Stack()
