@@ -227,7 +227,6 @@ class Lexicon:
             if value == f.false:
                 f.active_word.branch(address)
 
-
         def _br(f):
             address = f.active_word.next_word()
             f.active_word.branch(address)
