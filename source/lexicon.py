@@ -52,8 +52,7 @@ class Lexicon:
 
     def _define_begin_until(self):
         def _until(forth):
-            until = forth.find_word('*UNTIL')
-            forth.append_word(until)
+            forth.append_word(forth.find_word('*UNTIL'))
             jump_loc = forth.compile_stack.pop()
             forth.append_word(jump_loc - len(forth.word_list) - 1)
 
