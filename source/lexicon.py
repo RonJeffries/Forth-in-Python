@@ -222,14 +222,12 @@ class Lexicon:
             f.compile_stack.pop().patch('OF')
 
         def _0br(f):
-            value = f.stack.pop()
             address = f.active_word.next_word()
-            if value == f.false:
+            if f.stack.pop() == f.false:
                 f.active_word.branch(address)
 
         def _br(f):
-            address = f.active_word.next_word()
-            f.active_word.branch(address)
+            f.active_word.branch(f.active_word.next_word())
 
         def _br_target(f):
             msg = f'branch not patched in {f.active_word}'
