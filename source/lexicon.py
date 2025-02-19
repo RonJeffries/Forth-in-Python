@@ -94,8 +94,7 @@ class Lexicon:
 
         def _loop(forth):
             jump_loc = forth.compile_stack.pop()
-            loop = forth.find_word('*LOOP')
-            forth.append_word(loop)
+            forth.append_word(forth.find_word('*LOOP'))
             forth.append_word(jump_loc - len(forth.word_list))
 
         self.pw('DO', _do, immediate=True)
