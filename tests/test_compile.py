@@ -311,6 +311,12 @@ class TestCompile:
         f.process_line(s)
         assert f.stack.stack == [0, 10, 20, 30, 40]
 
+    def test_do_loop(self):
+        f = Forth()
+        f.process_line(': TEST 5 0 DO I 10 * LOOP ;')
+        f.process_line(' TEST ')
+        assert f.stack.stack == [0, 10, 20, 30, 40]
+
     def test_rudimentary_heap(self):
         f = Forth()
         f.process_line('9 ALLOT')
