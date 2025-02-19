@@ -52,7 +52,7 @@ class Lexicon:
 
     def _define_begin_until(self):
         def _until(forth):
-            forth.append_word(forth.find_word('*UNTIL'))
+            forth.compile_word('*UNTIL')
             jump_loc = forth.compile_stack.pop()
             forth.append_word(jump_loc - len(forth.word_list) - 1)
 
@@ -89,11 +89,11 @@ class Lexicon:
     def _define_do_loop(self):
         def _do(forth):
             forth.compile_stack.push(len(forth.word_list))
-            forth.append_word(forth.find_word('*DO'))
+            forth.compile_word('*DO')
 
         def _loop(forth):
             jump_loc = forth.compile_stack.pop()
-            forth.append_word(forth.find_word('*LOOP'))
+            forth.compile_word('*LOOP')
             forth.append_word(jump_loc - len(forth.word_list))
 
         self.pw('DO', _do, immediate=True)
@@ -102,7 +102,7 @@ class Lexicon:
     def _define_if_else_then(self):
         def _compile_conditional(forth, word_to_compile, word_list):
             forth.compile_stack.push(len(word_list) + 1)
-            forth.append_word(forth.find_word(word_to_compile))
+            forth.compile_word(word_to_compile)
             forth.append_word(0)
 
         def _patch_the_skip(forth, skip_adjustment, word_list):
@@ -202,21 +202,21 @@ class Lexicon:
             f.compile_stack.push(CompileInfo('CASE', f.word_list))
 
         def _endcase(f):
-            f.append_word(f.find_word('DROP'))
+            f.compile_word('DROP')
             ci = f.compile_stack.pop()
             assert ci.name == 'CASE', f'expected CASE on compile stack, found {ci.name}'
 
         def _of(f):
-            f.append_word(f.find_word('OVER'))
-            f.append_word(f.find_word('='))
-            f.append_word(f.find_word('0BR'))
+            f.compile_word('OVER')
+            f.compile_word('=')
+            f.compile_word('0BR')
             f.compile_stack.push(CompileInfo('OF', f.word_list, len(f.word_list)))
-            f.append_word(f.find_word('BR_TARGET'))
-            f.append_word(f.find_word('DROP'))
+            f.compile_word('BR_TARGET')
+            f.compile_word('DROP')
 
         def _endof(f):
-            f.append_word(f.find_word('BR'))
-            f.append_word(f.find_word('BR_TARGET'))
+            f.compile_word('BR')
+            f.compile_word('BR_TARGET')
             f.compile_stack.pop().patch('OF')
 
         def _0br(f):

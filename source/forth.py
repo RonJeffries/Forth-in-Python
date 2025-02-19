@@ -40,6 +40,9 @@ class Forth:
     def append_word(self, word):
         self.word_list.append(word)
 
+    def compile_word(self, word_name):
+        self.append_word(self.find_word(word_name))
+
     def next_token(self):
         try:
             token = self.tokens[self.token_index]
