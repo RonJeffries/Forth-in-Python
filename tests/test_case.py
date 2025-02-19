@@ -87,3 +87,16 @@ class TestCase:
         f.process_line('TEST')
         assert f.stack.pop() == 8
 
+    def test_zero_branch_no_branch(self):
+        f = Forth()
+        test = ': TEST 5 1 0BR BR_TARGET DUP + 3 + ;'
+        #              0 1  2  3         4   5 6 7
+        ok = f.compile(test)
+        assert ok == 'ok'
+        w = f.find_word('TEST')
+        words = w.words
+        assert words[3] == f.find_word('BR_TARGET')
+        words[3] = 6
+        f.process_line('TEST')
+        assert f.stack.pop() == 13
+
