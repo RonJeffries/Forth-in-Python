@@ -222,7 +222,11 @@ class Lexicon:
             f.compile_stack.pop().patch('OF')
 
         def _0br(f):
-            pass
+            value = f.stack.pop()
+            address = f.active_word.next_word()
+            if value == f.false:
+                f.active_word.branch(address)
+
 
         def _br(f):
             address = f.active_word.next_word()
