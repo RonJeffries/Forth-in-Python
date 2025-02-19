@@ -37,6 +37,9 @@ class Forth:
         else:
             return Word('no active word', [])
 
+    def append_word(self, word):
+        self.word_list.append(word)
+
     def next_token(self):
         try:
             token = self.tokens[self.token_index]
@@ -62,6 +65,9 @@ class Forth:
                 self.abend()
                 return f'{e} ?'
         return 'ok'
+
+    def next_word(self):
+        return self.active_word.next_word()
 
     def process_line(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)

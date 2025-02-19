@@ -53,9 +53,9 @@ class Lexicon:
     def _define_begin_until(self):
         def _until(forth):
             until = forth.find_word('*UNTIL')
-            forth.word_list.append(until)
+            forth.append_word(until)
             jump_loc = forth.compile_stack.pop()
-            forth.word_list.append(jump_loc - len(forth.word_list) - 1)
+            forth.append_word(jump_loc - len(forth.word_list) - 1)
 
         self.pw('BEGIN', lambda f: f.compile_stack.push(len(f.word_list)), immediate=True)
         self.pw('UNTIL', _until, immediate=True)
@@ -90,13 +90,13 @@ class Lexicon:
     def _define_do_loop(self):
         def _do(forth):
             forth.compile_stack.push(len(forth.word_list))
-            forth.word_list.append(forth.find_word('*DO'))
+            forth.append_word(forth.find_word('*DO'))
 
         def _loop(forth):
             jump_loc = forth.compile_stack.pop()
             loop = forth.find_word('*LOOP')
-            forth.word_list.append(loop)
-            forth.word_list.append(jump_loc - len(forth.word_list))
+            forth.append_word(loop)
+            forth.append_word(jump_loc - len(forth.word_list))
 
         self.pw('DO', _do, immediate=True)
         self.pw('LOOP', _loop, immediate=True)
@@ -104,8 +104,8 @@ class Lexicon:
     def _define_if_else_then(self):
         def _compile_conditional(forth, word_to_compile, word_list):
             forth.compile_stack.push(len(word_list) + 1)
-            word_list.append(forth.find_word(word_to_compile))
-            word_list.append(0)
+            forth.append_word(forth.find_word(word_to_compile))
+            forth.append_word(0)
 
         def _patch_the_skip(forth, skip_adjustment, word_list):
             patch_loc = forth.compile_stack.pop()
@@ -128,7 +128,7 @@ class Lexicon:
 
     def define_skippers(self, forth):
         def _next_word(forth):
-            return forth.active_word.next_word()
+            return forth.next_word()
 
         def _star_loop(forth):
             beginning_of_do_loop = _next_word(forth)
@@ -204,30 +204,30 @@ class Lexicon:
             f.compile_stack.push(CompileInfo('CASE', f.word_list))
 
         def _endcase(f):
-            f.word_list.append(f.find_word('DROP'))
+            f.append_word(f.find_word('DROP'))
             ci = f.compile_stack.pop()
             assert ci.name == 'CASE', f'expected CASE on compile stack, found {ci.name}'
 
         def _of(f):
-            f.word_list.append(f.find_word('OVER'))
-            f.word_list.append(f.find_word('='))
-            f.word_list.append(f.find_word('0BR'))
+            f.append_word(f.find_word('OVER'))
+            f.append_word(f.find_word('='))
+            f.append_word(f.find_word('0BR'))
             f.compile_stack.push(CompileInfo('OF', f.word_list, len(f.word_list)))
-            f.word_list.append(f.find_word('BR_TARGET'))
-            f.word_list.append(f.find_word('DROP'))
+            f.append_word(f.find_word('BR_TARGET'))
+            f.append_word(f.find_word('DROP'))
 
         def _endof(f):
-            f.word_list.append(f.find_word('BR'))
-            f.word_list.append(f.find_word('BR_TARGET'))
+            f.append_word(f.find_word('BR'))
+            f.append_word(f.find_word('BR_TARGET'))
             f.compile_stack.pop().patch('OF')
 
         def _0br(f):
-            address = f.active_word.next_word()
+            address = f.next_word()
             if f.stack.pop() == f.false:
                 f.active_word.branch(address)
 
         def _br(f):
-            f.active_word.branch(f.active_word.next_word())
+            f.active_word.branch(f.next_word())
 
         def _br_target(f):
             msg = f'branch not patched in {f.active_word}'
