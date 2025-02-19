@@ -27,6 +27,9 @@ class Word:
                 return i + start
         return None
 
+    def branch(self, word_address):
+        self.pc = word_address
+
     def next_word(self):
         word =  self.words[self.pc]
         self.pc += 1

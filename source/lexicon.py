@@ -225,7 +225,8 @@ class Lexicon:
             pass
 
         def _br(f):
-            pass
+            address = f.active_word.next_word()
+            f.active_word.branch(address)
 
         def _br_target(f):
             msg = f'branch not patched in {f.active_word}'

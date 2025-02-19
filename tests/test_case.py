@@ -61,3 +61,16 @@ class TestCase:
         # target_location = 13 - 3
         assert w.words[branch_location] == target_location
 
+    def test_branch(self):
+        f = Forth()
+        test = ': TEST 5 BR BR_TARGET DUP + 3 + ;'
+        #              0 1  2         3   4 5 6
+        ok = f.compile(test)
+        assert ok == 'ok'
+        w = f.find_word('TEST')
+        words = w.words
+        assert words[2] == f.find_word('BR_TARGET')
+        words[2] = 5
+        f.process_line('TEST')
+        assert f.stack.pop() == 8
+
