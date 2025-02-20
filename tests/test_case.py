@@ -116,3 +116,31 @@ class TestCase:
         f.process_line('TEST')
         assert f.stack.pop() == 13
 
+    def test_famous_case_behavior(self):
+        f = Forth()
+        case = ': T CASE 1 OF 111 ENDOF 2 OF 222 ENDOF ENDCASE ;'
+        f.compile(case)
+        assert f.stack.is_empty()
+        f.compile(' 1 T')
+        assert f.stack.pop() == 111
+        assert f.stack.is_empty()
+        f.compile(' 2 T')
+        assert f.stack.pop() == 222
+        assert f.stack.is_empty()
+        f.compile(' 3 T')
+        assert f.stack.is_empty()
+
+    def test_famous_case_behavior_default(self):
+        f = Forth()
+        case = ': T CASE 1 OF 111 ENDOF 2 OF 222 ENDOF >R 666 R> ENDCASE ;'
+        f.compile(case)
+        assert f.stack.is_empty()
+        f.compile(' 1 T')
+        assert f.stack.pop() == 111
+        assert f.stack.is_empty()
+        f.compile(' 2 T')
+        assert f.stack.pop() == 222
+        assert f.stack.is_empty()
+        f.compile(' 3 T')
+        assert f.stack.pop() == 666
+
