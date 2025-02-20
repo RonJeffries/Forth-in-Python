@@ -35,6 +35,9 @@ class Stack:
     def over(self):
         self.push(self.stack[-2])
 
+    def peek(self):
+        return self.stack[-1]
+
     def pop(self):
         return self.stack.pop()
 

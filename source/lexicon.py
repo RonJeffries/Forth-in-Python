@@ -203,8 +203,7 @@ class Lexicon:
 
         def _endcase(f):
             f.compile_word('DROP')
-            ci = f.compile_stack.pop()
-            assert ci.name == 'CASE', f'expected CASE on compile stack, found {ci.name}'
+            f.compile_stack.pop().patch('CASE')
 
         def _of(f):
             f.compile_word('OVER')
@@ -216,6 +215,9 @@ class Lexicon:
 
         def _endof(f):
             f.compile_word('BR')
+            f.compile_stack.swap()
+            f.compile_stack.peek().add_current_location('CASE')
+            f.compile_stack.swap()
             f.compile_word('BR_TARGET')
             f.compile_stack.pop().patch('OF')
 
