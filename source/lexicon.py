@@ -198,9 +198,6 @@ class Lexicon:
         def _get_c_stack_top(f):
             f.c_stack_top = f.compile_stack[-1]
 
-        def _case(f):
-            f.compile_stack.push(CompileInfo('CASE', f.word_list))
-
         def _endcase(f):
             f.compile_word('DROP')
             f.compile_stack.pop().patch('CASE')
@@ -224,18 +221,16 @@ class Lexicon:
             if f.stack.pop() == f.false:
                 f.active_word.branch(address)
 
-        def _br(f):
-            f.active_word.branch(f.next_word())
-
         def _br_target(f):
-            msg = f'branch not patched in {f.active_word}'
-            raise NotImplementedError(msg)
+            raise NotImplementedError(f'branch not patched in {f.active_word}')
 
         self.pw('OF', _of, immediate=True)
         self.pw('ENDOF', _endof, immediate=True)
-        self.pw('CASE', _case, immediate=True)
+        self.pw('CASE',
+                lambda f: f.compile_stack.push(CompileInfo('CASE', f.word_list)),
+                immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
         self.pw('GET_C_STACK_TOP', _get_c_stack_top, immediate=True)
         self.pw('0BR', _0br)
-        self.pw('BR', _br)
+        self.pw('BR', lambda f: f.active_word.branch(f.next_word()))
         self.pw('BR_TARGET', _br_target)
