@@ -38,6 +38,9 @@ class Stack:
     def peek(self):
         return self.stack[-1]
 
+    def peek_under(self):
+        return self.stack[-2]
+
     def pop(self):
         return self.stack.pop()
 
