@@ -100,18 +100,6 @@ class Lexicon:
         self.pw('LOOP', _loop, immediate=True)
 
     def _define_if_else_then(self):
-        def _compile_conditional(forth, word_to_compile, word_list):
-            forth.compile_word(word_to_compile)
-            info = CompileInfo('IF', word_list, len(word_list))
-            forth.compile_stack.push(info)
-            forth.append_word(0)
-
-        def _patch_the_skip(forth, skip_adjustment, word_list):
-            info = forth.compile_stack.pop()
-            patch_loc = info.locations[0]
-            last_loc = len(word_list) + skip_adjustment
-            word_list[patch_loc] = last_loc - patch_loc
-
         def _if(forth):
             forth.compile_word('0BR')
             info = CompileInfo('IF', forth.word_list, len(forth.word_list))
@@ -119,18 +107,14 @@ class Lexicon:
             forth.compile_word('BR_TARGET')
 
         def _else(forth):
-            info = forth.compile_stack.pop()
-            patch_loc = info.locations[0]
             forth.compile_word('BR')
-            info = CompileInfo('IF', forth.word_list, len(forth.word_list))
+            new_info = CompileInfo('IF', forth.word_list, len(forth.word_list))
+            forth.compile_stack.push(new_info)
             forth.compile_word('BR_TARGET')
-            forth.word_list[patch_loc] = len(forth.word_list)
-            forth.compile_stack.push(info)
+            forth.compile_stack.swap_pop().patch('IF')
 
         def _then(forth):
-            info = forth.compile_stack.pop()
-            patch_loc = info.locations[0]
-            forth.word_list[patch_loc] = len(forth.word_list)
+            forth.compile_stack.pop().patch('IF')
 
         self.pw('IF',   _if,   immediate=True)
         self.pw('ELSE', _else, immediate=True)
