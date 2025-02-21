@@ -102,6 +102,7 @@ class Lexicon:
     def _define_if_else_then(self):
         def _compile_conditional(forth, word_to_compile, word_list):
             forth.compile_word(word_to_compile)
+            info = CompileInfo('IF', word_list, len(word_list))
             forth.compile_stack.push(len(word_list))
             forth.append_word(0)
 
