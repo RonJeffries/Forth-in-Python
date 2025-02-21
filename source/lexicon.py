@@ -104,10 +104,7 @@ class Lexicon:
             forth.compile_branch('0BR', 'IF')
 
         def _else(forth):
-            forth.compile_word('BR')
-            info = CompileInfo('IF', forth.word_list, len(forth.word_list))
-            forth.compile_stack.push(info)
-            forth.compile_word('BR_TARGET')
+            forth.compile_branch('BR', 'IF')
             forth.compile_stack.swap_pop().patch('IF')
 
         def _then(forth):
