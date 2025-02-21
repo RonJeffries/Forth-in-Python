@@ -101,15 +101,12 @@ class Lexicon:
 
     def _define_if_else_then(self):
         def _if(forth):
-            forth.compile_word('0BR')
-            info = CompileInfo('IF', forth.word_list, len(forth.word_list))
-            forth.compile_stack.push(info)
-            forth.compile_word('BR_TARGET')
+            forth.compile_branch('0BR', 'IF')
 
         def _else(forth):
             forth.compile_word('BR')
-            new_info = CompileInfo('IF', forth.word_list, len(forth.word_list))
-            forth.compile_stack.push(new_info)
+            info = CompileInfo('IF', forth.word_list, len(forth.word_list))
+            forth.compile_stack.push(info)
             forth.compile_word('BR_TARGET')
             forth.compile_stack.swap_pop().patch('IF')
 
