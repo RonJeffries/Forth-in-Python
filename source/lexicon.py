@@ -193,9 +193,7 @@ class Lexicon:
         def _of(f):
             f.compile_word('OVER')
             f.compile_word('=')
-            f.compile_word('0BR')
-            f.compile_stack.push(CompileInfo('OF', f.word_list, len(f.word_list)))
-            f.compile_word('BR_TARGET')
+            f.compile_branch('0BR', 'OF')
             f.compile_word('DROP')
 
         def _endof(f):
