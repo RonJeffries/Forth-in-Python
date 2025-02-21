@@ -52,6 +52,9 @@ class Forth:
         top = self.compile_stack.top()
         top.add_current_location(top.name)
 
+    def add_locations_from(self, info):
+        self.compile_stack.top().add_locations_from(info)
+
     def compile_word(self, word_name):
         self.append_word(self.find_word(word_name))
 

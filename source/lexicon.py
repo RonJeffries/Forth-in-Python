@@ -197,12 +197,10 @@ class Lexicon:
             f.compile_word('DROP')
 
         def _endof(f):
-            f.compile_stack.swap()
-            f.compile_word('BR')
-            f.update_branch()
-            f.compile_stack.swap()
-            f.compile_word('BR_TARGET')
-            f.compile_stack.pop().patch('OF')
+            existing_info = f.compile_stack.swap_pop()
+            f.compile_branch('BR', 'CASE')
+            f.add_locations_from(existing_info)
+            f.compile_stack.swap_pop().patch('OF')
 
         def _0br(f):
             address = f.next_word()
