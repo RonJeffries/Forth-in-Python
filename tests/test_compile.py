@@ -150,6 +150,7 @@ class TestCompile:
         s = ': TEST IF 5 ELSE 50 THEN ;'
         f.process_line(s)
         test_word = f.find_word('TEST')
+        print(test_word)
         f.stack.push(1)
         test_word(f)
         assert f.stack.pop() == 5
