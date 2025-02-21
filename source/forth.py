@@ -42,10 +42,15 @@ class Forth:
         self.word_list.append(word)
 
     def compile_branch(self, branch_name, info_name):
-            self.compile_word(branch_name)
-            info = CompileInfo(info_name, self.word_list, len(self.word_list))
-            self.compile_stack.push(info)
-            self.compile_word('BR_TARGET')
+        self.compile_word(branch_name)
+        info = CompileInfo(info_name, self.word_list)
+        self.compile_stack.push(info)
+        self.update_branch()
+        self.compile_word('BR_TARGET')
+
+    def update_branch(self):
+        top = self.compile_stack.top()
+        top.add_current_location(top.name)
 
     def compile_word(self, word_name):
         self.append_word(self.find_word(word_name))

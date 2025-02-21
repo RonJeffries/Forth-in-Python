@@ -197,8 +197,10 @@ class Lexicon:
             f.compile_word('DROP')
 
         def _endof(f):
+            f.compile_stack.swap()
             f.compile_word('BR')
-            f.compile_stack.peek_under().add_current_location('CASE')
+            f.update_branch()
+            f.compile_stack.swap()
             f.compile_word('BR_TARGET')
             f.compile_stack.pop().patch('OF')
 
