@@ -156,10 +156,8 @@ class Lexicon:
                 forth.active_word.skip(branch_distance)
 
         self.pw('*LOOP',  _star_loop)
-        self.pw('*IF',    _zero_skip)
         self.pw('*UNTIL', _zero_skip)
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
-        self.pw('*ELSE',  lambda f: f.active_word.skip(f.next_word()))
         self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
 
     def define_stack_ops(self):
