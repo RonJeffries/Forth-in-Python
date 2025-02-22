@@ -56,7 +56,10 @@ class Lexicon:
             jump_loc = forth.compile_stack.pop()
             forth.append_word(jump_loc - len(forth.word_list) - 1)
 
-        self.pw('BEGIN', lambda f: f.compile_stack.push(len(f.word_list)), immediate=True)
+        def _begin(forth):
+            forth.compile_stack.push(len(forth.word_list))
+
+        self.pw('BEGIN', _begin, immediate=True)
         self.pw('UNTIL', _until, immediate=True)
 
     def _define_colon_semi(self):
