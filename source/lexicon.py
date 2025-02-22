@@ -90,6 +90,7 @@ class Lexicon:
         def _do(forth):
             forth.compile_stack.push(len(forth.word_list))
             forth.compile_word('*DO')
+            # : DO SWAP >R >R ;
 
         def _loop(forth):
             jump_loc = forth.compile_stack.pop()
