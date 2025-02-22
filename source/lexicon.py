@@ -57,9 +57,7 @@ class Lexicon:
             forth.append_word(info.locations[0])
 
         def _begin(forth):
-            info = CompileInfo('BEGIN', forth.word_list)
-            forth.compile_stack.push(info)
-            info.add_current_location('BEGIN')
+            forth.push_compile_info('BEGIN')
 
         self.pw('BEGIN', _begin, immediate=True)
         self.pw('UNTIL', _until, immediate=True)
