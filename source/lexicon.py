@@ -56,10 +56,7 @@ class Lexicon:
             info = forth.compile_stack.pop()
             forth.append_word(info.locations[0])
 
-        def _begin(forth):
-            forth.push_compile_info('BEGIN')
-
-        self.pw('BEGIN', _begin, immediate=True)
+        self.pw('BEGIN', lambda f: f.push_compile_info('BEGIN'), immediate=True)
         self.pw('UNTIL', _until, immediate=True)
 
     def _define_colon_semi(self):
