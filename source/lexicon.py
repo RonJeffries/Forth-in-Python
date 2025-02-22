@@ -52,12 +52,14 @@ class Lexicon:
 
     def _define_begin_until(self):
         def _until(forth):
-            forth.compile_word('*UNTIL')
-            jump_loc = forth.compile_stack.pop()
-            forth.append_word(jump_loc - len(forth.word_list) - 1)
+            forth.compile_word('0BR')
+            info = forth.compile_stack.pop()
+            forth.append_word(info.locations[0])
 
         def _begin(forth):
-            forth.compile_stack.push(len(forth.word_list))
+            info = CompileInfo('BEGIN', forth.word_list)
+            forth.compile_stack.push(info)
+            info.add_current_location('BEGIN')
 
         self.pw('BEGIN', _begin, immediate=True)
         self.pw('UNTIL', _until, immediate=True)
