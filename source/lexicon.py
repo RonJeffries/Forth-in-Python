@@ -90,11 +90,10 @@ class Lexicon:
             forth.push_compile_info('DO')
             # : DO SWAP >R >R ;
 
-        def _loop(forth):
-            forth.compile_branching_word('*LOOP', 'DO')
-
         self.pw('DO', _do, immediate=True)
-        self.pw('LOOP', _loop, immediate=True)
+        self.pw('LOOP',
+                lambda f: f.compile_branching_word('*LOOP', 'DO'),
+                immediate=True)
 
     def _define_if_else_then(self):
         def _if(forth):
