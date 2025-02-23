@@ -88,14 +88,14 @@ class Lexicon:
 
     def _define_do_loop(self):
         def _do(forth):
-            forth.compile_stack.push(len(forth.word_list))
             forth.compile_word('*DO')
+            forth.compile_stack.push(len(forth.word_list))
             # : DO SWAP >R >R ;
 
         def _loop(forth):
             jump_loc = forth.compile_stack.pop()
             forth.compile_word('*LOOP')
-            forth.append_word(jump_loc - len(forth.word_list))
+            forth.append_word(jump_loc)
 
         self.pw('DO', _do, immediate=True)
         self.pw('LOOP', _loop, immediate=True)
@@ -127,7 +127,7 @@ class Lexicon:
             if index < limit:
                 forth.return_stack.push(limit)
                 forth.return_stack.push(index)
-                forth.active_word.skip(beginning_of_do_loop)
+                forth.active_word.branch(beginning_of_do_loop)
 
         self.pw('*LOOP',  _star_loop)
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
