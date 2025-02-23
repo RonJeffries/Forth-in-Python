@@ -91,9 +91,7 @@ class Lexicon:
             # : DO SWAP >R >R ;
 
         def _loop(forth):
-            forth.compile_word('*LOOP')
-            info = forth.compile_stack.pop()
-            forth.append_word(info.locations[0])
+            forth.compile_branching_word('*LOOP', 'DO')
 
         self.pw('DO', _do, immediate=True)
         self.pw('LOOP', _loop, immediate=True)
