@@ -129,11 +129,6 @@ class Lexicon:
                 forth.return_stack.push(index)
                 forth.active_word.skip(beginning_of_do_loop)
 
-        def _zero_skip(forth):
-            branch_distance = _next_word(forth)
-            if forth.stack.pop() == 0:
-                forth.active_word.skip(branch_distance)
-
         self.pw('*LOOP',  _star_loop)
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
         self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
