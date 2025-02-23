@@ -89,13 +89,13 @@ class Lexicon:
     def _define_do_loop(self):
         def _do(forth):
             forth.compile_word('*DO')
-            forth.compile_stack.push(len(forth.word_list))
+            forth.push_compile_info('DO')
             # : DO SWAP >R >R ;
 
         def _loop(forth):
-            jump_loc = forth.compile_stack.pop()
             forth.compile_word('*LOOP')
-            forth.append_word(jump_loc)
+            info = forth.compile_stack.pop()
+            forth.append_word(info.locations[0])
 
         self.pw('DO', _do, immediate=True)
         self.pw('LOOP', _loop, immediate=True)

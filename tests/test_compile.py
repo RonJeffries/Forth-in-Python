@@ -315,9 +315,9 @@ class TestCompile:
     def test_do_loop(self):
         f = Forth()
         f.compile(': TEST 5 0 DO I 10 * LOOP ;')
-        # print(f.find_word('TEST'))
-        # print(f.find_word('*DO'))
-        # print(f.find_word('I'))
+        print(f.find_word('TEST'))
+        print(f.find_word('*DO'))
+        print(f.find_word('I'))
         f.process_line(' TEST ')
         assert f.stack.stack == [0, 10, 20, 30, 40]
         # assert False
