@@ -51,11 +51,8 @@ class Lexicon:
         self._define_if_else_then()
 
     def _define_begin_until(self):
-        def _until(forth):
-            forth.compile_branching_word('0BR', 'BEGIN')
-
         self.pw('BEGIN', lambda f: f.push_compile_info('BEGIN'), immediate=True)
-        self.pw('UNTIL', _until, immediate=True)
+        self.pw('UNTIL', lambda f: f.compile_branching_word('0BR', 'BEGIN'), immediate=True)
 
     def _define_colon_semi(self):
         def _colon(forth):
