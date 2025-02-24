@@ -52,7 +52,6 @@ class Forth:
         assert info.name == info_name, f'{info.name} != {info_name}'
         self.append_word(info.locations[0])
 
-
     def push_compile_info(self, info_name):
         info = CompileInfo(info_name, self.word_list)
         self.compile_stack.push(info)
@@ -61,6 +60,15 @@ class Forth:
     def update_branch(self):
         top = self.compile_stack.top()
         top.add_current_location(top.name)
+
+    def star_loop(self):
+            new_index = self.return_stack.pop() + 1
+            limit = self.return_stack.pop()
+            beginning_of_do_loop = self.next_word()
+            if new_index < limit:
+                self.return_stack.push(limit)
+                self.return_stack.push(new_index)
+                self.active_word.branch(beginning_of_do_loop)
 
     def add_locations_from(self, info):
         self.compile_stack.top().add_locations_from(info)
