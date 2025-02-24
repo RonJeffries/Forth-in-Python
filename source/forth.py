@@ -8,20 +8,21 @@ from source.word import Word
 
 
 class Forth:
+    true = -1
+    false = 0
+
     def __init__(self):
-        self.true = -1
-        self.false = 0
         self.active_words = []
         self.compile_stack = Stack()
         self.compilation_state = False
         self.c_stack_top = None
         self.heap = Heap()
-        self.lexicon = Lexicon()
         self.return_stack = Stack()
         self.stack = Stack()
         self.tokens = None
         self.token_index = 0
         self.word_list = []
+        self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
 
     def abend(self):
