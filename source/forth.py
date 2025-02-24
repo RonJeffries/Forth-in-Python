@@ -29,12 +29,12 @@ class Forth:
         self.compile_stack.clear()
         self.compilation_state = False
         self.return_stack.clear()
-        self.active_words = []
+        self.active_words = Stack()
 
     @property
     def active_word(self):
         if self.active_words:
-            return self.active_words[-1]
+            return self.active_words.peek()
         else:
             return Word('no active word', [])
 

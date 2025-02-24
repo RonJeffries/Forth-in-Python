@@ -4,6 +4,12 @@ class Stack:
         self.stack = []
         self.limit = limit
 
+    def __eq__(self, other):
+        return other == self.stack
+
+    def __getitem__(self, item):
+        return self.stack[item]
+
     def _check_limit(self):
         if len(self.stack) > self.limit:
             raise ValueError("Stack is full")
@@ -69,9 +75,3 @@ class Stack:
         bot = self[-2]
         self.push(bot)
         self.push(top)
-
-    def __eq__(self, other):
-        return other == self.stack
-
-    def __getitem__(self, item):
-        return self.stack[item]
