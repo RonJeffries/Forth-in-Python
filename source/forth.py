@@ -12,7 +12,7 @@ class Forth:
     false = 0
 
     def __init__(self):
-        self.active_words = []
+        self.active_words = Stack()
         self.compile_stack = Stack()
         self.compilation_state = False
         self.c_stack_top = None
@@ -80,7 +80,7 @@ class Forth:
         return self.tokens.pop(0).upper()
 
     def begin(self, word):
-        self.active_words.append(word)
+        self.active_words.push(word)
 
     def end(self):
         self.active_words.pop()
