@@ -102,14 +102,12 @@ class Lexicon:
         self.pw('THEN', lambda f: f.compile_stack.pop().patch('IF'), immediate=True)
 
     def define_skippers(self, forth):
-        def _next_word(forth):
-            return forth.next_word()
 
         def _star_loop(forth):
-            beginning_of_do_loop = _next_word(forth)
             index = forth.return_stack.pop()
             limit = forth.return_stack.pop()
             index += 1
+            beginning_of_do_loop = forth.next_word()
             if index < limit:
                 forth.return_stack.push(limit)
                 forth.return_stack.push(index)
