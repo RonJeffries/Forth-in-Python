@@ -93,19 +93,13 @@ class Lexicon:
                 immediate=True)
 
     def _define_if_else_then(self):
-        def _if(forth):
-            forth.compile_branch('0BR', 'IF')
-
         def _else(forth):
             forth.compile_branch('BR', 'IF')
             forth.compile_stack.swap_pop().patch('IF')
 
-        def _then(forth):
-            forth.compile_stack.pop().patch('IF')
-
-        self.pw('IF',   _if,   immediate=True)
         self.pw('ELSE', _else, immediate=True)
-        self.pw('THEN', _then, immediate=True)
+        self.pw('IF',   lambda f: f.compile_branch('0BR', 'IF'),   immediate=True)
+        self.pw('THEN', lambda f: f.compile_stack.pop().patch('IF'), immediate=True)
 
     def define_skippers(self, forth):
         def _next_word(forth):
