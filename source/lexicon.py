@@ -119,7 +119,7 @@ class Lexicon:
         self.pw('SWAP',  lambda f: f.stack.swap())
         self.pw('>R',    lambda f: f.return_stack.push(f.stack.pop()))
         self.pw('R>',    lambda f: f.stack.push(f.return_stack.pop()))
-        self.pw('R@',    lambda f: f.stack.push(f.return_stack.top()))
+        self.pw('R@',    lambda f: f.stack.push(f.return_stack.peek()))
 
     def define_arithmetic(self):
         self.pw('-',  lambda f: f.stack.push(f.stack.swap_pop() - f.stack.pop()))

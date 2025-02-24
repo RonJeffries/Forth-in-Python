@@ -67,11 +67,5 @@ class Stack:
         # (_ under top -> _ top ) -> under
         return self.stack.pop(-2)
 
-    def top(self):
-        return self[-1]
-
     def two_dup(self):
-        top = self[-1]
-        bot = self[-2]
-        self.push(bot)
-        self.push(top)
+        self.extend(self.stack[-2:])
