@@ -19,8 +19,7 @@ class Forth:
         self.heap = Heap()
         self.return_stack = Stack()
         self.stack = Stack()
-        self.tokens = None
-        self.token_index = 0
+        self.tokens = []
         self.word_list = []
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
@@ -78,12 +77,7 @@ class Forth:
         self.append_word(self.find_word(word_name))
 
     def next_token(self):
-        try:
-            token = self.tokens[self.token_index]
-        except IndexError:
-            return None
-        self.token_index += 1
-        return token.upper()
+        return self.tokens.pop(0).upper()
 
     def begin(self, word):
         self.active_words.append(word)
@@ -109,8 +103,7 @@ class Forth:
     def process_line(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
         self.tokens = new_text.split()
-        self.token_index = 0
-        while self.token_index < len(self.tokens):
+        while self.tokens:
             self.process_token(self.next_token())
         if self.compilation_state:
             raise ValueError('Unexpected end of input')
