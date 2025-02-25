@@ -104,7 +104,7 @@ class Forth:
         if not self.compilation_state or definition.immediate:
             definition(self)
         else:
-            self.word_list.append(definition)
+            self.append_word(definition)
 
     def get_definition(self, token):
         if definition := self.find_word(token):
