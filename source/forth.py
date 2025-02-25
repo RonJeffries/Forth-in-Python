@@ -44,16 +44,16 @@ class Forth:
         self.push_compile_info(info_name)
         self.compile_word('BR_TARGET')
 
+    def push_compile_info(self, info_name):
+        info = CompileInfo(info_name, self.word_list)
+        self.compile_stack.push(info)
+        self.update_branch()
+
     def compile_branching_word(self, branch_name, info_name):
         self.compile_word(branch_name)
         info = self.compile_stack.pop()
         assert info.name == info_name, f'{info.name} != {info_name}'
         self.append_word(info.locations[0])
-
-    def push_compile_info(self, info_name):
-        info = CompileInfo(info_name, self.word_list)
-        self.compile_stack.push(info)
-        self.update_branch()
 
     def update_branch(self):
         top = self.compile_stack.peek()
