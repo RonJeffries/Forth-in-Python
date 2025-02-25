@@ -5,6 +5,7 @@ from source.heap import Heap
 from source.lexicon import Lexicon
 from source.stack import Stack
 from source.word import Word
+from tests.test_tokenizing import split_off_token
 
 
 class Forth:
@@ -17,6 +18,7 @@ class Forth:
         self.compilation_state = False
         self.c_stack_top = None
         self.heap = Heap()
+        self.input_line = ''
         self.return_stack = Stack()
         self.stack = Stack()
         self.tokens = []
@@ -76,9 +78,6 @@ class Forth:
     def compile_word(self, word_name):
         self.append_word(self.find_word(word_name))
 
-    def next_token(self):
-        return self.tokens.pop(0).upper()
-
     def begin(self, word):
         self.active_words.push(word)
 
@@ -98,9 +97,8 @@ class Forth:
         return 'ok'
 
     def process_line(self, text):
-        new_text = re.sub(r'\(.*?\)', ' ', text)
-        self.tokens = new_text.split()
-        while self.tokens:
+        self.input_line = re.sub(r'\(.*?\)', ' ', text)
+        while self.input_line:
             self.process_token(self.next_token())
         if self.compilation_state:
             raise ValueError('Unexpected end of input')
@@ -125,6 +123,19 @@ class Forth:
             return Word(f'*# {int(token)}', [self.find_word('*#'), int(token)])
         except ValueError:
             return None
+
+    def next_token(self):
+        token, self.input_line = self.split_off_token(self.input_line)
+        return token
+
+    @staticmethod
+    def split_off_token(line):
+        trimmed = line.strip()
+        index = trimmed.find(' ')
+        if index == -1:
+            return trimmed.upper(), ''
+        else:
+            return trimmed[:index].upper(), trimmed[index:].strip()
 
     def next_word(self):
         return self.active_word.next_word()
