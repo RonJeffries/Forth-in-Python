@@ -49,15 +49,15 @@ class Forth:
         self.compile_stack.push(info)
         self.update_branch()
 
+    def update_branch(self):
+        top = self.compile_stack.peek()
+        top.add_current_location(top.name)
+
     def compile_branching_word(self, branch_name, info_name):
         self.compile_word(branch_name)
         info = self.compile_stack.pop()
         assert info.name == info_name, f'{info.name} != {info_name}'
         self.append_word(info.locations[0])
-
-    def update_branch(self):
-        top = self.compile_stack.peek()
-        top.add_current_location(top.name)
 
     def star_loop(self):
         new_index = self.return_stack.pop() + 1
