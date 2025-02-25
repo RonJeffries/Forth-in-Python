@@ -12,6 +12,12 @@ class Forth:
     false = 0
 
     def __init__(self):
+        self.abend()
+        self.lexicon = Lexicon()
+        self.lexicon.define_primaries(self)
+
+    # noinspection PyAttributeOutsideInit
+    def abend(self):
         self.active_words = Stack()
         self.compile_stack = Stack()
         self.compilation_state = False
@@ -21,15 +27,6 @@ class Forth:
         self.return_stack = Stack()
         self.stack = Stack()
         self.word_list = []
-        self.lexicon = Lexicon()
-        self.lexicon.define_primaries(self)
-
-    def abend(self):
-        self.active_words = Stack()
-        self.compile_stack.clear()
-        self.compilation_state = False
-        self.input_line = ''
-        self.return_stack.clear()
         self.stack.clear()
 
     @property
