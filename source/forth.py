@@ -25,12 +25,12 @@ class Forth:
         self.lexicon.define_primaries(self)
 
     def abend(self):
-        self.stack.clear()
+        self.active_words = Stack()
         self.compile_stack.clear()
         self.compilation_state = False
         self.input_line = ''
         self.return_stack.clear()
-        self.active_words = Stack()
+        self.stack.clear()
 
     @property
     def active_word(self):
