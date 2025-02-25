@@ -482,11 +482,11 @@ class TestCompile:
         assert msg == 'Syntax error: "BAR" unrecognized ?'
         assert f.compilation_state == False
 
-    # def test_repr_if(self):
-    #     f = Forth()
-    #     f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
-    #     w = f.find_word('FOO')
-    #     assert repr(w) == 'FOO'
+    def test_repr_if(self):
+        f = Forth()
+        f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
+        w = f.find_word('FOO')
+        assert repr(w) == ': FOO *# 1 0BR 6 *# 255 BR 7 *# 127 ;'
 
     def test_minus_1(self):
         i = 0xFFFFFFFF
