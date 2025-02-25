@@ -97,9 +97,6 @@ class Forth:
                 return f'{e} ?'
         return 'ok'
 
-    def next_word(self):
-        return self.active_word.next_word()
-
     def process_line(self, text):
         new_text = re.sub(r'\(.*?\)', ' ', text)
         self.tokens = new_text.split()
@@ -128,6 +125,9 @@ class Forth:
             return Word(f'*# {int(token)}', [self.find_word('*#'), int(token)])
         except ValueError:
             return None
+
+    def next_word(self):
+        return self.active_word.next_word()
 
     def find_word(self, word):
         return self.lexicon.find_word(word)
