@@ -28,6 +28,7 @@ class Forth:
         self.stack.clear()
         self.compile_stack.clear()
         self.compilation_state = False
+        self.input_line = ''
         self.return_stack.clear()
         self.active_words = Stack()
 
