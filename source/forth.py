@@ -21,7 +21,6 @@ class Forth:
         self.input_line = ''
         self.return_stack = Stack()
         self.stack = Stack()
-        self.tokens = []
         self.word_list = []
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
