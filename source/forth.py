@@ -5,7 +5,6 @@ from source.heap import Heap
 from source.lexicon import Lexicon
 from source.stack import Stack
 from source.word import Word
-from tests.test_tokenizing import split_off_token
 
 
 class Forth:
@@ -124,17 +123,13 @@ class Forth:
             return None
 
     def next_token(self):
-        token, self.input_line = self.split_off_token(self.input_line)
-        return token
-
-    @staticmethod
-    def split_off_token(line):
-        trimmed = line.strip()
+        trimmed = self.input_line.strip()
         index = trimmed.find(' ')
         if index == -1:
-            return trimmed.upper(), ''
+            token, self.input_line = trimmed.upper(), ''
         else:
-            return trimmed[:index].upper(), trimmed[index:].strip()
+            token, self.input_line = trimmed[:index].upper(), trimmed[index+1:].strip()
+        return token
 
     def next_word(self):
         return self.active_word.next_word()
