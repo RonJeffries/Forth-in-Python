@@ -96,10 +96,11 @@ class Forth:
 
     def process_line(self, text):
         clean_line = re.sub(r'\(.*?\)', ' ', text)
-        self.provider = StringProvider(clean_line)
-        self.main_loop()
+        provider = StringProvider(clean_line)
+        self.main_loop(provider)
 
-    def main_loop(self):
+    def main_loop(self, provider):
+        self.provider = provider
         while self.provider.has_tokens():
             self.process_token(self.provider.next_token())
         if self.compilation_state:
