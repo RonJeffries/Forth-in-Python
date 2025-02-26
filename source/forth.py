@@ -24,6 +24,7 @@ class Forth:
         self.c_stack_top = None
         self.heap = Heap()
         self.input_line = ''
+        self.provider = self
         self.return_stack = Stack()
         self.stack = Stack()
         self.word_list = []
@@ -94,8 +95,8 @@ class Forth:
 
     def process_line(self, text):
         self.input_line = re.sub(r'\(.*?\)', ' ', text)
-        while self.input_line:
-            self.process_token(self.next_token())
+        while self.provider.has_tokens():
+            self.process_token(self.provider.next_token())
         if self.compilation_state:
             raise ValueError('Unexpected end of input')
 
@@ -119,6 +120,9 @@ class Forth:
             return Word(f'*# {int(token)}', [self.find_word('*#'), int(token)])
         except ValueError:
             return None
+
+    def has_tokens(self):
+        return self.input_line
 
     def next_token(self):
         trimmed = self.input_line.strip()
