@@ -11,7 +11,6 @@ class KeyboardProvider:
 
     def next_token(self):
         if not self.provider.has_tokens():
-            print(self.forth.result)
             prompt = 'Forth>'
             if self.forth.compilation_state:
                 prompt = '...'
