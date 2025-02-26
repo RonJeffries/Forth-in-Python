@@ -7,14 +7,14 @@ class TestCase:
 
     def test_trivial_case(self):
         f = Forth()
-        f.process_line(': TEST 3 CASE ENDCASE ;')
+        f.compile(': TEST 3 CASE ENDCASE ;')
         w = f.find_word('TEST')
         words = w.words
         assert str(w) == ': TEST *# 3 DROP ;'
 
     def test_c_stack_set_up(self):
         f = Forth()
-        f.process_line(': TEST 3 CASE GET_C_STACK_TOP ENDCASE ;')
+        f.compile(': TEST 3 CASE GET_C_STACK_TOP ENDCASE ;')
         assert f.c_stack_top.name == 'CASE'
         assert f.c_stack_top.locations == []
 
@@ -36,7 +36,7 @@ class TestCase:
                 '  ENDCASE '
                 ';')
         expected_stack = [222]
-        f.process_line(test)
+        f.compile(test)
         w = f.find_word('TEST')
         expected = (
             ': TEST *# 2 *# 1 OVER = 0BR 10 '
@@ -53,7 +53,7 @@ class TestCase:
                 '  ENDCASE '
                 ';')
         expected_stack = [222]
-        f.process_line(test)
+        f.compile(test)
         w = f.find_word('TEST')
         branch_location = w.index('0BR') + 1
         # branch_location = 4 + 1
@@ -70,7 +70,7 @@ class TestCase:
                 '  ENDCASE '
                 ';')
         expected_stack = [222]
-        f.process_line(test)
+        f.compile(test)
         w = f.find_word('TEST')
         first_exit_location = w.index('BR') + 1
         assert w.words[first_exit_location] == 20
@@ -87,7 +87,7 @@ class TestCase:
         words = w.words
         assert words[2] == f.find_word('BR_TARGET')
         words[2] = 5
-        f.process_line('TEST')
+        f.compile('TEST')
         assert f.stack.pop() == 8
 
     def test_zero_branch_branches(self):
@@ -100,7 +100,7 @@ class TestCase:
         words = w.words
         assert words[3] == f.find_word('BR_TARGET')
         words[3] = 6
-        f.process_line('TEST')
+        f.compile('TEST')
         assert f.stack.pop() == 8
 
     def test_zero_branch_no_branch(self):
@@ -113,7 +113,7 @@ class TestCase:
         words = w.words
         assert words[3] == f.find_word('BR_TARGET')
         words[3] = 6
-        f.process_line('TEST')
+        f.compile('TEST')
         assert f.stack.pop() == 13
 
     def test_famous_case_behavior(self):

@@ -84,9 +84,6 @@ class Forth:
         self.active_words.pop()
 
     def compile(self, text):
-        return self.process_line(text)
-
-    def process_line(self, text):
         clean_line = re.sub(r'\(.*?\)', ' ', text)
         provider = StringProvider(clean_line)
         return self.main_loop(provider)

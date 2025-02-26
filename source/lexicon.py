@@ -39,10 +39,10 @@ class Lexicon:
         self.define_secondaries(forth)
 
     def define_secondaries(self, forth):
-        forth.process_line(': CONSTANT CREATE , DOES> @ ;')
-        forth.process_line(': VARIABLE CREATE ;')
-        forth.process_line(': *DO SWAP >R >R ;')
-        forth.process_line(': I R@ ;')
+        forth.compile(': CONSTANT CREATE , DOES> @ ;')
+        forth.compile(': VARIABLE CREATE ;')
+        forth.compile(': *DO SWAP >R >R ;')
+        forth.compile(': I R@ ;')
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
