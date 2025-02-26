@@ -11,7 +11,11 @@ class KeyboardProvider:
 
     def next_token(self):
         if not self.provider.has_tokens():
-            self.set_line(input('Forth>'))
+            print(self.forth.result)
+            prompt = 'Forth>'
+            if self.forth.compilation_state:
+                prompt = '...'
+            self.set_line(input(prompt))
         return self.provider.next_token()
 
     def set_line(self, line):

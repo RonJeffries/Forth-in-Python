@@ -35,6 +35,7 @@ class Lexicon:
         self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR',   lambda f: print())
         self.pw('BYE', lambda f: sys.exit())
+        self.pw('', lambda f: None)
         self.define_secondaries(forth)
 
     def define_secondaries(self, forth):

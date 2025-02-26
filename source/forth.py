@@ -14,6 +14,7 @@ class Forth:
 
     def __init__(self):
         self.provider = None
+        self.result = ''
         self.abend()
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
@@ -83,16 +84,8 @@ class Forth:
         self.active_words.pop()
 
     def compile(self, text):
-        try:
-            self.process_line(text)
-        except Exception as e:
-            msg = str(e)
-            if msg  == 'Unexpected end of input':
-                return '...'
-            else:
-                self.abend()
-                return f'{e} ?'
-        return 'ok'
+        self.process_line(text)
+        return self.result
 
     def process_line(self, text):
         clean_line = re.sub(r'\(.*?\)', ' ', text)
@@ -102,7 +95,13 @@ class Forth:
     def main_loop(self, provider):
         self.provider = provider
         while self.provider.has_tokens():
-            self.process_token(self.provider.next_token())
+            try:
+                self.process_token(self.provider.next_token())
+            except Exception as e:
+                self.result = f'{e} ?'
+                self.abend()
+            else:
+                self.result = 'ok'
         if self.compilation_state:
             raise ValueError('Unexpected end of input')
 
