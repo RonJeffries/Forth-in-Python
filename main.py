@@ -1,13 +1,9 @@
 from source.forth import Forth
 import readline
 
+from source.keyboard_provider import KeyboardProvider
+
 if __name__ == '__main__':
     forth = Forth()
-    prompt = 'Forth> '
-    while True:
-        result = forth.compile(input(prompt))
-        if forth.compilation_state:
-            prompt = '...'
-        else:
-            print(result)
-            prompt = 'Forth> '
+    provider = KeyboardProvider(forth)
+    forth.main_loop(provider)
