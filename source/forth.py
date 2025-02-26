@@ -84,13 +84,12 @@ class Forth:
         self.active_words.pop()
 
     def compile(self, text):
-        self.process_line(text)
-        return self.result
+        return self.process_line(text)
 
     def process_line(self, text):
         clean_line = re.sub(r'\(.*?\)', ' ', text)
         provider = StringProvider(clean_line)
-        self.main_loop(provider)
+        return self.main_loop(provider)
 
     def main_loop(self, provider):
         self.provider = provider
@@ -103,7 +102,8 @@ class Forth:
             else:
                 self.result = 'ok'
         if self.compilation_state:
-            raise ValueError('Unexpected end of input')
+            return 'Unexpected end of input ?'
+        return self.result
 
     def process_token(self, token):
         definition = self.get_definition(token)

@@ -62,23 +62,17 @@ class TestCompile:
         f.find_word('OVER')(f)
         assert f.stack == [4, 2, 4]
 
-    @pytest.mark.skip("fix main loop")
     def test_syntax_error(self):
         f = Forth()
         s = '; SQUARE DUP + ;'
-        with pytest.raises(IndexError) as e:
-            f.process_line(s)
-        assert (str(e.value) ==
-                'pop from empty list')
+        result = f.process_line(s)
+        assert result == 'pop from empty list ?'
 
-    @pytest.mark.skip("fix main loop")
     def test_undefined_word(self):
         f = Forth()
         s = ': SQUARE UNKNOWN_WORD + ;'
-        with pytest.raises(SyntaxError) as e:
-            f.process_line(s)
-        assert (str(e.value) ==
-                'Syntax error: "UNKNOWN_WORD" unrecognized')
+        result = f.process_line(s)
+        assert result == 'Syntax error: "UNKNOWN_WORD" unrecognized ?'
 
     def test_compile_if(self):
         f = Forth()
@@ -339,11 +333,10 @@ class TestCompile:
         f.process_line('1 3 + @')
         assert f.stack.pop() == 666
 
-    @pytest.mark.skip("fix main loop")
     def test_rudimentary_heap_overflow(self):
         f = Forth()
-        with pytest.raises(IndexError):
-            f.process_line('666 10 !')
+        result = f.process_line('666 10 !')
+        assert result == 'list assignment index out of range ?'
 
 
     def test_constant(self):
@@ -366,12 +359,11 @@ class TestCompile:
         f.process_line('BAZ @ BAR @ FOO @')
         assert f.stack.stack == [888, 777, 666]
 
-    @pytest.mark.skip("fix main loop")
     def test_variable_without_allot_fails(self):
         f = Forth()
         f.process_line('VARIABLE FOO')
-        with pytest.raises(IndexError):
-            f.process_line('FOO @')
+        result = f.process_line('FOO @')
+        assert result == 'list index out of range ?'
 
     def test_compile_create_does(self):
         f = Forth()
@@ -443,19 +435,16 @@ class TestCompile:
         words = sorted([w.name for w in f.lexicon.lexicon])
         print(" ".join(words))
 
-    @pytest.mark.skip("fix main loop")
     def test_destroy_world(self):
         f = Forth()
         f.process_line(': EXECUTE BEGIN 666 0 UNTIL ;')
-        with pytest.raises(ValueError) as e:
-            f.process_line(' EXECUTE ')
-        assert str(e.value) == 'Stack is full'
+        result = f.process_line(' EXECUTE ')
+        assert result == 'Stack is full ?'
 
     def test_partial_definition(self):
         f = Forth()
-        with pytest.raises(ValueError) as e:
-            f.process_line(': FOO 444 222 +')
-        assert str(e.value) == 'Unexpected end of input'
+        result = f.process_line(': FOO 444 222 +')
+        assert result == 'Unexpected end of input ?'
 
     def test_safe_compile(self):
         f = Forth()
@@ -465,11 +454,10 @@ class TestCompile:
         assert result == 'integer division or modulo by zero ?'
         assert f.stack.is_empty()
 
-    @pytest.mark.skip("fix main loop")
     def test_safe_compile_needs_more_input(self):
         f = Forth()
         result = f.compile(': FOO 42 ')  # no semicolon
-        assert result == '...'
+        assert result == 'Unexpected end of input ?'
 
     def test_repr(self):
         f = Forth()
