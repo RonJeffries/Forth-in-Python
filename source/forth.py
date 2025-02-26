@@ -4,6 +4,7 @@ from source.compile_info import CompileInfo
 from source.heap import Heap
 from source.lexicon import Lexicon
 from source.stack import Stack
+from source.string_provider import StringProvider
 from source.word import Word
 
 
@@ -12,6 +13,7 @@ class Forth:
     false = 0
 
     def __init__(self):
+        self.provider = None
         self.abend()
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
@@ -23,8 +25,7 @@ class Forth:
         self.compilation_state = False
         self.c_stack_top = None
         self.heap = Heap()
-        self.input_line = ''
-        self.provider = self
+        self.provider = StringProvider('')
         self.return_stack = Stack()
         self.stack = Stack()
         self.word_list = []
@@ -94,7 +95,8 @@ class Forth:
         return 'ok'
 
     def process_line(self, text):
-        self.input_line = re.sub(r'\(.*?\)', ' ', text)
+        clean_line = re.sub(r'\(.*?\)', ' ', text)
+        self.provider = StringProvider(clean_line)
         while self.provider.has_tokens():
             self.process_token(self.provider.next_token())
         if self.compilation_state:
@@ -121,17 +123,8 @@ class Forth:
         except ValueError:
             return None
 
-    def has_tokens(self):
-        return self.input_line
-
     def next_token(self):
-        trimmed = self.input_line.strip()
-        index = trimmed.find(' ')
-        if index == -1:
-            token, self.input_line = trimmed.upper(), ''
-        else:
-            token, self.input_line = trimmed[:index].upper(), trimmed[index+1:].strip()
-        return token
+        return self.provider.next_token()
 
     def next_word(self):
         return self.active_word.next_word()
