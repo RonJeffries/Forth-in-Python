@@ -41,12 +41,7 @@ class Lexicon:
         self.define_secondaries(forth)
 
     def define_include(self):
-        def _include(f):
-            file_name = f.next_token().lower()
-            fp = FileProvider(file_name)
-            f.main_loop(fp)
-
-        self.pw('INCLUDE', _include)
+        self.pw('INCLUDE', lambda f: f.main_loop(FileProvider(f.next_token())))
 
     def define_secondaries(self, forth):
         forth.compile(': CONSTANT CREATE , DOES> @ ;')

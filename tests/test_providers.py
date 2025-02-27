@@ -30,13 +30,13 @@ class TestProviders:
             pass
 
     def test_read_file(self):
-        with open('init.forth', 'r') as file:
+        with open('test.forth', 'r') as file:
             lines = file.readlines()
         assert lines[0] == ': c 32 - 5 * 9 / ;\n'
         assert lines[1] == '0 c 32 c -40 c . . .'
 
     def test_file_provider(self):
-        fp = FileProvider('init.forth')
+        fp = FileProvider('test.forth')
         tokens = []
         while fp.has_tokens():
             tokens.append(fp.next_token())
@@ -47,7 +47,7 @@ class TestProviders:
 
     def test_include(self):
         f = Forth()
-        result = f.compile('include init.forth')
+        result = f.compile('include test.forth')
         assert result == 'ok'
         word = f.find_word('C')
         print(f'C is {word}')

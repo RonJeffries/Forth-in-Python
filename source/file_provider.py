@@ -3,7 +3,7 @@ from source.string_provider import StringProvider
 
 class FileProvider:
     def __init__(self, filename):
-        with open(filename, 'r') as f:
+        with open(filename.lower(), 'r') as f:
             self.lines = f.readlines()
         self.line_number = 0
         self.reader = StringProvider()
