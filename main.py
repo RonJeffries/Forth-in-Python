@@ -11,4 +11,4 @@ if __name__ == '__main__':
     provider = KeyboardProvider(forth)
     while True:
         result = forth.main_loop(provider)
-        print(result)
+        # print(result)
