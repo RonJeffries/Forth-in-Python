@@ -2,6 +2,7 @@ import math
 import sys
 
 from source.compile_info import CompileInfo
+from source.file_provider import FileProvider
 from source.word import Word
 
 
@@ -31,12 +32,21 @@ class Lexicon:
         self.define_comparators()
         self.define_logical_operators()
         self.define_case_of_endof_endcase()
+        self.define_include()
         self.pw('SQRT', lambda f: f.stack.push(math.sqrt(f.stack.pop())))
         self.pw('.',    lambda f: print(f.stack.pop(), end=' '))
         self.pw('CR',   lambda f: print())
         self.pw('BYE', lambda f: sys.exit())
         self.pw('', lambda f: None)
         self.define_secondaries(forth)
+
+    def define_include(self):
+        def _include(f):
+            file_name = f.next_token()
+            fp = FileProvider(file_name)
+            f.main_loop(fp)
+
+        self.pw('INCLUDE', _include)
 
     def define_secondaries(self, forth):
         forth.compile(': CONSTANT CREATE , DOES> @ ;')

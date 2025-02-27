@@ -1,4 +1,5 @@
 from source.file_provider import FileProvider
+from source.forth import Forth
 from source.keyboard_provider import KeyboardProvider
 from source.string_provider import StringProvider
 
@@ -43,3 +44,11 @@ class TestProviders:
         assert tokens[2] == '32'
         assert tokens[-1] == '.'
         assert tokens[-5] == '-40'
+
+    def test_include(self):
+        f = Forth()
+        result = f.compile('include init.forth')
+        assert result == 'ok'
+        f.compile('32 c')
+        assert f.stack == [0]
+
