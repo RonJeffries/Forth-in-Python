@@ -49,6 +49,12 @@ class TestProviders:
         f = Forth()
         result = f.compile('include init.forth')
         assert result == 'ok'
+        word = f.find_word('C')
+        print(f'C is {word}')
         f.compile('32 c')
-        assert f.stack == [0]
+        assert f.stack.pop() == 0
+        f.compile('-40 c')
+        assert f.stack.pop() == -40
+        print(f.stack.stack)
+        assert f.stack.is_empty()
 

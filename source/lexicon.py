@@ -42,7 +42,7 @@ class Lexicon:
 
     def define_include(self):
         def _include(f):
-            file_name = f.next_token()
+            file_name = f.next_token().lower()
             fp = FileProvider(file_name)
             f.main_loop(fp)
 
