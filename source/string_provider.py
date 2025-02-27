@@ -1,5 +1,5 @@
 class StringProvider:
-    def __init__(self, text):
+    def __init__(self, text=''):
         self.input_line = text
 
     def has_tokens(self):
