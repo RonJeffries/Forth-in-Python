@@ -9,10 +9,13 @@ class KeyboardProvider:
     def has_tokens(self):
         return True
 
+    def error(self, text):
+        self.provider = StringProvider('')
+
     def next_token(self):
         if not self.provider.has_tokens():
             if self.forth:
-                print(self.forth.result)
+                print(f'{self.forth.result}')
             prompt = 'Forth>'
             if self.forth.compilation_state:
                 prompt = '...'

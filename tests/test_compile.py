@@ -530,3 +530,10 @@ class TestCompile:
         assert f.stack.flush() == [f.false]
         f.compile(' 2 3 = invert')
         assert f.stack.flush() == [f.true]
+
+    def test_weird_non_error(self):
+        # error was between main and keyboard provider
+        # PEBKAC
+        f = Forth()
+        result = f.compile('foo 1 allot')
+        assert result == 'Syntax error: "FOO" unrecognized ?'
