@@ -15,6 +15,7 @@ class Forth:
     def __init__(self):
         self.provider = None
         self.result = ''
+        self.heap = Heap()
         self.abend()
         self.lexicon = Lexicon()
         self.lexicon.define_primaries(self)
@@ -25,7 +26,6 @@ class Forth:
         self.compile_stack = Stack()
         self.compilation_state = False
         self.c_stack_top = None
-        self.heap = Heap()
         self.provider = StringProvider('')
         self.return_stack = Stack()
         self.stack = Stack()
