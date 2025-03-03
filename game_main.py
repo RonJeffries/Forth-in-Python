@@ -22,7 +22,21 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
             self.screen.fill("midnightblue")
-            self.text((100,100), "Hello, World!", 16, self.WHITE, self.BLACK)
+            lines = [
+                '4 ok',
+                'Forth> 2 2 +',
+                'alpha', 'bravo', 'charlie', 'delta', 'echo',
+                'foxtrot', 'golf', 'hotel', 'india', 'juliett',
+                'kilo', 'lima', 'mike', 'november',
+                'oscar', 'papa', 'quebec', 'romeo', 'sierra',
+                'tango', 'uniform', 'victor', 'whiskey', 'xray',
+                'yankee', 'zulu'
+            ]
+            rect = self.screen.get_rect()
+            y = rect.bottomleft[1] - 20
+            for line in lines:
+                self.text((10,y),line, 16, self.WHITE, "midnightblue")
+                y -= 20
             pygame.display.flip()
 
     def text(self, location, phrase, size, front_color, back_color):
