@@ -9,10 +9,12 @@ class Game:
     GREEN = (0, 255, 0)
     BLACK = (0, 0, 0)
     BASE_FONT = 'Courier New.ttf'
+    SIZE = (800, 600)
+    MARGIN = SIZE[0]/2
 
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode(self.SIZE)
         pygame.display.set_caption('ForthBots')
         self.lines = [
                 'Forth> _',
@@ -40,11 +42,14 @@ class Game:
                     else:
                         self.lines[0] = self.lines[0][:-1] + event.unicode + '_'
             self.screen.fill("midnightblue")
-
+            pygame.draw.line(self.screen, self.WHITE,
+                             (self.MARGIN, 0),
+                             (self.MARGIN,self.SIZE[1]), 1)
             rect = self.screen.get_rect()
+            x = self.MARGIN + 10
             y = rect.bottomleft[1] - 24
             for line in self.lines:
-                self.text((10,y),line, 16, self.WHITE, "midnightblue")
+                self.text((x,y),line, 16, self.WHITE, "midnightblue")
                 y -= 20
             pygame.display.flip()
 
