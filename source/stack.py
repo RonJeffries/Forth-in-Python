@@ -59,6 +59,9 @@ class Stack:
         stack[-1], stack[-2], stack[-3]  = stack[-3], stack[-1], stack[-2]
         # top, middle, bottom  =            bottom     top        middle
 
+    def size(self):
+        return len(self.stack)
+
     def swap(self):
         stack = self.stack
         stack[-1], stack[-2] = stack[-2], stack[-1]

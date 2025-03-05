@@ -43,6 +43,7 @@ class Lexicon:
         self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
         self.pw('TRUE', lambda f: f.stack.push(f.true))
         self.pw('FALSE', lambda f: f.stack.push(f.false))
+        self.pw('DEPTH', lambda f: f.stack.push(f.stack.size()))
         self.define_secondaries(forth)
 
     def define_include(self):
@@ -53,6 +54,7 @@ class Lexicon:
         forth.compile(': VARIABLE CREATE ;')
         forth.compile(': *DO SWAP >R >R ;')
         forth.compile(': I R@ ;')
+        forth.compile(': /MOD 2DUP MOD ROT ROT / ;')
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
