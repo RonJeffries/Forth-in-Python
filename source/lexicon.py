@@ -54,6 +54,9 @@ class Lexicon:
         forth.compile(': VARIABLE CREATE ;')
         forth.compile(': *DO SWAP >R >R ;')
         forth.compile(': I R@ ;')
+        forth.compile(': TUCK SWAP OVER ;')
+        forth.compile(': 2DROP DROP DROP ;')
+        forth.compile(': 2SWAP ROT >R ROT R> ;')
         forth.compile(': /MOD 2DUP MOD ROT ROT / ;')
 
     def define_immediate_words(self, forth):
@@ -128,6 +131,7 @@ class Lexicon:
         self.pw('DUP',   lambda f: f.stack.dup())
         self.pw('OVER',  lambda f: f.stack.over())
         self.pw('ROT',   lambda f: f.stack.rot())
+        self.pw('NIP',   lambda f: f.stack.nip())
         self.pw('SWAP',  lambda f: f.stack.swap())
         self.pw('>R',    lambda f: f.return_stack.push(f.stack.pop()))
         self.pw('R>',    lambda f: f.stack.push(f.return_stack.pop()))

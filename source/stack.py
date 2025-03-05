@@ -38,6 +38,10 @@ class Stack:
         self.stack.extend(items)
         self._check_limit()
 
+    def nip(self):
+        top, nip = self.pop(), self.pop()
+        self.push(top)
+
     def over(self):
         self.push(self.stack[-2])
 
