@@ -536,6 +536,12 @@ class TestCompile:
         f.compile('1 2 3 4 3 pick')
         assert f.stack.pop() == 1
 
+    def test_roll(self):
+        f = Forth()
+        result = f.compile('10 20 30 40 50 60 3 roll')
+        assert result == 'ok'
+        assert f.stack.stack == [10, 20, 40, 50, 60, 30]
+
     def test_2over(self):
         f = Forth()
         result = f.compile('1 2 3 4 2over')

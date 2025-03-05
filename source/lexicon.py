@@ -135,6 +135,7 @@ class Lexicon:
         self.pw('NIP',   lambda f: f.stack.nip())
         self.pw('SWAP',  lambda f: f.stack.swap())
         self.pw('PICK',  lambda f: f.stack.pick())
+        self.pw('ROLL',  lambda f: f.stack.roll())
         self.pw('>R',    lambda f: f.return_stack.push(f.stack.pop()))
         self.pw('R>',    lambda f: f.stack.push(f.return_stack.pop()))
         self.pw('R@',    lambda f: f.stack.push(f.return_stack.peek()))

@@ -52,8 +52,15 @@ class Stack:
         return self.stack[-2]
 
     def pick(self):
-        index = self.pop()
-        self.push(self.stack[-1 - index])
+        index = -1 - self.pop()
+        self.push(self.stack[index])
+
+    def roll(self):
+        index = -1 - self.pop()
+        self.push(self.stack.pop(index))
+
+    # pick ( xu...x1 x0 u -- xu...x1 x0 xu )
+    # roll ( xu xu-1 ... x0 u -- xu-1 ... x0 xu )
 
     def pop(self):
         return self.stack.pop()
