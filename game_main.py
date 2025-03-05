@@ -75,7 +75,9 @@ class Game:
         self.lines[0] = self.lines[0][:-1]
         forth_line = self.lines[0][6:]
         result = self.call_forth(forth_line)
-        self.lines.insert(0, result)
+        result_lines = result.split('\n')
+        for line in result_lines:
+            self.lines.insert(0, line)
 
     def text(self, location, phrase, size, front_color, back_color):
         font = pygame.font.Font(self.BASE_FONT, size)

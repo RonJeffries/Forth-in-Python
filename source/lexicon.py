@@ -25,6 +25,9 @@ class Lexicon:
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
 
+    def words(self):
+        return '\n'.join(sorted([word.name for word in self.lexicon]))
+
     def define_primaries(self, forth):
         self.define_immediate_words(forth)
         self.define_stack_ops()
@@ -44,6 +47,7 @@ class Lexicon:
         self.pw('TRUE', lambda f: f.stack.push(f.true))
         self.pw('FALSE', lambda f: f.stack.push(f.false))
         self.pw('DEPTH', lambda f: f.stack.push(f.stack.size()))
+        self.pw('.WORDS', lambda f: print(f.words(), end = ' '))
         self.define_secondaries(forth)
 
     def define_include(self):
