@@ -1,4 +1,5 @@
 import math
+import os
 import sys
 
 from source.compile_info import CompileInfo
@@ -38,6 +39,10 @@ class Lexicon:
         self.pw('CR',   lambda f: print())
         self.pw('BYE', lambda f: sys.exit())
         self.pw('', lambda f: None)
+        self.pw('.CWD', lambda f: print(os.getcwd().strip(), end=' '))
+        self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
+        self.pw('TRUE', lambda f: f.stack.push(f.true))
+        self.pw('FALSE', lambda f: f.stack.push(f.false))
         self.define_secondaries(forth)
 
     def define_include(self):
@@ -110,7 +115,6 @@ class Lexicon:
     def define_skippers(self, forth):
         self.pw('*LOOP',  lambda f: f.star_loop())
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
-        self.pw('DUMP',   lambda f: f.stack.dump(f.active_word.name, f.active_word.pc))
 
     def define_stack_ops(self):
         self.pw('2DUP',  lambda f: f.stack.two_dup())
