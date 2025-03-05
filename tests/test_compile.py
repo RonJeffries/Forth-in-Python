@@ -180,6 +180,10 @@ class TestCompile:
         assert f.stack.pop() == f.false
         f.compile(' 2 2 <= ')
         assert f.stack.pop() == f.true
+        f.compile(' 1 2 <> ')
+        assert f.stack.pop() == f.true
+        f.compile(' 2 2 <> ')
+        assert f.stack.pop() == f.false
 
     def test_double(self):
         f = Forth()

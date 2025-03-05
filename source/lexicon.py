@@ -59,6 +59,10 @@ class Lexicon:
         forth.compile(': 2DROP DROP DROP ;')
         forth.compile(': 2SWAP ROT >R ROT R> ;')
         forth.compile(': /MOD 2DUP MOD ROT ROT / ;')
+        forth.compile(': 0= 0 = ;')
+        forth.compile(': 0< 0 < ;')
+        forth.compile(': 0> 0 > ;')
+        forth.compile(': 0<> 0 <> ;')
 
     def define_immediate_words(self, forth):
         self._define_begin_until()
@@ -161,6 +165,8 @@ class Lexicon:
                 lambda f: f.stack.push(f.true if f.stack.pop() >= f.stack.pop() else f.false))
         self.pw('<=',
                 lambda f: f.stack.push(f.true if f.stack.pop() <= f.stack.pop() else f.false))
+        self.pw('<>',
+                lambda f: f.stack.push(f.true if f.stack.pop() != f.stack.pop() else f.false))
 
     def define_logical_operators(self):
         self.pw('OR',
