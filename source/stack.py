@@ -51,6 +51,10 @@ class Stack:
     def peek_under(self):
         return self.stack[-2]
 
+    def pick(self):
+        index = self.pop()
+        self.push(self.stack[-1 - index])
+
     def pop(self):
         return self.stack.pop()
 

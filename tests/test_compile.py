@@ -531,6 +531,17 @@ class TestCompile:
         f.compile(' 2 3 = invert')
         assert f.stack.flush() == [f.true]
 
+    def test_pick(self):
+        f = Forth()
+        f.compile('1 2 3 4 3 pick')
+        assert f.stack.pop() == 1
+
+    def test_2over(self):
+        f = Forth()
+        result = f.compile('1 2 3 4 2over')
+        assert result == 'ok'
+        assert f.stack.stack == [1, 2, 3, 4, 1, 2]
+
     def test_weird_non_error(self):
         # error was between main and keyboard provider
         # PEBKAC
