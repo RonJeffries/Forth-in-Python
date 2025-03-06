@@ -558,3 +558,8 @@ class TestCompile:
         f = Forth()
         result = f.compile('foo 1 allot')
         assert result == 'Syntax error: "FOO" unrecognized ?'
+
+    def test_compile_ok(self):
+        f = Forth()
+        with pytest.raises(AssertionError):
+            f.compile_ok('1 2 3 3OVER')

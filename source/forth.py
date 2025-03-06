@@ -83,6 +83,10 @@ class Forth:
     def end(self):
         self.active_words.pop()
 
+    def compile_ok(self, text):
+        result = self.compile(text)
+        assert result == 'ok', result
+
     def compile(self, text):
         clean_line = re.sub(r'\(.*?\)', ' ', text)
         provider = StringProvider(clean_line)
