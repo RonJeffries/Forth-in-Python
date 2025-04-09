@@ -40,8 +40,8 @@ class TestCase:
         w = f.find_word('TEST')
         expected = (
             ': TEST *# 2 *# 1 OVER = _0BR 10 '
-            'DROP *# 111 BR 20 *# 2 OVER = _0BR 19 '
-            'DROP *# 222 BR 20 DROP ;')
+            'DROP *# 111 _BR 20 *# 2 OVER = _0BR 19 '
+            'DROP *# 222 _BR 20 DROP ;')
         assert str(w) == expected
 
     def test_pattern_of_cases(self):
@@ -72,14 +72,14 @@ class TestCase:
         expected_stack = [222]
         f.compile(test)
         w = f.find_word('TEST')
-        first_exit_location = w.index('BR') + 1
+        first_exit_location = w.index('_BR') + 1
         assert w.words[first_exit_location] == 20
-        second_exit_location = w.index('BR', first_exit_location) + 1
+        second_exit_location = w.index('_BR', first_exit_location) + 1
         assert w.words[second_exit_location] == 20
 
     def test_branch(self):
         f = Forth()
-        test = ': TEST 5 BR _BR_TGT DUP + 3 + ;'
+        test = ': TEST 5 _BR _BR_TGT DUP + 3 + ;'
         #              0 1  2         3   4 5 6
         ok = f.compile(test)
         assert ok == 'ok'

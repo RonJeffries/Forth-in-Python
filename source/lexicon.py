@@ -120,7 +120,7 @@ class Lexicon:
 
     def _define_if_else_then(self):
         def _else(forth):
-            forth.compile_branch('BR', 'IF')
+            forth.compile_branch('_BR', 'IF')
             forth.compile_stack.swap_pop().patch('IF')
 
         self.pw('ELSE', _else, immediate=True)
@@ -196,7 +196,7 @@ class Lexicon:
 
         def _endof(f):
             existing_info = f.compile_stack.swap_pop()
-            f.compile_branch('BR', 'CASE')
+            f.compile_branch('_BR', 'CASE')
             f.add_locations_from(existing_info)
             f.compile_stack.swap_pop().patch('OF')
 
@@ -216,5 +216,5 @@ class Lexicon:
         self.pw('ENDCASE', _endcase, immediate=True)
         self.pw('_PEEK_C_S', _peek_c_s, immediate=True)
         self.pw('_0BR', _0br)
-        self.pw('BR', lambda f: f.active_word.branch(f.next_word()))
+        self.pw('_BR', lambda f: f.active_word.branch(f.next_word()))
         self.pw('_BR_TGT', _br_tgt)

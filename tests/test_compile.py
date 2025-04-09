@@ -484,7 +484,7 @@ class TestCompile:
         f = Forth()
         f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
         w = f.find_word('FOO')
-        assert repr(w) == ': FOO *# 1 _0BR 6 *# 255 BR 7 *# 127 ;'
+        assert repr(w) == ': FOO *# 1 _0BR 6 *# 255 _BR 7 *# 127 ;'
 
     def test_minus_1(self):
         i = 0xFFFFFFFF
