@@ -128,7 +128,7 @@ class Lexicon:
         self.pw('THEN', lambda f: f.compile_stack.pop().patch('IF'), immediate=True)
 
     def define_skippers(self, forth):
-        self.pw('_LOOP',  lambda f: f.star_loop())
+        self.pw('_LOOP', lambda f: f.bar_loop())
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
 
     def define_stack_ops(self):

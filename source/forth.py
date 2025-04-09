@@ -62,7 +62,7 @@ class Forth:
         assert info.name == info_name, f'{info.name} != {info_name}'
         self.append_word(info.locations[0])
 
-    def star_loop(self):
+    def bar_loop(self):
         new_index = self.return_stack.pop() + 1
         limit = self.return_stack.pop()
         beginning_of_do_loop = self.next_word()
