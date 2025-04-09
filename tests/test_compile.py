@@ -306,7 +306,7 @@ class TestCompile:
         f = Forth()
         f.compile(': JUMP_BACK ;')
         f.compile(': SKIP ;')
-        star_loop = ': *LOOP R> R> SWAP 1 + 2DUP < IF SWAP >R >R JUMP_BACK ELSE DROP DROP SKIP THEN ;'
+        star_loop = ': _LOOP R> R> SWAP 1 + 2DUP < IF SWAP >R >R JUMP_BACK ELSE DROP DROP SKIP THEN ;'
         # f.compile(star_loop)
         s = ' 5 0 DO I 10 * LOOP '
         f.compile(s)
@@ -316,7 +316,7 @@ class TestCompile:
         f = Forth()
         f.compile(': TEST 5 0 DO I 10 * LOOP ;')
         print(f.find_word('TEST'))
-        print(f.find_word('*DO'))
+        print(f.find_word('_DO'))
         print(f.find_word('I'))
         f.compile(' TEST ')
         assert f.stack.stack == [0, 10, 20, 30, 40]

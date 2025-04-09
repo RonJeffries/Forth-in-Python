@@ -57,7 +57,7 @@ class Lexicon:
     def define_secondaries(self, forth):
         forth.compile_ok(': CONSTANT CREATE , DOES> @ ;')
         forth.compile_ok(': VARIABLE CREATE ;')
-        forth.compile_ok(': *DO SWAP >R >R ;')
+        forth.compile_ok(': _DO SWAP >R >R ;')
         forth.compile_ok(': I R@ ;')
         forth.compile_ok(': TUCK SWAP OVER ;')
         forth.compile_ok(': 2OVER 3 PICK 3 PICK ;')
@@ -109,13 +109,13 @@ class Lexicon:
 
     def _define_do_loop(self):
         def _do(forth):
-            forth.compile_word('*DO')
+            forth.compile_word('_DO')
             forth.push_compile_info('DO')
             # : DO SWAP >R >R ;
 
         self.pw('DO', _do, immediate=True)
         self.pw('LOOP',
-                lambda f: f.compile_branching_word('*LOOP', 'DO'),
+                lambda f: f.compile_branching_word('_LOOP', 'DO'),
                 immediate=True)
 
     def _define_if_else_then(self):
@@ -128,7 +128,7 @@ class Lexicon:
         self.pw('THEN', lambda f: f.compile_stack.pop().patch('IF'), immediate=True)
 
     def define_skippers(self, forth):
-        self.pw('*LOOP',  lambda f: f.star_loop())
+        self.pw('_LOOP',  lambda f: f.star_loop())
         self.pw('*#',     lambda f: f.stack.push(f.next_word()))
 
     def define_stack_ops(self):
