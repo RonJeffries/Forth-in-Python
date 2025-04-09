@@ -2,6 +2,7 @@ import re
 
 from source.compile_info import CompileInfo
 from source.heap import Heap
+from source.keyboard_provider import KeyboardProvider
 from source.lexicon import Lexicon
 from source.stack import Stack
 from source.string_provider import StringProvider
@@ -138,3 +139,13 @@ class Forth:
 
     def words(self, count):
         return self.lexicon.words(count)
+
+
+if __name__ == '__main__':
+    # print(os.getcwd())
+    forth = Forth()
+    provider = KeyboardProvider(forth)
+    while True:
+        result = forth.main_loop(provider)
+        if result != 'ok':
+            provider.error(result)
