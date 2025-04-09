@@ -20,12 +20,12 @@ class TestCase:
 
     def test_br_target(self):
         f = Forth()
-        test = ': TEST BR_TARGET ;'
+        test = ': TEST _BR_TGT ;'
         result = f.compile(test)
         result = f.compile('TEST')
         assert (result ==
                 'branch not patched in '
-                ': TEST BR_TARGET ; ?')
+                ': TEST _BR_TGT ; ?')
 
     def test_for_discussion(self):
         f = Forth()
@@ -79,39 +79,39 @@ class TestCase:
 
     def test_branch(self):
         f = Forth()
-        test = ': TEST 5 BR BR_TARGET DUP + 3 + ;'
+        test = ': TEST 5 BR _BR_TGT DUP + 3 + ;'
         #              0 1  2         3   4 5 6
         ok = f.compile(test)
         assert ok == 'ok'
         w = f.find_word('TEST')
         words = w.words
-        assert words[2] == f.find_word('BR_TARGET')
+        assert words[2] == f.find_word('_BR_TGT')
         words[2] = 5
         f.compile('TEST')
         assert f.stack.pop() == 8
 
     def test_zero_branch_branches(self):
         f = Forth()
-        test = ': TEST 5 0 0BR BR_TARGET DUP + 3 + ;'
+        test = ': TEST 5 0 0BR _BR_TGT DUP + 3 + ;'
         #              0 1  2  3         4   5 6 7
         ok = f.compile(test)
         assert ok == 'ok'
         w = f.find_word('TEST')
         words = w.words
-        assert words[3] == f.find_word('BR_TARGET')
+        assert words[3] == f.find_word('_BR_TGT')
         words[3] = 6
         f.compile('TEST')
         assert f.stack.pop() == 8
 
     def test_zero_branch_no_branch(self):
         f = Forth()
-        test = ': TEST 5 1 0BR BR_TARGET DUP + 3 + ;'
+        test = ': TEST 5 1 0BR _BR_TGT DUP + 3 + ;'
         #              0 1  2  3         4   5 6 7
         ok = f.compile(test)
         assert ok == 'ok'
         w = f.find_word('TEST')
         words = w.words
-        assert words[3] == f.find_word('BR_TARGET')
+        assert words[3] == f.find_word('_BR_TGT')
         words[3] = 6
         f.compile('TEST')
         assert f.stack.pop() == 13

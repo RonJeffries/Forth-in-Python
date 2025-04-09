@@ -205,7 +205,7 @@ class Lexicon:
             if f.stack.pop() == f.false:
                 f.active_word.branch(address)
 
-        def _br_target(f):
+        def _br_tgt(f):
             raise NotImplementedError(f'branch not patched in {f.active_word}')
 
         self.pw('OF', _of, immediate=True)
@@ -217,4 +217,4 @@ class Lexicon:
         self.pw('_PEEK_C_S', _peek_c_s, immediate=True)
         self.pw('0BR', _0br)
         self.pw('BR', lambda f: f.active_word.branch(f.next_word()))
-        self.pw('BR_TARGET', _br_target)
+        self.pw('_BR_TGT', _br_tgt)

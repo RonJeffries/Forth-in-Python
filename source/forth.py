@@ -45,7 +45,7 @@ class Forth:
     def compile_branch(self, branch_name, info_name):
         self.compile_word(branch_name)
         self.push_compile_info(info_name)
-        self.compile_word('BR_TARGET')
+        self.compile_word('_BR_TGT')
 
     def push_compile_info(self, info_name):
         info = CompileInfo(info_name, self.word_list)
