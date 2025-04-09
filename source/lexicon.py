@@ -25,8 +25,9 @@ class Lexicon:
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
 
-    def words(self):
-        return '\n'.join(sorted([word.name for word in self.lexicon]))
+    def words(self, count):
+        names = sorted(word.name for word in self.lexicon)
+        return ' '.join([f'{name:8s}' + ("\n" if i%count==0 else "") for i, name in enumerate(names)])
 
     def define_primaries(self, forth):
         self.define_immediate_words(forth)
@@ -47,7 +48,7 @@ class Lexicon:
         self.pw('TRUE', lambda f: f.stack.push(f.true))
         self.pw('FALSE', lambda f: f.stack.push(f.false))
         self.pw('DEPTH', lambda f: f.stack.push(f.stack.size()))
-        self.pw('.WORDS', lambda f: print(f.words(), end = ' '))
+        self.pw('.WORDS', lambda f: print(f.words(f.stack.pop()), end = ' '))
         self.define_secondaries(forth)
 
     def define_include(self):
@@ -180,7 +181,7 @@ class Lexicon:
         self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))
 
     def define_case_of_endof_endcase(self):
-        def _get_c_stack_top(f):
+        def _peek_c_s(f):
             f.c_stack_top = f.compile_stack[-1]
 
         def _endcase(f):
@@ -213,7 +214,7 @@ class Lexicon:
                 lambda f: f.compile_stack.push(CompileInfo('CASE', f.word_list)),
                 immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
-        self.pw('GET_C_STACK_TOP', _get_c_stack_top, immediate=True)
+        self.pw('_PEEK_C_S', _peek_c_s, immediate=True)
         self.pw('0BR', _0br)
         self.pw('BR', lambda f: f.active_word.branch(f.next_word()))
         self.pw('BR_TARGET', _br_target)

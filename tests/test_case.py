@@ -14,7 +14,7 @@ class TestCase:
 
     def test_c_stack_set_up(self):
         f = Forth()
-        f.compile(': TEST 3 CASE GET_C_STACK_TOP ENDCASE ;')
+        f.compile(': TEST 3 CASE _PEEK_C_S ENDCASE ;')
         assert f.c_stack_top.name == 'CASE'
         assert f.c_stack_top.locations == []
 

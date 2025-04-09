@@ -136,5 +136,5 @@ class Forth:
     def find_word(self, word):
         return self.lexicon.find_word(word)
 
-    def words(self):
-        return self.lexicon.words()
+    def words(self, count):
+        return self.lexicon.words(count)
