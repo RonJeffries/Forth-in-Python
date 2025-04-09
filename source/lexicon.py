@@ -181,7 +181,7 @@ class Lexicon:
         self.pw('INVERT', lambda f: f.stack.push(~f.stack.pop()))
 
     def define_case_of_endof_endcase(self):
-        def _peek_c_s(f):
+        def _peek_cs(f):
             f.c_stack_top = f.compile_stack[-1]
 
         def _endcase(f):
@@ -214,7 +214,7 @@ class Lexicon:
                 lambda f: f.compile_stack.push(CompileInfo('CASE', f.word_list)),
                 immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
-        self.pw('_PEEK_C_S', _peek_c_s, immediate=True)
+        self.pw('_PEEK_CS', _peek_cs, immediate=True)
         self.pw('_0BR', _0br)
         self.pw('_BR', lambda f: f.active_word.branch(f.next_word()))
         self.pw('_BR_TGT', _br_tgt)
