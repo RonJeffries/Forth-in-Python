@@ -78,7 +78,7 @@ class Lexicon:
 
     def _define_begin_until(self):
         self.pw('BEGIN', lambda f: f.push_compile_info('BEGIN'), immediate=True)
-        self.pw('UNTIL', lambda f: f.compile_branching_word('0BR', 'BEGIN'), immediate=True)
+        self.pw('UNTIL', lambda f: f.compile_branching_word('_0BR', 'BEGIN'), immediate=True)
 
     def _define_colon_semi(self):
         def _colon(forth):
@@ -124,7 +124,7 @@ class Lexicon:
             forth.compile_stack.swap_pop().patch('IF')
 
         self.pw('ELSE', _else, immediate=True)
-        self.pw('IF',   lambda f: f.compile_branch('0BR', 'IF'),   immediate=True)
+        self.pw('IF',   lambda f: f.compile_branch('_0BR', 'IF'),   immediate=True)
         self.pw('THEN', lambda f: f.compile_stack.pop().patch('IF'), immediate=True)
 
     def define_skippers(self, forth):
@@ -191,7 +191,7 @@ class Lexicon:
         def _of(f):
             f.compile_word('OVER')
             f.compile_word('=')
-            f.compile_branch('0BR', 'OF')
+            f.compile_branch('_0BR', 'OF')
             f.compile_word('DROP')
 
         def _endof(f):
@@ -215,6 +215,6 @@ class Lexicon:
                 immediate=True)
         self.pw('ENDCASE', _endcase, immediate=True)
         self.pw('_PEEK_C_S', _peek_c_s, immediate=True)
-        self.pw('0BR', _0br)
+        self.pw('_0BR', _0br)
         self.pw('BR', lambda f: f.active_word.branch(f.next_word()))
         self.pw('_BR_TGT', _br_tgt)

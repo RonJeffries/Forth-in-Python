@@ -39,8 +39,8 @@ class TestCase:
         f.compile(test)
         w = f.find_word('TEST')
         expected = (
-            ': TEST *# 2 *# 1 OVER = 0BR 10 '
-            'DROP *# 111 BR 20 *# 2 OVER = 0BR 19 '
+            ': TEST *# 2 *# 1 OVER = _0BR 10 '
+            'DROP *# 111 BR 20 *# 2 OVER = _0BR 19 '
             'DROP *# 222 BR 20 DROP ;')
         assert str(w) == expected
 
@@ -55,9 +55,9 @@ class TestCase:
         expected_stack = [222]
         f.compile(test)
         w = f.find_word('TEST')
-        branch_location = w.index('0BR') + 1
+        branch_location = w.index('_0BR') + 1
         # branch_location = 4 + 1
-        target_location = w.index('0BR', branch_location) - 3
+        target_location = w.index('_0BR', branch_location) - 3
         # target_location = 13 - 3
         assert w.words[branch_location] == target_location
 
@@ -92,7 +92,7 @@ class TestCase:
 
     def test_zero_branch_branches(self):
         f = Forth()
-        test = ': TEST 5 0 0BR _BR_TGT DUP + 3 + ;'
+        test = ': TEST 5 0 _0BR _BR_TGT DUP + 3 + ;'
         #              0 1  2  3         4   5 6 7
         ok = f.compile(test)
         assert ok == 'ok'
@@ -105,7 +105,7 @@ class TestCase:
 
     def test_zero_branch_no_branch(self):
         f = Forth()
-        test = ': TEST 5 1 0BR _BR_TGT DUP + 3 + ;'
+        test = ': TEST 5 1 _0BR _BR_TGT DUP + 3 + ;'
         #              0 1  2  3         4   5 6 7
         ok = f.compile(test)
         assert ok == 'ok'
