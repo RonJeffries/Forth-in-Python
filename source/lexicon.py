@@ -25,9 +25,18 @@ class Lexicon:
     def find_word(self, word):
         return next(filter(lambda d: d.name == word, reversed(self.lexicon)), None)
 
+    @property
+    def _names(self):
+        return (word.name for word in self.lexicon)
+
+    def _extended_names(self, width):
+        return ((n :=name + ' ' * width)[:len(n)//width*width] for name in self._names)
+
     def words(self, count):
-        names = sorted(word.name for word in self.lexicon)
-        return ' '.join([f'{name:8s}' + ("\n" if i%count==0 else "") for i, name in enumerate(names)])
+        column_width = 9
+        names = sorted(name for name in self._extended_names(column_width))
+        return ''.join([f'{name}' + ("\n" if i%count==0 else "")
+                        for i, name in enumerate(names)])
 
     def define_primaries(self, forth):
         self.define_immediate_words(forth)
