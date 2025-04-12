@@ -108,7 +108,7 @@ class Lexicon:
     def _define_create_does(self):
         def _create(forth):
             address = forth.heap.next_available()
-            literal = forth.find_word('*#')
+            literal = forth.find_word('_#')
             name = forth.next_token()
             word = Word(name, [literal, address])
             forth.lexicon.append(word)
@@ -138,7 +138,7 @@ class Lexicon:
 
     def define_skippers(self, forth):
         self.pw('_LOOP', lambda f: f.bar_loop())
-        self.pw('*#',     lambda f: f.stack.push(f.next_word()))
+        self.pw('_#',     lambda f: f.stack.push(f.next_word()))
 
     def define_stack_ops(self):
         self.pw('2DUP',  lambda f: f.stack.two_dup())

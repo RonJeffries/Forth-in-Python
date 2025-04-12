@@ -89,7 +89,7 @@ class TestCompile:
     def test_lit_hand_compiled(self):
         f = Forth()
         # s = ': 3 DUP +'
-        lit = f.find_word('*#')
+        lit = f.find_word('_#')
         dup = f.find_word('DUP')
         plus = f.find_word('+')
         indices = [lit, 3, dup, plus]
@@ -484,7 +484,7 @@ class TestCompile:
         f = Forth()
         f.compile(': FOO 1 IF 255 ELSE 127 THEN ;')
         w = f.find_word('FOO')
-        assert repr(w) == ': FOO *# 1 _0BR 6 *# 255 _BR 7 *# 127 ;'
+        assert repr(w) == ': FOO _# 1 _0BR 6 _# 255 _BR 7 _# 127 ;'
 
     def test_minus_1(self):
         i = 0xFFFFFFFF

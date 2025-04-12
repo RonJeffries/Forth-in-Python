@@ -10,7 +10,7 @@ class TestCase:
         f.compile(': TEST 3 CASE ENDCASE ;')
         w = f.find_word('TEST')
         words = w.words
-        assert str(w) == ': TEST *# 3 DROP ;'
+        assert str(w) == ': TEST _# 3 DROP ;'
 
     def test_c_stack_set_up(self):
         f = Forth()
@@ -39,9 +39,9 @@ class TestCase:
         f.compile(test)
         w = f.find_word('TEST')
         expected = (
-            ': TEST *# 2 *# 1 OVER = _0BR 10 '
-            'DROP *# 111 _BR 20 *# 2 OVER = _0BR 19 '
-            'DROP *# 222 _BR 20 DROP ;')
+            ': TEST _# 2 _# 1 OVER = _0BR 10 '
+            'DROP _# 111 _BR 20 _# 2 OVER = _0BR 19 '
+            'DROP _# 222 _BR 20 DROP ;')
         assert str(w) == expected
 
     def test_pattern_of_cases(self):
